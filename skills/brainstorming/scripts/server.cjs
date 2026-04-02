@@ -79,6 +79,7 @@ const URL_HOST = process.env.BRAINSTORM_URL_HOST || (HOST === '127.0.0.1' ? 'loc
 const SESSION_DIR = process.env.BRAINSTORM_DIR || '/tmp/brainstorm';
 const CONTENT_DIR = path.join(SESSION_DIR, 'content');
 const STATE_DIR = path.join(SESSION_DIR, 'state');
+const RENDERED_FILE = path.join(SESSION_DIR, 'index.html');
 let ownerPid = process.env.BRAINSTORM_OWNER_PID ? Number(process.env.BRAINSTORM_OWNER_PID) : null;
 
 const MIME_TYPES = {
@@ -101,6 +102,20 @@ h1 { color: #333; } p { color: #666; }</style>
 const frameTemplate = fs.readFileSync(path.join(__dirname, 'frame-template.html'), 'utf-8');
 const helperScript = fs.readFileSync(path.join(__dirname, 'helper.js'), 'utf-8');
 const helperInjection = '<script>\n' + helperScript + '\n</script>';
+
+function writeRenderedPage() {
+  const screenFile = getNewestScreen();
+  let html = screenFile
+    ? (raw => isFullDocument(raw) ? raw : wrapInFrame(raw))(fs.readFileSync(screenFile, 'utf-8'))
+    : WAITING_PAGE;
+  const wsOverride = '<script>window.__BRAINSTORM_WS="ws://' + URL_HOST + ':' + PORT + '";</script>\n';
+  if (html.includes('</body>')) {
+    html = html.replace('</body>', wsOverride + helperInjection + '\n</body>');
+  } else {
+    html += wsOverride + helperInjection;
+  }
+  fs.writeFileSync(RENDERED_FILE, html);
+}
 
 // ========== Helper Functions ==========
 
@@ -294,6 +309,7 @@ function startServer() {
       }
 
       broadcast({ type: 'reload' });
+      writeRenderedPage();
     }, 100));
   });
   watcher.on('error', (err) => console.error('fs.watch error:', err.message));
@@ -337,10 +353,12 @@ function startServer() {
   }
 
   server.listen(PORT, HOST, () => {
+    writeRenderedPage();
     const info = JSON.stringify({
       type: 'server-started', port: Number(PORT), host: HOST,
       url_host: URL_HOST, url: 'http://' + URL_HOST + ':' + PORT,
-      screen_dir: CONTENT_DIR, state_dir: STATE_DIR
+      screen_dir: CONTENT_DIR, state_dir: STATE_DIR,
+      view_dir: SESSION_DIR
     });
     console.log(info);
     fs.writeFileSync(path.join(STATE_DIR, 'server-info'), info + '\n');

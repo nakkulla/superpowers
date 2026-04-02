@@ -59,7 +59,7 @@ With the upstream original:
     "Spec self-review\n(fix inline)" -> "User reviews spec?";
 ```
 
-### Step 3: Rewrite Beads Integration section in English
+- [ ] **Step 3: Rewrite Beads Integration section in English**
 
 **Replace:**
 ```
@@ -80,7 +80,7 @@ connect the spec to the Beads issue tracker if `.beads/` directory exists in the
 
 (Rest of the numbered list is already English — no change needed.)
 
-### Step 4: Update User Review Gate example options
+- [ ] **Step 4: Update User Review Gate example options**
 
 **Replace:**
 ```
@@ -94,7 +94,7 @@ connect the spec to the Beads issue tracker if `.beads/` directory exists in the
 - "Use writing-plans" (general implementation plan)
 ```
 
-### Verification
+- [ ] **Step 5: Verify diff against upstream**
 
 Run: `git diff upstream/main -- skills/brainstorming/SKILL.md`
 
@@ -111,7 +111,7 @@ Only these fork additions should remain:
 
 ## Task 2: `skills/finishing-a-development-branch/SKILL.md`
 
-### Step 1: Restore Step 3 to upstream 4-option flow
+- [ ] **Step 1: Restore Step 3 to upstream 4-option flow**
 
 **Replace the entire Step 3 + Step 3.5 block** (lines 49–82):
 
@@ -173,7 +173,7 @@ Which option?
 **Don't add explanation** - keep options concise.
 ```
 
-### Step 2: Simplify Beads gate sentences in Options 1-3
+- [ ] **Step 2: Simplify Beads gate sentences in Options 1-3**
 
 For each option, replace the bold "**Beads Merge Gate:**" prefix with a plain sentence.
 
@@ -204,7 +204,7 @@ If this work is tied to a Beads issue, creating a PR does not count as merged �
 If this work is tied to a Beads issue, do not close it while the branch remains unmerged.
 ```
 
-### Step 3: Restore Common Mistakes and Red Flags text
+- [ ] **Step 3: Restore Common Mistakes and Red Flags text**
 
 **Replace** (in Common Mistakes):
 ```
@@ -224,7 +224,7 @@ If this work is tied to a Beads issue, do not close it while the branch remains 
 - Present exactly 4 options
 ```
 
-### Verification
+- [ ] **Step 4: Verify diff against upstream**
 
 Run: `git diff upstream/main -- skills/finishing-a-development-branch/SKILL.md`
 
@@ -234,7 +234,7 @@ Only these fork additions should remain: one Beads gate sentence per Option (1, 
 
 ## Task 3: `skills/writing-plans/SKILL.md`
 
-### Step 1: Translate Beads Plan Link section to English
+- [ ] **Step 1: Translate Beads Plan Link section to English**
 
 **Replace:**
 ```
@@ -258,7 +258,7 @@ Only these fork additions should remain: one Beads gate sentence per Option (1, 
 4. `bd dolt push`
 ```
 
-### Verification
+- [ ] **Step 2: Verify diff against upstream**
 
 Run: `git diff upstream/main -- skills/writing-plans/SKILL.md`
 
@@ -268,7 +268,7 @@ Only these fork additions should remain: EnterPlanMode line, Beads Plan Link sec
 
 ## Task 4: `skills/using-git-worktrees/SKILL.md`
 
-### Step 1: Move Beads section after project setup
+- [ ] **Step 1: Move Beads section after project setup**
 
 Currently Step 3.5 sits between the `### 3. Run Project Setup` heading and its actual content ("Auto-detect and run..."). Move it after the setup bash block.
 
@@ -297,7 +297,7 @@ Also clean up wording:
 - Body: "After worktree creation and project setup" (drop "and setup, check if main repo has")
 - Remove "(cooperative mode, default)" from the bd-adopt-worktree line
 
-### Verification
+- [ ] **Step 2: Verify diff against upstream**
 
 Run: `git diff upstream/main -- skills/using-git-worktrees/SKILL.md`
 

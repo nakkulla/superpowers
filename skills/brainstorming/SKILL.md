@@ -28,8 +28,9 @@ You MUST create a task for each of these items and complete them in order:
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
 6. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
 7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-8. **User reviews written spec** — ask user to review the spec file before proceeding
-9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+8. **Beads integration** — connect spec to parent bead if `.beads/` exists (see below)
+9. **User reviews written spec** — ask user to review the spec file before proceeding
+10. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
 <HARD-GATE>
 If the brainstorming target is a skill (SKILL.md), you MUST use AskUserQuestion to ask: "`skill-creator` or `writing-plans`?" before proceeding. DO NOT default to writing-plans without asking.
@@ -48,6 +49,7 @@ digraph brainstorming {
     "User approves design?" [shape=diamond];
     "Write design doc" [shape=box];
     "Spec self-review\n(fix inline)" [shape=box];
+    "Beads integration\n(.beads/ exists?)" [shape=diamond];
     "User reviews spec?" [shape=diamond];
     "Invoke writing-plans skill" [shape=doublecircle];
 
@@ -61,7 +63,8 @@ digraph brainstorming {
     "User approves design?" -> "Present design sections" [label="no, revise"];
     "User approves design?" -> "Write design doc" [label="yes"];
     "Write design doc" -> "Spec self-review\n(fix inline)";
-    "Spec self-review\n(fix inline)" -> "User reviews spec?";
+    "Spec self-review\n(fix inline)" -> "Beads integration\n(.beads/ exists?)";
+    "Beads integration\n(.beads/ exists?)" -> "User reviews spec?";
     "User reviews spec?" -> "Write design doc" [label="changes requested"];
     "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
 }
@@ -130,17 +133,18 @@ Fix any issues inline. No need to re-review — just fix and move on.
 
 ### Beads Integration (Post-Spec-Review)
 
-After the spec review loop passes and before presenting the spec to the user for review,
-connect the spec to the Beads issue tracker if `.beads/` directory exists in the project:
+After the spec self-review passes and before presenting the spec to the user for review,
+connect the spec to a **parent bead** if `.beads/` directory exists in the project.
+This step only creates or links a parent bead (feature/epic) — child task beads are created later during plan execution via `seed-beads-from-plan`.
 
-1. `bd list --json`으로 관련 bead 검색:
-   - `spec-id` 필드가 현재 spec 경로와 일치하는 bead
-   - 제목/설명이 동일 주제인 bead
-2. 기존 bead 있으면 → `bd update <id> --spec-id <path> --add-label has:spec`
-3. 없으면 → AskUserQuestion으로 확인 후 생성:
-   - 타입: 하위 task 분리가 예상되면 `epic`, 단일 구현이면 `feature`
-   - `bd create --type <type> --title "<한글 제목>"`
-   - 생성 직후: `bd update <id> --spec-id <path> --add-label has:spec`
+1. Search for a related parent bead via `bd list --json`:
+   - A bead whose `spec-id` field matches the current spec path
+   - A bead whose title/description matches the same topic
+2. If a matching bead exists → `bd update <id> --spec-id <path> --add-label has:spec`
+3. If no match → ask user via AskUserQuestion, then create:
+   - Type: `epic` if child task decomposition is expected, `feature` otherwise
+   - `bd create --type <type> --title "<title>"`
+   - Immediately after: `bd update <id> --spec-id <path> --add-label has:spec`
 4. `bd dolt push`
 
 If `.beads/` does not exist, skip this step entirely.
@@ -154,10 +158,10 @@ BEFORE constructing the AskUserQuestion for next steps after spec review:
 If the brainstorming target is a skill or agent (SKILL.md, agent definition),
 the AskUserQuestion options MUST include BOTH `skill-creator` AND `writing-plans`.
 NEVER present only `writing-plans` for skill targets. Example options:
-- "skill-creator로 진행" (스킬 작성/수정에 최적화)
-- "writing-plans로 진행" (일반 구현 plan 작성)
-- "Spec 수정 필요"
-- "여기서 종료"
+- "skill-creator" (optimized for skill authoring/editing)
+- "writing-plans" (general implementation plan)
+- "Revise spec"
+- "Stop here"
 </HARD-GATE>
 After the spec review loop passes, ask the user to review the written spec before proceeding:
 

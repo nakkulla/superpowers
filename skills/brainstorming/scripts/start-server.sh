@@ -80,7 +80,7 @@ SESSION_ID="$$-$(date +%s)"
 if [[ -n "$PROJECT_DIR" ]]; then
   SESSION_DIR="${PROJECT_DIR}/.superpowers/brainstorm/${SESSION_ID}"
 else
-  SESSION_DIR="/tmp/brainstorm-${SESSION_ID}"
+  SESSION_DIR="$HOME/tmp/brainstorming/$(date +%Y-%m-%d)/${SESSION_ID}"
 fi
 
 STATE_DIR="${SESSION_DIR}/state"

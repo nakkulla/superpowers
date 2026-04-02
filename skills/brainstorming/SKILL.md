@@ -31,6 +31,10 @@ You MUST create a task for each of these items and complete them in order:
 8. **User reviews written spec** — ask user to review the spec file before proceeding
 9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
+<HARD-GATE>
+If the brainstorming target is a skill (SKILL.md), you MUST use AskUserQuestion to ask: "`skill-creator` or `writing-plans`?" before proceeding. DO NOT default to writing-plans without asking.
+</HARD-GATE>
+
 ## Process Flow
 
 ```dot
@@ -63,7 +67,7 @@ digraph brainstorming {
 }
 ```
 
-**The terminal state is invoking writing-plans.** Do NOT invoke frontend-design, mcp-builder, or any other implementation skill. The ONLY skill you invoke after brainstorming is writing-plans.
+**The terminal state is invoking writing-plans.** Do NOT invoke frontend-design, mcp-builder, or any other implementation skill. The default next skill is writing-plans. **For skill/agent targets (SKILL.md), you MUST use AskUserQuestion to ask whether to use `skill-creator` or `writing-plans` before proceeding.**
 
 ## The Process
 
@@ -75,6 +79,7 @@ digraph brainstorming {
 - For appropriately-scoped projects, ask questions one at a time to refine the idea
 - Prefer multiple choice questions when possible, but open-ended is fine too
 - Only one question per message - if a topic needs more exploration, break it into multiple questions
+- IMPORTANT: Use AskUserQuestion for all clarifying questions instead of plain text output. This provides structured choice UI and better UX.
 - Focus on understanding: purpose, constraints, success criteria
 
 **Exploring approaches:**
@@ -123,17 +128,47 @@ After writing the spec document, look at it with fresh eyes:
 
 Fix any issues inline. No need to re-review — just fix and move on.
 
+### Beads Integration (Post-Spec-Review)
+
+After the spec review loop passes and before presenting the spec to the user for review,
+connect the spec to the Beads issue tracker if `.beads/` directory exists in the project:
+
+1. `bd list --json`으로 관련 bead 검색:
+   - `spec-id` 필드가 현재 spec 경로와 일치하는 bead
+   - 제목/설명이 동일 주제인 bead
+2. 기존 bead 있으면 → `bd update <id> --spec-id <path> --add-label has:spec`
+3. 없으면 → AskUserQuestion으로 확인 후 생성:
+   - 타입: 하위 task 분리가 예상되면 `epic`, 단일 구현이면 `feature`
+   - `bd create --type <type> --title "<한글 제목>"`
+   - 생성 직후: `bd update <id> --spec-id <path> --add-label has:spec`
+4. `bd dolt push`
+
+If `.beads/` does not exist, skip this step entirely.
+
+**IMPORTANT: If you dispatch a spec-document-reviewer subagent using the companion prompt template, you MUST include `model: "sonnet"` in the Agent tool call parameters.**
+
 **User Review Gate:**
+
+<HARD-GATE>
+BEFORE constructing the AskUserQuestion for next steps after spec review:
+If the brainstorming target is a skill or agent (SKILL.md, agent definition),
+the AskUserQuestion options MUST include BOTH `skill-creator` AND `writing-plans`.
+NEVER present only `writing-plans` for skill targets. Example options:
+- "skill-creator로 진행" (스킬 작성/수정에 최적화)
+- "writing-plans로 진행" (일반 구현 plan 작성)
+- "Spec 수정 필요"
+- "여기서 종료"
+</HARD-GATE>
 After the spec review loop passes, ask the user to review the written spec before proceeding:
 
-> "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we start writing out the implementation plan."
+> "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we proceed to the next step."
 
 Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
 
 **Implementation:**
 
 - Invoke the writing-plans skill to create a detailed implementation plan
-- Do NOT invoke any other skill. writing-plans is the next step.
+- For skill/agent targets (SKILL.md), use AskUserQuestion to ask whether to use `skill-creator` or `writing-plans`.
 
 ## Key Principles
 

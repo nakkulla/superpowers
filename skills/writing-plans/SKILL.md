@@ -13,6 +13,8 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
+**Do NOT use EnterPlanMode** during superpowers skill flows. Use the skill's own plan document workflow instead.
+
 **Context:** This should be run in a dedicated worktree (created by brainstorming skill).
 
 **Save plans to:** `docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md`
@@ -130,6 +132,23 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 **3. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
 
 If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
+
+### Beads Plan Link (Post-Plan-Review)
+
+After the plan review loop passes, connect the plan to the Beads issue tracker
+if `.beads/` directory exists in the project:
+
+1. `bd list --json`으로 관련 bead 검색 (우선순위):
+   - `spec-id`가 원본 spec 경로와 일치하는 bead (brainstorming에서 생성된 것)
+   - `metadata.plan`이 현재 plan 경로와 일치하는 bead
+   - 제목이 동일 주제인 bead
+2. 기존 bead 있으면 → `bd update <id> --set-metadata plan=<path> --add-label has:plan`
+3. 없으면 → AskUserQuestion으로 확인 후 beads.md "Spec/Plan 작성 후 Bead 연결" 규칙에 따라 생성
+4. `bd dolt push`
+
+If `.beads/` does not exist, skip this step entirely.
+
+**IMPORTANT: If you dispatch a plan-document-reviewer subagent using the companion prompt template, you MUST include `model: "sonnet"` in the Agent tool call parameters.**
 
 ## Execution Handoff
 

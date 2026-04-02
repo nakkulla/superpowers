@@ -9,6 +9,7 @@ Use this template when dispatching a plan document reviewer subagent.
 ```
 Task tool (general-purpose):
   description: "Review plan document"
+  model: sonnet
   prompt: |
     You are a plan document reviewer. Verify this plan is complete and ready for implementation.
 

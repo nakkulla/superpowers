@@ -121,6 +121,7 @@ Implementer subagents report one of four statuses. Handle each appropriately:
 
 - `./implementer-prompt.md` - Dispatch implementer subagent
 - `./spec-reviewer-prompt.md` - Dispatch spec compliance reviewer subagent
+  **IMPORTANT: You MUST include `model: "sonnet"` in the Agent tool call parameters when dispatching spec-compliance-reviewer subagents.**
 - `./code-quality-reviewer-prompt.md` - Dispatch code quality reviewer subagent
 
 ## Example Workflow

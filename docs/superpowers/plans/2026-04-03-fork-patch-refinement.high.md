@@ -25,7 +25,7 @@
 
 ## Task 1: `skills/brainstorming/SKILL.md`
 
-### Step 1: Restore checklist numbering
+- [ ] **Step 1: Restore checklist numbering**
 
 Remove the inserted "Beads integration" item. The HARD-GATE stays, only the numbering changes.
 
@@ -42,7 +42,7 @@ Remove the inserted "Beads integration" item. The HARD-GATE stays, only the numb
 9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 ```
 
-### Step 2: Remove Beads diamond from graphviz
+- [ ] **Step 2: Remove Beads diamond from graphviz**
 
 Remove this node declaration:
 ```

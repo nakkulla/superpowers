@@ -41,7 +41,15 @@ scripts/start-server.sh --project-dir /path/to/project
 #           "state_dir":"/path/to/project/.superpowers/brainstorm/12345-1706000000/state"}
 ```
 
-Save `screen_dir` and `state_dir` from the response. Build the user-facing URL by running `ts-ip` and appending the path relative to `~/tmp/` — e.g., if `screen_dir` is `~/tmp/brainstorming/2026-04-03/12345/content`, tell the user to open `http://$(ts-ip):9000/brainstorming/2026-04-03/12345/content/`. If `ts-ip` fails, fall back to the `url` field from the response.
+Save `screen_dir` and `state_dir` from the response.
+
+**IMPORTANT — Always tell the user the URL immediately after starting the server:**
+1. Run `ts-ip` to get the Tailscale IP
+2. Strip `$HOME/tmp/` prefix from `screen_dir` to get the relative path
+3. Tell the user: "브라우저에서 열어주세요: `http://{ts-ip}:9000/{relative-path}/`"
+4. If `ts-ip` fails, fall back to the `url` field from the server response
+
+Never skip this step. The user cannot use the companion without the URL.
 
 **Finding connection info:** The server writes its startup JSON to `$STATE_DIR/server-info`. If you launched the server in the background and didn't capture stdout, read that file to get the URL and port. When using `--project-dir`, check `<project>/.superpowers/brainstorm/` for the session directory.
 

@@ -8,6 +8,8 @@
 
 **Tech Stack:** Markdown (skill files)
 
+**Spec:** `docs/superpowers/specs/2026-04-03-fork-patch-refinement-design.md`
+
 ---
 
 ## Scope
@@ -61,7 +63,7 @@ With the upstream original:
 
 - [ ] **Step 3: Rewrite Beads Integration section in English**
 
-**Replace:**
+**Replace this entire intro block:**
 ```
 After the spec self-review passes and before presenting the spec to the user for review,
 connect the spec to a **parent bead** if `.beads/` directory exists in the project.
@@ -78,7 +80,7 @@ connect the spec to the Beads issue tracker if `.beads/` directory exists in the
 1. Search for a related bead via `bd list --json`:
 ```
 
-(Rest of the numbered list is already English — no change needed.)
+Keep the remaining numbered bullets unchanged. Do **not** reintroduce the removed parent-bead-only explanation sentence.
 
 - [ ] **Step 4: Update User Review Gate example options**
 
@@ -270,7 +272,7 @@ Only these fork additions should remain: EnterPlanMode line, Beads Plan Link sec
 
 - [ ] **Step 1: Move Beads section after project setup**
 
-Currently Step 3.5 sits between the `### 3. Run Project Setup` heading and its actual content ("Auto-detect and run..."). Move it after the setup bash block.
+Currently Step 3.5 sits between the `### 3. Run Project Setup` heading and its actual content ("Auto-detect and run..."). Move it after the setup bash block so the document order matches the intended execution order.
 
 **Current order (broken):**
 ```
@@ -294,7 +296,7 @@ Auto-detect and run appropriate setup:
 
 Also clean up wording:
 - Heading: `### 3.5. Beads Integration` (drop "(Post-Creation)")
-- Body: "After worktree creation and project setup" (drop "and setup, check if main repo has")
+- Body: "After worktree creation and project setup, check if the main repo uses Beads:"
 - Remove "(cooperative mode, default)" from the bd-adopt-worktree line
 
 - [ ] **Step 2: Verify diff against upstream**

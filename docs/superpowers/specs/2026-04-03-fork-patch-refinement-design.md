@@ -134,11 +134,11 @@ If `.beads/` does not exist, skip this step entirely.
 - Keep as-is (sensible safety guard, 1-line change)
 
 **Beads Integration section:**
-- Keep `### 3.5. Beads Integration` heading between steps 3 and 4
+- Keep `### 3.5. Beads Integration` heading after the project setup bash block and before step 4
 - Rewrite description in English:
 
 ```
-After worktree creation and before project setup, check if the main repo uses Beads:
+After worktree creation and project setup, check if the main repo uses Beads:
 
 (bash block with MAIN_REPO_ROOT detection)
 

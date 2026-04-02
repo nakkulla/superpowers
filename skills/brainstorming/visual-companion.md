@@ -41,7 +41,7 @@ scripts/start-server.sh --project-dir /path/to/project
 #           "state_dir":"/path/to/project/.superpowers/brainstorm/12345-1706000000/state"}
 ```
 
-Save `screen_dir` and `state_dir` from the response. Tell user to open the URL.
+Save `screen_dir` and `state_dir` from the response. Tell user to open `view_url` (if present) or `url`. Prefer `view_url` — it uses the Tailscale IP and works across devices.
 
 **Finding connection info:** The server writes its startup JSON to `$STATE_DIR/server-info`. If you launched the server in the background and didn't capture stdout, read that file to get the URL and port. When using `--project-dir`, check `<project>/.superpowers/brainstorm/` for the session directory.
 
@@ -101,7 +101,7 @@ Use `--url-host` to control what hostname is printed in the returned URL JSON.
    - Server automatically serves the newest file
 
 2. **Tell user what to expect and end your turn:**
-   - Remind them of the URL (every step, not just first)
+   - Remind them of `view_url` (or `url` if `view_url` is absent) every step, not just first
    - Give a brief text summary of what's on screen (e.g., "Showing 3 layout options for the homepage")
    - Ask them to respond in the terminal: "Take a look and let me know what you think. Click to select an option if you'd like."
 

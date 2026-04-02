@@ -1,8 +1,6 @@
 const crypto = require('crypto');
-const { execSync } = require('child_process');
 const http = require('http');
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 
 // ========== WebSocket Protocol (RFC 6455) ==========
@@ -340,21 +338,11 @@ function startServer() {
   }
 
   server.listen(PORT, HOST, () => {
-    let tsIp = null;
-    try { tsIp = execSync('ts-ip', { encoding: 'utf-8', timeout: 2000, stdio: ['pipe', 'pipe', 'pipe'] }).trim() || null; } catch (e) {}
-
-    const result = {
+    const info = JSON.stringify({
       type: 'server-started', port: Number(PORT), host: HOST,
       url_host: URL_HOST, url: 'http://' + URL_HOST + ':' + PORT,
       screen_dir: CONTENT_DIR, state_dir: STATE_DIR
-    };
-    if (tsIp) {
-      const homeTmp = path.join(os.homedir(), 'tmp');
-      if (CONTENT_DIR.startsWith(homeTmp)) {
-        result.view_url = 'http://' + tsIp + ':9000/' + path.relative(homeTmp, CONTENT_DIR) + '/';
-      }
-    }
-    const info = JSON.stringify(result);
+    });
     console.log(info);
     fs.writeFileSync(path.join(STATE_DIR, 'server-info'), info + '\n');
   });

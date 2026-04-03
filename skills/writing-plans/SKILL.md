@@ -105,6 +105,8 @@ git commit -m "feat: add specific feature"
 ```
 ````
 
+> If a task modifies skill files (SKILL.md), include: **REQUIRED SUB-SKILL:** Use superpowers:writing-skills
+
 ## No Placeholders
 
 Every step must contain the actual content an engineer needs. These are **plan failures** — never write them:

@@ -46,46 +46,28 @@ git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null
 
 Or ask: "This branch split from main - is that correct?"
 
-### Step 3: Finish Mode
+### Step 3: Present Options
 
-Present exactly these 3 options:
+Present exactly these 4 options:
 
 ```
-Implementation complete. How would you like to finish this work?
+Implementation complete. What would you like to do?
 
-1. Run implementation review first
-2. Continue directly to branch handling
-3. Discard this work
-
+1. Merge back to <base-branch> locally
+2. Push and create a Pull Request
+3. Keep the branch as-is (I'll handle it later)
+4. Discard this work
 
 Which option?
 ```
 
 **Don't add explanation** - keep options concise.
 
-### Step 3.5: Branch Action
-
-If the user selects **1. Run implementation review first**:
-1. Invoke `implementation-review`
-2. Show the review body before any follow-up question
-3. If fixes are applied, re-run the relevant verification
-4. If the user wants to continue, proceed to Branch Action selection below
-
-If the user selects **2. Continue directly to branch handling**, present exactly these 3 options:
-
-```
-1. Merge back to <base-branch> locally
-2. Push and create a Pull Request
-3. Keep the branch as-is (I'll handle it later)
-```
-
-If the user selects **3. Discard this work**, skip Branch Action and proceed directly to the discard confirmation in Step 4.
-
 ### Step 4: Execute Choice
 
 #### Option 1: Merge Locally
 
-**Beads Merge Gate:** If this work is tied to a Beads issue, this is the only close-ready path. `bd close` is allowed only after the target branch merge completes successfully. After a successful merge, clean up the feature branch and worktree automatically.
+If this work is tied to a Beads issue, this is the only close-ready path. Run `bd close` only after the merge completes successfully.
 
 ```bash
 # Switch to base branch
@@ -108,7 +90,7 @@ Then: Cleanup worktree (Step 5)
 
 #### Option 2: Push and Create PR
 
-**Beads Merge Gate:** Creating a PR does **not** count as merged. If this work is tied to a Beads issue, keep the issue open or `resolved`; do **not** `bd close` it yet.
+If this work is tied to a Beads issue, creating a PR does not count as merged — keep the issue open or mark it `resolved`.
 
 ```bash
 # Push branch
@@ -129,7 +111,7 @@ Then: Cleanup worktree (Step 5)
 
 #### Option 3: Keep As-Is
 
-**Beads Merge Gate:** Keeping the branch/worktree as-is means the work is not merged. If this work is tied to a Beads issue, do **not** `bd close` it.
+If this work is tied to a Beads issue, do not close it while the branch remains unmerged.
 
 Report: "Keeping branch <name>. Worktree preserved at <path>."
 
@@ -190,7 +172,7 @@ git worktree remove <worktree-path>
 
 **Open-ended questions**
 - **Problem:** "What should I do next?" → ambiguous
-- **Fix:** Present exactly 3 Finish Mode options, then 3 Branch Action options
+- **Fix:** Present exactly 4 structured options
 
 **Automatic worktree cleanup**
 - **Problem:** Remove worktree when might need it (Option 2, 3)
@@ -210,7 +192,7 @@ git worktree remove <worktree-path>
 
 **Always:**
 - Verify tests before offering options
-- Present exactly 3 Finish Mode options, then 3 Branch Action options
+- Present exactly 4 options
 - Get typed confirmation for Option 4
 - Clean up worktree for Options 1 & 4 only
 

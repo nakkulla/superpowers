@@ -28,9 +28,8 @@ You MUST create a task for each of these items and complete them in order:
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
 6. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
 7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-8. **Beads integration** — connect spec to parent bead if `.beads/` exists (see below)
-9. **User reviews written spec** — ask user to review the spec file before proceeding
-10. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+8. **User reviews written spec** — ask user to review the spec file before proceeding
+9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
 <HARD-GATE>
 If the brainstorming target is a skill (SKILL.md), you MUST use AskUserQuestion to ask: "`skill-creator` or `writing-plans`?" before proceeding. DO NOT default to writing-plans without asking.
@@ -49,7 +48,6 @@ digraph brainstorming {
     "User approves design?" [shape=diamond];
     "Write design doc" [shape=box];
     "Spec self-review\n(fix inline)" [shape=box];
-    "Beads integration\n(.beads/ exists?)" [shape=diamond];
     "User reviews spec?" [shape=diamond];
     "Invoke writing-plans skill" [shape=doublecircle];
 
@@ -63,8 +61,7 @@ digraph brainstorming {
     "User approves design?" -> "Present design sections" [label="no, revise"];
     "User approves design?" -> "Write design doc" [label="yes"];
     "Write design doc" -> "Spec self-review\n(fix inline)";
-    "Spec self-review\n(fix inline)" -> "Beads integration\n(.beads/ exists?)";
-    "Beads integration\n(.beads/ exists?)" -> "User reviews spec?";
+    "Spec self-review\n(fix inline)" -> "User reviews spec?";
     "User reviews spec?" -> "Write design doc" [label="changes requested"];
     "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
 }
@@ -133,11 +130,10 @@ Fix any issues inline. No need to re-review — just fix and move on.
 
 ### Beads Integration (Post-Spec-Review)
 
-After the spec self-review passes and before presenting the spec to the user for review,
-connect the spec to a **parent bead** if `.beads/` directory exists in the project.
-This step only creates or links a parent bead (feature/epic) — child task beads are created later during plan execution via `seed-beads-from-plan`.
+After the spec review loop passes and before presenting the spec to the user for review,
+connect the spec to the Beads issue tracker if `.beads/` directory exists in the project:
 
-1. Search for a related parent bead via `bd list --json`:
+1. Search for a related bead via `bd list --json`:
    - A bead whose `spec-id` field matches the current spec path
    - A bead whose title/description matches the same topic
 2. If a matching bead exists → `bd update <id> --spec-id <path> --add-label has:spec`
@@ -158,8 +154,8 @@ BEFORE constructing the AskUserQuestion for next steps after spec review:
 If the brainstorming target is a skill or agent (SKILL.md, agent definition),
 the AskUserQuestion options MUST include BOTH `skill-creator` AND `writing-plans`.
 NEVER present only `writing-plans` for skill targets. Example options:
-- "skill-creator" (optimized for skill authoring/editing)
-- "writing-plans" (general implementation plan)
+- "Use skill-creator" (optimized for skill authoring/editing)
+- "Use writing-plans" (general implementation plan)
 - "Revise spec"
 - "Stop here"
 </HARD-GATE>

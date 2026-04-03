@@ -138,12 +138,12 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 After the plan review loop passes, connect the plan to the Beads issue tracker
 if `.beads/` directory exists in the project:
 
-1. `bd list --json`으로 관련 bead 검색 (우선순위):
-   - `spec-id`가 원본 spec 경로와 일치하는 bead (brainstorming에서 생성된 것)
-   - `metadata.plan`이 현재 plan 경로와 일치하는 bead
-   - 제목이 동일 주제인 bead
-2. 기존 bead 있으면 → `bd update <id> --set-metadata plan=<path> --add-label has:plan`
-3. 없으면 → AskUserQuestion으로 확인 후 beads.md "Spec/Plan 작성 후 Bead 연결" 규칙에 따라 생성
+1. Search for a related bead via `bd list --json` (priority order):
+   - A bead whose `spec-id` matches the original spec path (created during brainstorming)
+   - A bead whose `metadata.plan` matches the current plan path
+   - A bead whose title matches the same topic
+2. If found → `bd update <id> --set-metadata plan=<path> --add-label has:plan`
+3. If not found → ask user via AskUserQuestion, then create per the Beads spec/plan linking rules
 4. `bd dolt push`
 
 If `.beads/` does not exist, skip this step entirely.

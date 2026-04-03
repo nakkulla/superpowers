@@ -100,20 +100,6 @@ cd "$path"
 
 ### 3. Run Project Setup
 
-### 3.5. Beads Integration (Post-Creation)
-
-After worktree creation and setup, check if main repo has `.beads/`:
-
-```bash
-MAIN_REPO_ROOT=$(git worktree list --porcelain | head -1 | sed 's/^worktree //')
-test -d "$MAIN_REPO_ROOT/.beads"
-```
-
-If `.beads/` exists:
-1. Check for `bd-adopt-worktree`: `command -v bd-adopt-worktree`
-2. If found → `bd-adopt-worktree <worktree-path>` (cooperative mode, default)
-3. If not found → warn: "bd-adopt-worktree not in PATH, .beads/ will be an independent copy"
-
 Auto-detect and run appropriate setup:
 
 ```bash
@@ -130,6 +116,20 @@ if [ -f pyproject.toml ]; then if grep -q "\[tool\.poetry\]" pyproject.toml; the
 # Go
 if [ -f go.mod ]; then go mod download; fi
 ```
+
+### 3.5. Beads Integration
+
+After worktree creation and project setup, check if the main repo uses Beads:
+
+```bash
+MAIN_REPO_ROOT=$(git worktree list --porcelain | head -1 | sed 's/^worktree //')
+test -d "$MAIN_REPO_ROOT/.beads"
+```
+
+If `.beads/` exists:
+1. Check for `bd-adopt-worktree`: `command -v bd-adopt-worktree`
+2. If found → `bd-adopt-worktree <worktree-path>`
+3. If not found → warn: "bd-adopt-worktree not in PATH, .beads/ will be an independent copy"
 
 ### 4. Verify Clean Baseline
 

@@ -115,6 +115,10 @@ After all tasks complete and verified:
 ## Integration
 
 **Required workflow skills:**
-- **superpowers:using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
+- **superpowers:using-git-worktrees** - Set up isolated workspace (when chosen in Step 0-C)
 - **superpowers:writing-plans** - Creates the plan this skill executes
 - **superpowers:finishing-a-development-branch** - Complete development after all tasks
+
+**Optional workflow skills:**
+- **superpowers:subagent-driven-development** - Delegate execution (when chosen in Step 0-B)
+- **seed-beads-from-plan** - Create child beads from plan (when Beads integration is ON in Step 1)

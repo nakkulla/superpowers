@@ -37,7 +37,7 @@ grep -i "worktree.*director" CLAUDE.md 2>/dev/null
 
 ### 3. Ask User
 
-If no directory exists and no CLAUDE.md preference:
+If no directory exists and no CLAUDE.md preference, use AskUserQuestion (Codex: `request_user_input`):
 
 ```
 No worktree directory found. Where should I create worktrees?
@@ -143,7 +143,7 @@ pytest
 go test ./...
 ```
 
-**If tests fail:** Report failures, ask whether to proceed or investigate.
+**If tests fail:** Report failures, use AskUserQuestion (Codex: `request_user_input`) to ask whether to proceed or investigate.
 
 **If tests pass:** Report ready.
 

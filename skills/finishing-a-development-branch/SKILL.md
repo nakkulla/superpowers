@@ -48,7 +48,7 @@ Or ask: "This branch split from main - is that correct?"
 
 ### Step 3: Present Options
 
-Present exactly these 4 options:
+Present exactly these 4 options using AskUserQuestion (Codex: `request_user_input`):
 
 ```
 Implementation complete. What would you like to do?
@@ -61,7 +61,7 @@ Implementation complete. What would you like to do?
 Which option?
 ```
 
-**Don't add explanation** - keep options concise.
+**Don't add explanation** - keep options concise. Use AskUserQuestion so the user gets a structured choice UI, not plain text.
 
 ### Step 4: Execute Choice
 
@@ -119,7 +119,7 @@ Report: "Keeping branch <name>. Worktree preserved at <path>."
 
 #### Option 4: Discard
 
-**Confirm first:**
+**Confirm first** using AskUserQuestion (Codex: `request_user_input`):
 ```
 This will permanently delete:
 - Branch <name>

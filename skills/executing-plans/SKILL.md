@@ -44,7 +44,7 @@ After all tasks complete and verified:
 - You don't understand an instruction
 - Verification fails repeatedly
 
-**Ask for clarification using AskUserQuestion (Codex: `request_user_input`) rather than guessing.**
+**Ask for clarification rather than guessing.**
 
 ## When to Revisit Earlier Steps
 

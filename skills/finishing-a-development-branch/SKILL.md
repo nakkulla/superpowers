@@ -15,6 +15,16 @@ Guide completion of development work by presenting clear options and handling ch
 
 ## The Process
 
+### Step 0: Beads Context Detection
+
+Detect Beads issue context via 3-step fallback:
+
+1. **Conversation context** — If a Beads issue ID was passed from executing-plans (e.g., "이 작업은 Beads issue `<id>`에 연결되어 있습니다"), use it directly.
+2. **Branch name matching** — If `.beads/` exists: `bd list --json`, search for an issue whose branch or metadata matches the current git branch name.
+3. **No match** — Proceed with Beads OFF, even if `.beads/` exists.
+
+If Beads ON (= issue detected, Full or Parent only): load issue context via `bd show <id> --json` (labels, deps, children).
+
 ### Step 1: Verify Tests
 
 **Before presenting options, verify tests pass:**
@@ -46,6 +56,17 @@ git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null
 
 Or ask: "This branch split from main - is that correct?"
 
+### Step 2.5: Implementation Review Gate
+
+**Condition:** Beads ON AND issue lacks `reviewed:impl` label.
+
+AskUserQuestion: "Implementation review를 실행할까요?"
+1. Run implementation-review, then continue
+2. Skip and proceed to options
+
+If chosen: invoke `implementation-review` skill, then `bd update <id> --add-label reviewed:impl` → `bd dolt push`.
+If issue already has `reviewed:impl` label, skip this gate entirely.
+
 ### Step 3: Present Options
 
 Present exactly these 4 options using AskUserQuestion (Codex: `request_user_input`):
@@ -67,12 +88,6 @@ Which option?
 
 #### Option 1: Merge Locally
 
-If this work is tied to a Beads issue, this is the only close-ready path:
-1. Verify all child beads are resolved/closed: `bd children <parent-id> --json`
-2. If unresolved children remain: ask user whether to proceed or resolve them first
-3. After merge succeeds: `bd close <id>`
-4. `bd dolt push`
-
 ```bash
 # Switch to base branch
 git checkout <base-branch>
@@ -89,6 +104,19 @@ git merge <feature-branch>
 # If tests pass
 git branch -d <feature-branch>
 ```
+
+**Beads close flow (only when Beads ON):**
+
+This is the only close-ready path. After merge succeeds:
+
+1. Verify child beads: `bd children <parent-id> --json`
+   - If unresolved children remain: AskUserQuestion "미완료 child가 있습니다. 그래도 close할까요?"
+2. AskUserQuestion: "이슈 `<id>`를 close할까요?"
+   - Yes: `bd close <id>`
+   - No: keep as `resolved`
+3. Parent check: if parent bead exists and ALL children are now closed → AskUserQuestion: "Parent 이슈 `<parent-id>`도 close할까요?"
+   - Yes: `bd close <parent-id>`
+4. `bd dolt push`
 
 Then: Cleanup worktree (Step 5)
 
@@ -141,7 +169,38 @@ git checkout <base-branch>
 git branch -D <feature-branch>
 ```
 
+**Beads state (only when Beads ON):**
+
+AskUserQuestion: "Beads 이슈 상태를 어떻게 할까요?"
+1. Close (작업 폐기)
+2. Open 유지 (나중에 다시 시도)
+3. Deferred (보류)
+
+Execute chosen action:
+- Close: `bd close <id>`
+- Open: no action needed
+- Deferred: `bd update <id> --defer "discarded branch"`
+- Then: `bd dolt push`
+
 Then: Cleanup worktree (Step 5)
+
+### Step 4.5: Resolved Residual Check
+
+**Condition:** After Option 1 completes AND Beads ON.
+
+```bash
+bd list -s resolved --json
+```
+
+If resolved issues remain:
+
+AskUserQuestion: "resolved 상태 이슈가 N건 남아있습니다. Close할까요?"
+[issue list displayed]
+1. Close all
+2. Select which to close
+3. Skip
+
+Execute chosen action, then `bd dolt push` if any changes made.
 
 ### Step 5: Cleanup Worktree
 
@@ -159,14 +218,25 @@ git worktree remove <worktree-path>
 
 **For Option 3:** Keep worktree.
 
+### Step 6: Handoff Offer
+
+**Condition:** After Option 1 or Option 2 completes.
+
+AskUserQuestion: "Handoff 문서를 생성할까요?"
+1. Generate handoff (ho-create)
+2. Skip
+
+If chosen: invoke `ho-create` skill.
+**Beads ON:** `bd update <id> --set-metadata handoff=<path> --add-label has:handoff` → `bd dolt push`.
+
 ## Quick Reference
 
-| Option | Merge | Push | Keep Worktree | Cleanup Branch |
-|--------|-------|------|---------------|----------------|
-| 1. Merge locally | ✓ | - | - | ✓ |
-| 2. Create PR | - | ✓ | ✓ | - |
-| 3. Keep as-is | - | - | ✓ | - |
-| 4. Discard | - | - | - | ✓ (force) |
+| Option | Merge | Push | Keep Worktree | Cleanup Branch | Beads Close |
+|--------|-------|------|---------------|----------------|-------------|
+| 1. Merge locally | ✓ | - | - | ✓ | ✓ (confirm) |
+| 2. Create PR | - | ✓ | ✓ | - | - (resolved) |
+| 3. Keep as-is | - | - | ✓ | - | - |
+| 4. Discard | - | - | - | ✓ (force) | ask |
 
 ## Common Mistakes
 
@@ -208,3 +278,5 @@ git worktree remove <worktree-path>
 
 **Pairs with:**
 - **using-git-worktrees** - Cleans up worktree created by that skill
+- **implementation-review** - Review gate before presenting options (Step 2.5)
+- **ho-create** - Generate handoff document (Step 6)

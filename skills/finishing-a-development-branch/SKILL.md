@@ -67,7 +67,11 @@ Which option?
 
 #### Option 1: Merge Locally
 
-If this work is tied to a Beads issue, this is the only close-ready path. Run `bd close` only after the merge completes successfully.
+If this work is tied to a Beads issue, this is the only close-ready path:
+1. Verify all child beads are resolved/closed: `bd children <parent-id> --json`
+2. If unresolved children remain: ask user whether to proceed or resolve them first
+3. After merge succeeds: `bd close <id>`
+4. `bd dolt push`
 
 ```bash
 # Switch to base branch
@@ -200,7 +204,7 @@ git worktree remove <worktree-path>
 
 **Called by:**
 - **subagent-driven-development** (Step 7) - After all tasks complete
-- **executing-plans** (Step 5) - After all batches complete
+- **executing-plans** (Step 3) - After all tasks complete
 
 **Pairs with:**
 - **using-git-worktrees** - Cleans up worktree created by that skill

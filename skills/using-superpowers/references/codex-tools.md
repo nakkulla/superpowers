@@ -10,6 +10,7 @@ Skills use Claude Code tool names. When you encounter these in a skill, use your
 | Task completes automatically | `close_agent` to free slot |
 | `TodoWrite` (task tracking) | `update_plan` |
 | `Skill` tool (invoke a skill) | Skills load natively — just follow the instructions |
+| `AskUserQuestion` (with options) | `request_user_input` — format options as a numbered list in the prompt text (e.g., "1. 구현 시작\n2. 여기서 종료\n\n번호로 선택해주세요.") |
 | `Read`, `Write`, `Edit` (files) | Use your native file tools |
 | `Bash` (run commands) | Use your native shell tools |
 

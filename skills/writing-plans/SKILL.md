@@ -105,7 +105,9 @@ git commit -m "feat: add specific feature"
 ```
 ````
 
-> If a task modifies skill files (SKILL.md), include: **REQUIRED SUB-SKILL:** Use superpowers:writing-skills
+> If a task modifies or creates skill files (SKILL.md):
+> - **REQUIRED SUB-SKILL:** Use superpowers:writing-skills (TDD discipline, pressure testing, CSO)
+> - **New skill creation or eval-driven iteration:** Also use skill-creator:skill-creator (eval viewer, benchmarking, description optimization)
 
 ## No Placeholders
 

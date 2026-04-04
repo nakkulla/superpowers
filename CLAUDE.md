@@ -77,6 +77,20 @@ Skills are not prose — they are code that shapes agent behavior. If you modify
 
 Before proposing changes to skill design, workflow philosophy, or architecture, read existing skills and understand the project's design decisions. Superpowers has its own tested philosophy about skill design, agent behavior shaping, and terminology (e.g., "your human partner" is deliberate, not interchangeable with "the user"). Changes that rewrite the project's voice or restructure its approach without understanding why it exists will be rejected.
 
+## Local Plugin Sync
+
+This repo is the **source of truth**. After making any changes here, you MUST sync them to all installed plugin locations:
+
+```
+~/.claude/plugins/marketplaces/superpowers-custom
+~/.claude/plugins/cache/superpowers-custom
+~/.codex/superpowers
+```
+
+These are separate copies (not symlinks). Changes made only in the repo will not take effect until synced. Changes made only in the plugin directories will be lost on next sync/install.
+
+**Sync order:** Always edit in this repo first, then copy to the plugin directories.
+
 ## General
 
 - Read `.github/PULL_REQUEST_TEMPLATE.md` before submitting

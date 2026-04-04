@@ -69,9 +69,15 @@ If `.beads/` does not exist, skip this question and proceed with Beads integrati
 
 For each task:
 1. Mark as in_progress
-2. Follow each step exactly (plan has bite-sized steps)
-3. Run verifications as specified
-4. Mark as completed
+2. **When Beads integration is ON:** `bd update <child-id> --claim`
+3. Follow each step exactly (plan has bite-sized steps)
+4. Run verifications as specified
+5. Mark as completed
+6. **When Beads integration is ON:**
+   - `bd update <child-id> --status resolved --set-metadata git_sha=$(git rev-parse HEAD)`
+   - `bd dolt push`
+
+**bd command serialization:** bd write operations (`update`, `dolt push`) must not run in parallel. Complete the beads update for one task before proceeding to the next.
 
 ### Step 3: Complete Development
 

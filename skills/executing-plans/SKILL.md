@@ -121,4 +121,4 @@ After all tasks complete and verified:
 
 **Optional workflow skills:**
 - **superpowers:subagent-driven-development** - Delegate execution (when chosen in Step 0-B)
-- **seed-beads-from-plan** - Create child beads from plan (when Beads integration is ON in Step 1)
+- **seed-beads-from-plan** - Create child beads from plan (when chosen in Step 0-D)

@@ -9,8 +9,6 @@ description: Use when you have a written implementation plan to execute in a sep
 
 Load plan, review critically, execute all tasks, report when complete.
 
-**Announce at start:** "I'm using the executing-plans skill to implement this plan."
-
 ## The Process
 
 ### Step 0: Preflight Decisions
@@ -18,45 +16,45 @@ Load plan, review critically, execute all tasks, report when complete.
 **0-A. Input Parsing:**
 
 ```
-$ARGUMENTS 분석:
-  .md로 끝남  → plan path 모드
-  숫자/ID     → Beads issue ID 모드 (.beads/ 필수)
-  없음        → 에러 ("plan path 또는 issue ID를 지정하세요")
+$ARGUMENTS:
+  ends with .md  → plan path mode
+  number/ID      → Beads issue ID mode (.beads/ required)
+  empty           → error ("Provide a plan path or issue ID")
 ```
 
-Issue ID 모드:
-1. `bd show <id> --json` → `metadata.plan` 필드에서 plan path 추출
-2. plan path 없으면 에러: "이 이슈에 plan이 연결되어 있지 않습니다."
+Issue ID mode:
+1. `bd show <id> --json` → extract plan path from `metadata.plan`
+2. If no plan path: error "This issue has no linked plan."
 
-Plan path 모드 + `.beads/` 존재:
-1. `bd list --json`으로 `metadata.plan`이 현재 plan path와 일치하는 이슈 검색
-2. 있으면 해당 이슈의 context 로드 (beads 연동 후보로 기억)
+Plan path mode + `.beads/` exists:
+1. `bd list --json` to find issues where `metadata.plan` matches the current plan path
+2. If found: load issue context (remember as beads integration candidate)
 
 **0-B. Execution Strategy (AskUserQuestion):**
 
-이 plan을 어떻게 실행할까요?
-1. 이 세션에서 직접 실행 (executing-plans)
-2. Subagent로 실행 (subagent-driven-development)
+How should this plan be executed?
+1. Direct execution in this session (executing-plans)
+2. Subagent execution (subagent-driven-development)
 
-- "Subagent로 실행" 선택 시: `superpowers:subagent-driven-development` invoke 후 이 스킬 종료
-- "직접 실행" 선택 시: 계속 진행
+- Subagent chosen: invoke `superpowers:subagent-driven-development` and exit this skill
+- Direct execution chosen: **Announce:** "I'm using the executing-plans skill to implement this plan." Continue to 0-C.
 
 **0-C. Workspace (AskUserQuestion):**
 
-어디에서 작업할까요?
-1. 워크트리 생성 (using-git-worktrees 사용)
-2. 현재 브랜치에서 진행
+Where should the work happen?
+1. Create a worktree (using-git-worktrees)
+2. Continue on the current branch
 
-- "워크트리 생성" 선택 시: `superpowers:using-git-worktrees` invoke
-- "현재 브랜치" 선택 시: 현재 위치에서 그대로 진행
+- Worktree chosen: invoke `superpowers:using-git-worktrees`
+- Current branch chosen: proceed in place
 
-**0-D. Beads Integration (AskUserQuestion, `.beads/` 존재 시만):**
+**0-D. Beads Integration (AskUserQuestion, only when `.beads/` exists):**
 
-Beads 이슈를 연결할까요?
-1. Beads 이슈 연결 (seed-beads-from-plan으로 child issue 생성 + task별 추적)
-2. Beads 연동 없이 진행
+Connect Beads issues?
+1. Connect Beads issues (create child issues via seed-beads-from-plan + per-task tracking)
+2. Proceed without Beads integration
 
-`.beads/`가 없으면 이 질문을 건너뛰고 Beads 연동 OFF로 진행.
+If `.beads/` does not exist, skip this question and proceed with Beads integration OFF.
 
 ### Step 1: Load and Review Plan
 1. Read plan file

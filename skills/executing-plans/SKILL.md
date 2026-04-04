@@ -61,6 +61,9 @@ If `.beads/` does not exist, skip this question and proceed with Beads integrati
 2. Review critically - identify any questions or concerns about the plan
 3. If concerns: Raise them with your human partner before starting
 4. If no concerns: Create TodoWrite and proceed
+5. **When Beads integration is ON:**
+   - Invoke `seed-beads-from-plan` (pass plan path + parent issue ID)
+   - Receive and retain the mapping table (Task → Bead ID)
 
 ### Step 2: Execute Tasks
 

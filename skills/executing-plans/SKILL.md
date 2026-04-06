@@ -77,7 +77,10 @@ If `.beads/` does not exist, skip this question and proceed with Beads integrati
 2. Review critically - identify any questions or concerns about the plan
 3. If concerns: Raise them with your human partner before starting
 4. If no concerns: Create TodoWrite and proceed
-5. **When Beads Full:**
+5. **When Beads Full or Parent only and a linked parent bead exists:**
+   - Claim the linked parent bead before execution begins: `bd update <parent-id> --claim`
+   - If the parent bead is already `in_progress`, continue without changing it
+6. **When Beads Full:**
    - Check for existing children: `bd children <parent-id> --json`
    - **If children exist (Resume):** Reconstruct Task→Bead mapping from existing children. Mark tasks corresponding to `resolved`/`closed` children as completed. Announce: "Resuming execution — N tasks already completed." Skip `seed-beads-from-plan`.
    - **If no children (Fresh start):** Invoke `seed-beads-from-plan` (pass plan path + parent issue ID). Receive and retain the mapping table (Task → Bead ID).
@@ -92,7 +95,7 @@ For each task:
 5. Mark as completed (TodoWrite)
 6. **Beads Full:** `bd update <child-id> --status resolved --set-metadata git_sha=$(git rev-parse HEAD)`
 
-**Parent only mode:** No child claim/resolve — track progress via TodoWrite only. Parent close is handled in Step 3 by finishing-a-development-branch.
+**Parent only mode:** Claim the parent bead once at the start of execution. Do not create or claim child beads. Parent close is handled in Step 3 by finishing-a-development-branch.
 
 **bd dolt push timing:** Do NOT push after each task. Push once after the last task completes (in Step 3), or when execution is interrupted. This minimizes conflict risk and serialization overhead.
 
@@ -101,7 +104,7 @@ For each task:
 ### Step 3: Complete Development
 
 After all tasks complete and verified:
-1. **Beads Full:** `bd dolt push` (flush all resolved states from Step 2)
+1. **Beads Full or Parent only:** `bd dolt push` (flush child resolved states and/or the parent claim state)
 2. **Beads Full or Parent only:** Declare context: "이 작업은 Beads issue `<id>`에 연결되어 있습니다."
 3. Announce: "I'm using the finishing-a-development-branch skill to complete this work."
 4. **REQUIRED SUB-SKILL:** Use superpowers:finishing-a-development-branch
@@ -129,8 +132,8 @@ After all tasks complete and verified:
 
 When execution is stopped before all tasks complete (blocker, user request, session end):
 
-1. Keep current child states as-is (resolved/in_progress/open — do not roll back)
-2. **Beads Full:** `bd dolt push` (preserve progress)
+1. Keep current Beads states as-is (parent and child `resolved`/`in_progress`/`open` — do not roll back)
+2. **Beads Full or Parent only:** `bd dolt push` (preserve parent claim and any child progress)
 3. Suggest handoff creation: "실행이 중단되었습니다. Handoff 문서를 생성할까요?" → invoke `ho-create` skill if accepted
 
 ## Remember

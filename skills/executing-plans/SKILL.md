@@ -33,8 +33,11 @@ Issue ID mode:
 2. If no plan path: error "This issue has no linked plan."
 
 Plan path mode + `.beads/` exists:
-1. `bd list --json` to find issues where `metadata.plan` matches the current plan path
-2. If found: load issue context (remember as beads integration candidate)
+1. `bd list --all --metadata-field plan=<current-plan-path> --json` to find linked issues regardless of status
+2. If exactly one match: `bd show <id> --json`으로 다시 확인하고 `metadata.plan`이 현재 plan path와 일치하면 linked bead로 사용
+3. If the matched issue is a child bead: re-resolve to the intended parent bead or ask the user before proceeding
+4. If multiple matches: ask the user which issue to use; do not create a new issue until ambiguity is resolved
+5. If no matches: proceed without linked bead context (the Beads integration choice in Step 0-E still applies)
 
 **0-B. Plan Review Gate (linked bead exists and lacks `reviewed:plan` label):**
 

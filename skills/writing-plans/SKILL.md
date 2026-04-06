@@ -25,7 +25,7 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 When invoked with `--auto`, this skill must:
 - generate and save the plan,
 - complete the built-in self-review,
-- link the plan to the Beads parent issue when enough context exists,
+- link the plan to the Beads parent issue immediately after the built-in self-review when enough context exists,
 - return the final plan path,
 - exit without asking the execution-choice question.
 
@@ -160,10 +160,10 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 
 If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
 
-### Beads Plan Link (Post-Plan-Review)
+### Beads Plan Link
 
-After the plan review loop passes, connect the plan to the Beads issue tracker
-if `.beads/` directory exists in the project:
+After saving the plan and completing the built-in self-review, connect the plan
+to the Beads issue tracker if `.beads/` directory exists in the project:
 
 **Safety check:** Link the plan to the Beads **parent** issue only.
 
@@ -178,6 +178,9 @@ if `.beads/` directory exists in the project:
 6. `bd dolt push`
 
 If `.beads/` does not exist, skip this step entirely.
+
+This linkage records the current plan document even when the linked bead does not
+yet have `reviewed:plan`.
 
 **IMPORTANT: If you dispatch a plan-document-reviewer subagent using the companion prompt template, you MUST include `model: "sonnet"` in the Agent tool call parameters.**
 

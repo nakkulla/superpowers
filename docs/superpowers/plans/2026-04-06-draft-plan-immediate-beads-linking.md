@@ -1,4 +1,5 @@
 # Draft Plan Immediate Beads Linking Implementation Plan
+Parent bead: superpowers-5q7
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -202,7 +203,7 @@ Create `docs/superpowers/evals/2026-04-06-draft-plan-beads-linking-eval.md` with
 
 - **Date:** 2026-04-06
 - **Harness:** file-diff evidence + targeted skill-text verification
-- **Baseline:** `HEAD^`
+- **Baseline:** `HEAD~2`
 - **Candidate:** working tree / branch tip after implementation
 - **Purpose:** Verify that `writing-plans` links plans immediately while `executing-plans` still treats `reviewed:plan` as the execution gate.
 - **Limitations:** This is a focused documentation-behavior eval, not a full multi-harness campaign.
@@ -219,7 +220,7 @@ Create `docs/superpowers/evals/2026-04-06-draft-plan-beads-linking-eval.md` with
 
 ### 1. `skills/writing-plans/SKILL.md`
 
-**Baseline (`HEAD^`)**
+**Baseline (`HEAD~2`)**
 
 ```text
 ### Beads Plan Link (Post-Plan-Review)
@@ -243,7 +244,7 @@ to the Beads issue tracker if `.beads/` directory exists in the project:
 
 ### 2. `skills/executing-plans/SKILL.md`
 
-**Baseline (`HEAD^`)**
+**Baseline (`HEAD~2`)**
 
 ```text
 Plan path mode + `.beads/` exists:
@@ -271,9 +272,9 @@ Run:
 ```bash
 git diff --check
 rg -n "### Beads Plan Link$|built-in self-review|reviewed:plan" skills/writing-plans/SKILL.md skills/executing-plans/SKILL.md
-git show HEAD^:skills/writing-plans/SKILL.md | sed -n '163,170p'
+git show HEAD~2:skills/writing-plans/SKILL.md | sed -n '163,170p'
 sed -n '163,172p' skills/writing-plans/SKILL.md
-git show HEAD^:skills/executing-plans/SKILL.md | sed -n '41,55p'
+git show HEAD~2:skills/executing-plans/SKILL.md | sed -n '41,55p'
 sed -n '41,57p' skills/executing-plans/SKILL.md
 ```
 

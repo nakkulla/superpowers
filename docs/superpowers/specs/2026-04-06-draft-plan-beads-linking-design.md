@@ -1,4 +1,5 @@
 # Draft Plan Immediate Beads Linking Design
+Parent bead: superpowers-5q7
 
 **Status:** Draft for review  
 **Date:** 2026-04-06

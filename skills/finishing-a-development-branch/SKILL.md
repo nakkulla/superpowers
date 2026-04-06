@@ -143,6 +143,15 @@ This is the only close-ready path. After merge succeeds:
    - Yes: `bd close <parent-id>`
 5. `bd dolt push`
 
+`--auto` branch for Option 1:
+- Read `--close-children yes|no` and `--close-parent yes|no`.
+- If unresolved children remain and no explicit close policy covers that case, fail fast instead of asking.
+- `--close-children yes` → close resolved child issues after merge.
+- `--close-children no` → keep child issues in `resolved` without prompting.
+- `--close-parent yes` → close the linked issue after merge, and close its parent only when `--close-parent yes` explicitly authorizes that transition.
+- `--close-parent no` → keep the linked issue and any parent issue in `resolved` without prompting.
+- If the required close policy is absent, fail fast instead of falling back to AskUserQuestion.
+
 Then: Cleanup worktree (Step 5)
 
 #### Option 2: Push and Create PR
@@ -232,6 +241,10 @@ AskUserQuestion: "resolved 상태 이슈가 N건 남아있습니다. Close할까
 3. Skip
 
 Execute chosen action, then `bd dolt push` if any changes made.
+
+`--auto` branch:
+- Reuse `--close-children` / `--close-parent` as the residual close policy.
+- If those overrides do not explicitly authorize closing additional resolved issues, skip the residual close prompt and leave them as `resolved`.
 
 ### Step 5: Cleanup Worktree
 

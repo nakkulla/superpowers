@@ -36,16 +36,25 @@ Plan path mode + `.beads/` exists:
 1. `bd list --json` to find issues where `metadata.plan` matches the current plan path
 2. If found: load issue context (remember as beads integration candidate)
 
-**0-B. Execution Strategy (AskUserQuestion):**
+**0-B. Plan Review Gate (linked bead exists and lacks `reviewed:plan` label):**
+
+AskUserQuestion: "이 plan은 아직 리뷰되지 않았습니다. Plan review를 먼저 실행할까요?"
+1. Run plan-review, then continue
+2. Skip and proceed to execution
+
+If chosen: invoke `plan-review` skill, then `bd update <id> --add-label reviewed:plan`.
+Skip this gate when: no linked bead, or issue already has `reviewed:plan` label.
+
+**0-C. Execution Strategy (AskUserQuestion):**
 
 How should this plan be executed?
 1. Direct execution in this session (executing-plans)
 2. Subagent execution (subagent-driven-development)
 
 - Subagent chosen: invoke `superpowers:subagent-driven-development` and exit this skill
-- Direct execution chosen: **Announce:** "I'm using the executing-plans skill to implement this plan." Continue to 0-C.
+- Direct execution chosen: **Announce:** "I'm using the executing-plans skill to implement this plan." Continue to 0-D.
 
-**0-C. Workspace (AskUserQuestion):**
+**0-D. Workspace (AskUserQuestion):**
 
 Where should the work happen?
 1. Create a worktree (using-git-worktrees)
@@ -54,7 +63,7 @@ Where should the work happen?
 - Worktree chosen: invoke `superpowers:using-git-worktrees`
 - Current branch chosen: proceed in place
 
-**0-D. Beads Integration (AskUserQuestion, only when `.beads/` exists):**
+**0-E. Beads Integration (AskUserQuestion, only when `.beads/` exists):**
 
 `.beads/` detected — choose integration level:
 1. **Full** — parent + child tracking (seed-beads-from-plan + per-task claim/resolve)
@@ -62,15 +71,6 @@ Where should the work happen?
 3. **Skip** — proceed without Beads integration
 
 If `.beads/` does not exist, skip this question and proceed with Beads integration OFF.
-
-**0-E. Plan Review Gate (Beads Full or Parent only, issue lacks `reviewed:plan` label):**
-
-AskUserQuestion: "이 plan은 아직 리뷰되지 않았습니다. Plan review를 먼저 실행할까요?"
-1. Run plan-review, then continue
-2. Skip and proceed to execution
-
-If chosen: invoke `plan-review` skill, then `bd update <id> --add-label reviewed:plan`.
-If issue already has `reviewed:plan` label, skip this gate entirely.
 
 ### Step 1: Load and Review Plan
 1. Read plan file
@@ -144,12 +144,12 @@ When execution is stopped before all tasks complete (blocker, user request, sess
 ## Integration
 
 **Required workflow skills:**
-- **superpowers:using-git-worktrees** - Set up isolated workspace (when chosen in Step 0-C)
+- **superpowers:using-git-worktrees** - Set up isolated workspace (when chosen in Step 0-D)
 - **superpowers:writing-plans** - Creates the plan this skill executes
 - **superpowers:finishing-a-development-branch** - Complete development after all tasks
 
 **Optional workflow skills:**
-- **superpowers:subagent-driven-development** - Delegate execution (when chosen in Step 0-B)
+- **superpowers:subagent-driven-development** - Delegate execution (when chosen in Step 0-C)
 - **seed-beads-from-plan** - Create child beads from plan (Beads Full mode)
-- **plan-review** - Review plan before execution (Step 0-E gate)
+- **plan-review** - Review plan before execution (Step 0-B gate)
 - **ho-create** - Generate handoff on interruption

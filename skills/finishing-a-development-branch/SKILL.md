@@ -109,20 +109,21 @@ git branch -d <feature-branch>
 
 This is the only close-ready path. After merge succeeds:
 
-1. Verify child beads: `bd children <parent-id> --json`
+1. Verify child beads attached to the linked issue: `bd children <id> --json`
    - If unresolved children remain: AskUserQuestion "미완료 child가 있습니다. 그래도 close할까요?"
-2. AskUserQuestion: "이슈 `<id>`를 close할까요?"
+2. If resolved child beads exist and the user wants to proceed, close those child issues first with `bd close <child-id>`.
+3. AskUserQuestion: "이슈 `<id>`를 close할까요?"
    - Yes: `bd close <id>`
    - No: keep as `resolved`
-3. Parent check: if parent bead exists and ALL children are now closed → AskUserQuestion: "Parent 이슈 `<parent-id>`도 close할까요?"
+4. Parent check: if this issue has a parent bead and all related child issues are now closed → AskUserQuestion: "Parent 이슈 `<parent-id>`도 close할까요?"
    - Yes: `bd close <parent-id>`
-4. `bd dolt push`
+5. `bd dolt push`
 
 Then: Cleanup worktree (Step 5)
 
 #### Option 2: Push and Create PR
 
-If this work is tied to a Beads issue, creating a PR does not count as merged — keep the issue open or mark it `resolved`.
+If this work is tied to a Beads issue, creating a PR does not count as merged — mark the linked issue `resolved`, not `closed`.
 
 ```bash
 # Push branch
@@ -138,6 +139,11 @@ gh pr create --title "<title>" --body "$(cat <<'EOF'
 EOF
 )"
 ```
+
+**Beads state (only when Beads ON):**
+
+- Mark the linked issue `resolved`: `bd update <id> -s resolved`
+- Persist the state: `bd dolt push`
 
 Then: Cleanup worktree (Step 5)
 

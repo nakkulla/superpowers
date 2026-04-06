@@ -64,7 +64,8 @@ AskUserQuestion: "Implementation review를 실행할까요?"
 1. Run implementation-review, then continue
 2. Skip and proceed to options
 
-If chosen: invoke `implementation-review` skill, then `bd update <id> --add-label reviewed:impl` → `bd dolt push`.
+If chosen: invoke `implementation-review` skill, then continue.
+`implementation-review`가 현재 issue + resolved child들의 `reviewed:impl` 라벨링을 담당한다.
 If issue already has `reviewed:impl` label, skip this gate entirely.
 
 ### Step 3: Present Options

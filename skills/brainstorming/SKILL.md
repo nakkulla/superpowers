@@ -31,10 +31,6 @@ You MUST create a task for each of these items and complete them in order:
 8. **User reviews written spec** — ask user to review the spec file before proceeding
 9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
-<HARD-GATE>
-If the brainstorming target is a skill (SKILL.md), you MUST use AskUserQuestion to ask: "`skill-creator` or `writing-plans`?" before proceeding. DO NOT default to writing-plans without asking.
-</HARD-GATE>
-
 ## Process Flow
 
 ```dot
@@ -67,7 +63,7 @@ digraph brainstorming {
 }
 ```
 
-**The terminal state is invoking writing-plans.** Do NOT invoke frontend-design, mcp-builder, or any other implementation skill. The default next skill is writing-plans. **For skill/agent targets (SKILL.md), you MUST use AskUserQuestion to ask whether to use `skill-creator` or `writing-plans` before proceeding.**
+**The terminal state is invoking writing-plans.** Do NOT invoke frontend-design, mcp-builder, or any other implementation skill. The default next skill is writing-plans.
 
 ## The Process
 
@@ -149,16 +145,6 @@ If `.beads/` does not exist, skip this step entirely.
 
 **User Review Gate:**
 
-<HARD-GATE>
-BEFORE constructing the AskUserQuestion for next steps after spec review:
-If the brainstorming target is a skill or agent (SKILL.md, agent definition),
-the AskUserQuestion options MUST include BOTH `skill-creator` AND `writing-plans`.
-NEVER present only `writing-plans` for skill targets. Example options:
-- "Use skill-creator" (optimized for skill authoring/editing)
-- "Use writing-plans" (general implementation plan)
-- "Revise spec"
-- "Stop here"
-</HARD-GATE>
 After the spec review loop passes, ask the user to review the written spec before proceeding:
 
 > "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we proceed to the next step."
@@ -168,7 +154,6 @@ Wait for the user's response. If they request changes, make them and re-run the 
 **Implementation:**
 
 - Invoke the writing-plans skill to create a detailed implementation plan
-- For skill/agent targets (SKILL.md), use AskUserQuestion to ask whether to use `skill-creator` or `writing-plans`.
 
 ## Key Principles
 

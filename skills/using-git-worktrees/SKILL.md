@@ -1,6 +1,6 @@
 ---
 name: using-git-worktrees
-description: Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with smart directory selection and safety verification
+description: Use when starting feature work that needs isolation from current workspace or before executing implementation plans, including non-interactive `--auto` setup, to create isolated git worktrees with smart directory selection and safety verification
 ---
 
 # Using Git Worktrees
@@ -16,6 +16,15 @@ Git worktrees create isolated workspaces sharing the same repository, allowing w
 ## Directory Selection Process
 
 Follow this priority order:
+
+### Auto Mode Rule
+
+When invoked with `--auto`:
+- use an existing `.worktrees/` directory if present,
+- otherwise use the CLAUDE.md / AGENTS.md preference if it is explicit,
+- otherwise fail fast instead of asking.
+
+위 규칙으로도 위치가 모호하면 실패한다.
 
 ### 1. Check Existing Directories
 
@@ -142,6 +151,8 @@ cargo test
 pytest
 go test ./...
 ```
+
+In `--auto` mode, baseline test failures default to abort unless an explicit override such as `--on-baseline-fail continue` is provided by the caller.
 
 **If tests fail:** Report failures, ask whether to proceed or investigate.
 

@@ -1,6 +1,6 @@
 ---
 name: writing-plans
-description: Use when you have a spec or requirements for a multi-step task, before touching code
+description: Use when you have a spec or requirements for a multi-step task, before touching code, including non-interactive `--auto` plan generation
 ---
 
 # Writing Plans
@@ -19,6 +19,17 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Save plans to:** `docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md`
 - (User preferences for plan location override this default)
+
+## Auto Mode
+
+When invoked with `--auto`, this skill must:
+- generate and save the plan,
+- complete the built-in self-review,
+- link the plan to the Beads parent issue when enough context exists,
+- return the final plan path,
+- exit without asking the execution-choice question.
+
+If the parent issue cannot be resolved safely in auto mode, fail fast instead of asking.
 
 ## Skill-Target Hard Gate
 
@@ -172,6 +183,8 @@ If `.beads/` does not exist, skip this step entirely.
 
 ## Execution Handoff
 
+### Default interactive branch
+
 After saving the plan, offer execution choice:
 
 **"Plan complete and saved to `docs/superpowers/plans/<filename>.md`. Two execution options:**
@@ -189,3 +202,8 @@ After saving the plan, offer execution choice:
 **If Inline Execution chosen:**
 - **REQUIRED SUB-SKILL:** Use superpowers:executing-plans
 - Batch execution with checkpoints for review
+
+### `--auto` branch
+
+Do not offer execution options; return the plan path and stop.
+즉, `--auto`에서는 execution choice 질문 없이 종료한다.

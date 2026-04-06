@@ -1,6 +1,6 @@
 ---
 name: finishing-a-development-branch
-description: Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup
+description: Use when implementation is complete, all tests pass, and you need to decide how to integrate the work, including non-interactive `--auto` policy-driven completion for merge, PR, or cleanup
 ---
 
 # Finishing a Development Branch
@@ -12,6 +12,14 @@ Guide completion of development work by presenting clear options and handling ch
 **Core principle:** Verify tests → Present options → Execute choice → Clean up.
 
 **Announce at start:** "I'm using the finishing-a-development-branch skill to complete this work."
+
+`--auto` is supported for policy-driven non-interactive completion.
+
+## Auto Mode
+
+When invoked with `--auto`, this skill must not ask the user to choose an option.
+The caller is responsible for passing explicit policy overrides such as `--action`, `--impl-review`, `--handoff`, `--close-children`, and `--close-parent`.
+If a destructive action would be required and no explicit policy is provided, fail fast.
 
 ## The Process
 
@@ -68,6 +76,13 @@ If chosen: invoke `implementation-review` skill, then continue.
 `implementation-review`가 현재 issue + resolved child들의 `reviewed:impl` 라벨링을 담당한다.
 If issue already has `reviewed:impl` label, skip this gate entirely.
 
+`--auto` branch:
+- Read `--impl-review run|skip|if-needed`.
+- `run` → invoke `implementation-review`.
+- `skip` → continue without review.
+- `if-needed` → run only when Beads is ON and the issue lacks `reviewed:impl`.
+- If Beads is OFF, continue without review regardless of `--impl-review`.
+
 ### Step 3: Present Options
 
 Present exactly these 4 options using AskUserQuestion (Codex: `request_user_input`):
@@ -84,6 +99,14 @@ Which option?
 ```
 
 **Don't add explanation** - keep options concise. Use AskUserQuestion so the user gets a structured choice UI, not plain text.
+
+`--auto` branch:
+- Read `--action merge|pr|keep|discard`.
+- `--action merge` → execute Option 1.
+- `--action pr` → execute Option 2.
+- `--action keep` → execute Option 3.
+- `--action discard` → execute Option 4 only when the caller has provided explicit destructive confirmation policy.
+- If `--action` is absent, fail fast instead of presenting the 4-option prompt.
 
 ### Step 4: Execute Choice
 
@@ -144,6 +167,7 @@ EOF
 **Beads state (only when Beads ON):**
 
 - Mark the linked issue `resolved`: `bd update <id> -s resolved`
+- In `--auto` mode, `--action pr --close-children no --close-parent no` must allow the `resolved` transition without any close prompt.
 - Persist the state: `bd dolt push`
 
 Then: Cleanup worktree (Step 5)
@@ -235,6 +259,11 @@ AskUserQuestion: "Handoff 문서를 생성할까요?"
 
 If chosen: invoke `ho-create` skill.
 **Beads ON:** `bd update <id> --set-metadata handoff=<path> --add-label has:handoff` → `bd dolt push`.
+
+`--auto` branch:
+- Read `--handoff yes|no`.
+- `--handoff no` → suppress the extra handoff offer and stop.
+- `--handoff yes` → invoke `ho-create` without prompting.
 
 ## Quick Reference
 

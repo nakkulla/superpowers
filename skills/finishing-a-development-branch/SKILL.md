@@ -72,7 +72,12 @@ AskUserQuestion: "Implementation review를 실행할까요?"
 1. Run implementation-review, then continue
 2. Skip and proceed to options
 
-If chosen: invoke `implementation-review` skill, then continue.
+Branch action은 이 review gate 뒤에만 온다. linked issue에 `reviewed:impl`가 없으면
+merge / PR / keep / discard를 먼저 묻지 않는다.
+If chosen: invoke `implementation-review` as an embedded sub-step of this finishing flow.
+After the review result is shown and any `reviewed:impl` labeling is complete,
+immediately continue in the same turn to Step 3.
+Do not end the turn after the review message.
 `implementation-review`가 현재 issue + resolved child들의 `reviewed:impl` 라벨링을 담당한다.
 If issue already has `reviewed:impl` label, skip this gate entirely.
 
@@ -131,17 +136,24 @@ git branch -d <feature-branch>
 
 **Beads close flow (only when Beads ON):**
 
-This is the only close-ready path. After merge succeeds:
+This is the only close-ready path. After merge succeeds and merged-result verification passes:
 
 1. Verify child beads attached to the linked issue: `bd children <id> --json`
-   - If unresolved children remain: AskUserQuestion "미완료 child가 있습니다. 그래도 close할까요?"
-2. If resolved child beads exist and the user wants to proceed, close those child issues first with `bd close <child-id>`.
-3. AskUserQuestion: "이슈 `<id>`를 close할까요?"
-   - Yes: `bd close <id>`
-   - No: keep as `resolved`
-4. Parent check: if this issue has a parent bead and all related child issues are now closed → AskUserQuestion: "Parent 이슈 `<parent-id>`도 close할까요?"
-   - Yes: `bd close <parent-id>`
-5. `bd dolt push`
+   - If unresolved children remain: AskUserQuestion "미완료 child가 있습니다. 그래도 close flow를 진행할까요?"
+2. Present a post-merge close question using AskUserQuestion / `request_user_input`:
+   - Close all (Recommended)
+   - Keep resolved
+   - Select manually
+3. If the user chooses Close all:
+   - close resolved child beads first with `bd close <child-id>`
+   - then ask whether to close the current issue `<id>`
+4. If the user chooses Keep resolved:
+   - do not run `bd close`
+   - keep current issue and child issues as-is
+5. If the user chooses Select manually:
+   - ask follow-up question(s) for child close scope and current issue close
+6. Parent check: if this issue has a parent bead and all related child issues are now closed → AskUserQuestion whether to close the parent issue
+7. `bd dolt push`
 
 `--auto` branch for Option 1:
 - Read `--close-children yes|no` and `--close-parent yes|no`.

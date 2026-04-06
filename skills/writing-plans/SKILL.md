@@ -20,6 +20,16 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 **Save plans to:** `docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md`
 - (User preferences for plan location override this default)
 
+## Skill-Target Hard Gate
+
+If the plan creates or modifies any skill artifact (`SKILL.md`, `agents/openai.yaml`, or files under a skill's `references/`, `scripts/`, or `assets/`), treat it as a skill-targeted plan.
+
+For skill-targeted plans:
+- **REQUIRED SUB-SKILL:** Use superpowers:writing-skills
+- **ALSO REQUIRED:** Use skill-creator when creating a new skill, changing skill metadata, restructuring the skill layout, or doing eval-driven iteration
+
+If this routing is missing from the relevant tasks, the plan is incomplete.
+
 ## Scope Check
 
 If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
@@ -105,9 +115,9 @@ git commit -m "feat: add specific feature"
 ```
 ````
 
-> If a task modifies or creates skill files (SKILL.md):
-> - **REQUIRED SUB-SKILL:** Use superpowers:writing-skills (TDD discipline, pressure testing, CSO)
-> - **New skill creation or eval-driven iteration:** Also use skill-creator:skill-creator (eval viewer, benchmarking, description optimization)
+> If a task touches any skill artifact (`SKILL.md`, `agents/openai.yaml`, or a skill's `references/`, `scripts/`, `assets/` files):
+> - **REQUIRED SUB-SKILL:** Use superpowers:writing-skills
+> - **ALSO REQUIRED:** Use skill-creator when creating a new skill, changing metadata, restructuring the skill, or doing eval-driven iteration
 
 ## No Placeholders
 
@@ -134,6 +144,8 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 **2. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" section above. Fix them.
 
 **3. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
+
+**4. Skill routing check:** If any task touches a skill artifact, verify that `superpowers:writing-skills` is explicitly required, and that `skill-creator` is also required when applicable.
 
 If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
 

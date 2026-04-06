@@ -142,13 +142,17 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 After the plan review loop passes, connect the plan to the Beads issue tracker
 if `.beads/` directory exists in the project:
 
-1. Search for a related bead via `bd list --json` (priority order):
+**Safety check:** Link the plan to the Beads **parent** issue only.
+
+1. Search for a related **parent** bead via `bd list --json` (priority order):
    - A bead whose `spec-id` matches the original spec path (created during brainstorming)
    - A bead whose `metadata.plan` matches the current plan path
    - A bead whose title matches the same topic
-2. If found → `bd update <id> --set-metadata plan=<path> --add-label has:plan`
-3. If not found → ask user via AskUserQuestion, then create per the Beads spec/plan linking rules
-4. `bd dolt push`
+2. Do **not** attach `metadata.plan` to a child bead. If a match has a parent, re-resolve to the intended parent issue or ask the user.
+3. If found → `bd update <id> --set-metadata plan=<path> --add-label has:plan`
+4. Re-check that `metadata.plan` is set correctly.
+5. If not found → ask user via AskUserQuestion, then create per the Beads spec/plan linking rules
+6. `bd dolt push`
 
 If `.beads/` does not exist, skip this step entirely.
 

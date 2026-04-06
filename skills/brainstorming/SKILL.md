@@ -129,15 +129,20 @@ Fix any issues inline. No need to re-review — just fix and move on.
 After the spec review loop passes and before presenting the spec to the user for review,
 connect the spec to the Beads issue tracker if `.beads/` directory exists in the project:
 
-1. Search for a related bead via `bd list --json`:
+**HARD GATE:** If `.beads/` exists and `bd` is available, do not proceed to the User Review Gate until the spec is linked to a Beads **parent** issue.
+
+1. Search for a related **parent** bead via `bd list --json`:
    - A bead whose `spec-id` field matches the current spec path
    - A bead whose title/description matches the same topic
-2. If a matching bead exists → `bd update <id> --spec-id <path> --add-label has:spec`
-3. If no match → ask user via AskUserQuestion, then create:
+2. Do **not** attach the spec to a child issue. If a match has a parent, re-resolve to the intended parent issue or ask the user.
+3. If a matching parent bead exists → `bd update <id> --spec-id <path> --add-label has:spec`
+4. Re-check that `spec-id` is set correctly on the parent bead.
+5. If no match → ask user via AskUserQuestion, then create:
    - Type: `epic` if child task decomposition is expected, `feature` otherwise
    - `bd create --type <type> --title "<title>"`
    - Immediately after: `bd update <id> --spec-id <path> --add-label has:spec`
-4. `bd dolt push`
+   - Re-check that `spec-id` is set correctly
+6. `bd dolt push`
 
 If `.beads/` does not exist, skip this step entirely.
 

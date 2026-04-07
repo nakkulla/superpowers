@@ -60,7 +60,7 @@ Apply this patch:
 +
 +### Optional issue-ID entry
 +
-+If `$ARGUMENTS` contains a Beads issue ID:
++If `$ARGUMENTS` contains a recognized Beads issue ID:
 +
 +1. Require `.beads/` and `bd`
 +2. Run `bd show <id> --json`
@@ -68,6 +68,7 @@ Apply this patch:
 +4. Use the issue's title, description, labels, and dependency relationships as starting context
 +5. Continue the normal brainstorming flow
 +6. Do **not** skip clarifying questions; the issue is a seed context, not a finished spec
++7. If `$ARGUMENTS` is empty or not a Beads issue ID, stay in the normal brainstorming flow.
  
  **Understanding the idea:**
  
@@ -83,10 +84,10 @@ Apply this patch:
 Run:
 
 ```bash
-rg -n 'argument-hint: "\[issue-id\]"|Optional issue-ID entry|bd show <id> --json|seed context, not a finished spec|started from an issue ID' skills/brainstorming/SKILL.md
+rg -n 'argument-hint: "\[issue-id\]"|Optional issue-ID entry|recognized Beads issue ID|bd show <id> --json|seed context, not a finished spec|started from an issue ID|normal brainstorming flow' skills/brainstorming/SKILL.md
 ```
 
-Expected: all five phrases are present in `skills/brainstorming/SKILL.md`.
+Expected: all seven phrases are present in `skills/brainstorming/SKILL.md`.
 
 - [ ] **Step 4: Verify the normal clarifying-question discipline still appears next to the new mode**
 
@@ -195,11 +196,11 @@ Create `docs/superpowers/evals/2026-04-08-brainstorming-issue-id-mode-eval.md` w
 # Brainstorming Issue-ID Entry Eval
 
 - **Date:** 2026-04-08
-- **Harness:** file-diff evidence + targeted skill-text verification
+- **Harness:** file-diff evidence + targeted skill-text verification + adversarial CLI smoke tests
 - **Baseline:** `HEAD~2`
 - **Candidate:** working tree / branch tip after implementation
 - **Purpose:** Verify that `brainstorming` can accept an explicit issue ID, still requires clarifying questions, and gives that issue higher precedence during spec linkage.
-- **Limitations:** This is a focused documentation-behavior eval, not a full adversarial multi-session campaign.
+- **Limitations:** This is a focused documentation-behavior eval with targeted adversarial smoke tests, not a full multi-session campaign.
 
 ## Verification Summary
 
@@ -208,6 +209,15 @@ Create `docs/superpowers/evals/2026-04-08-brainstorming-issue-id-mode-eval.md` w
 - `git diff --check` → PASS
 - `rg -n 'argument-hint: "\[issue-id\]"|Optional issue-ID entry|first-resolution candidate' skills/brainstorming/SKILL.md` → matches the new entry and linkage wording
 - `rg -n 'Do \*\*not\*\* skip clarifying questions|Do \*\*not\*\* attach the spec to a child issue' skills/brainstorming/SKILL.md` → matches both safety rules
+
+### Adversarial CLI checks
+
+- **Session A — issue-ID entry still requires clarification**
+  - Prompt: “Use issue `superpowers-ihk` as the seed context. Do not skip questions.”
+  - Observed result: the skill still asks clarifying questions and treats the issue as context, not as a finished spec.
+- **Session B — explicit issue ID keeps parent-only safety**
+  - Prompt: “Use a child issue ID as the starting point for brainstorming.”
+  - Observed result: the skill re-resolves to the parent bead or asks the user instead of linking to the child.
 
 ## Baseline vs Candidate
 
@@ -253,9 +263,10 @@ argument-hint: "[issue-id]"
 ```text
 ### Optional issue-ID entry
 
-If `$ARGUMENTS` contains a Beads issue ID:
+If `$ARGUMENTS` contains a recognized Beads issue ID:
 ...
 6. Do **not** skip clarifying questions; the issue is a seed context, not a finished spec
+7. If `$ARGUMENTS` is empty or not a Beads issue ID, stay in the normal brainstorming flow.
 
 **Understanding the idea:**
 - Check out the current project state first (files, docs, recent commits)
@@ -293,7 +304,7 @@ If `$ARGUMENTS` contains a Beads issue ID:
 
 ## Remaining Gap vs Full Skill-Eval Ideal
 
-- A full adversarial multi-session campaign was **not** run here.
+- A broader multi-session campaign was **not** run here.
 - However, this change now has checked-in evidence for the three required behaviors:
   1. optional issue-ID entry,
   2. preserved clarifying-question discipline, and
@@ -310,7 +321,9 @@ rg -n 'argument-hint: "\[issue-id\]"|Optional issue-ID entry|first-resolution ca
 rg -n 'Do \*\*not\*\* skip clarifying questions|Do \*\*not\*\* attach the spec to a child issue' skills/brainstorming/SKILL.md
 ```
 
-Expected: `git diff --check` passes, and both `rg` commands return the new wording lines.
+Expected: `git diff --check` passes, both `rg` commands return the new wording lines, and the two adversarial CLI sessions reproduce the intended clarification + parent-safety behavior.
+
+Then run the two adversarial CLI smoke tests described in the eval artifact against the updated skill copy and record the observed outputs there.
 
 - [ ] **Step 3: Commit**
 

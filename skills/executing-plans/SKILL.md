@@ -49,6 +49,8 @@ Plan path mode + `.beads/` exists:
    - `--auto` branch: fail fast instead of asking
 5. If no matches: proceed without linked bead context (the Beads integration choice in Step 0-E still applies)
 
+A linked `metadata.plan` entry is only a plan-document pointer; it does not imply the plan has already passed review.
+
 **0-B. Plan Review Gate (linked bead exists and lacks `reviewed:plan` label):**
 
 Default interactive branch:

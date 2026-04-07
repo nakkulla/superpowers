@@ -95,16 +95,16 @@ project=$(basename "$(git rev-parse --show-toplevel)")
 # Determine full path
 case $LOCATION in
   .worktrees|worktrees)
-    path="$LOCATION/$BRANCH_NAME"
+    wt_path="$LOCATION/$BRANCH_NAME"
     ;;
   ~/.config/superpowers/worktrees/*)
-    path="~/.config/superpowers/worktrees/$project/$BRANCH_NAME"
+    wt_path="~/.config/superpowers/worktrees/$project/$BRANCH_NAME"
     ;;
 esac
 
 # Create worktree with new branch
-git worktree add "$path" -b "$BRANCH_NAME"
-cd "$path"
+git worktree add "$wt_path" -b "$BRANCH_NAME"
+cd "$wt_path"
 ```
 
 ### 3. Run Project Setup
@@ -142,15 +142,23 @@ If `.beads/` exists:
 
 ### 4. Verify Clean Baseline
 
-Run tests to ensure worktree starts clean:
+Run the repository's documented verification command to ensure the worktree starts clean.
+Inspect local docs and config first (for example: `README`, `AGENTS.md`, `CLAUDE.md`, `package.json`,
+`pyproject.toml`, `Makefile`, `justfile`, or `tests/`).
 
 ```bash
 # Examples - use project-appropriate command
 npm test
 cargo test
-pytest
+uv run pytest
+./.venv/bin/pytest
+bash tests/smoke.sh
 go test ./...
 ```
+
+For Python projects, do not assume global `pytest` exists. Prefer the repo's documented command,
+its managed environment (`uv run`, `.venv/bin/pytest`, `poetry run pytest`, etc.), or the
+project's shell-based verification command if that is the established baseline.
 
 In `--auto` mode, baseline test failures default to abort unless an explicit override such as `--on-baseline-fail continue` is provided by the caller.
 

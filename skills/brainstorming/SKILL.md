@@ -1,6 +1,7 @@
 ---
 name: brainstorming
 description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
+argument-hint: "[issue-id]"
 ---
 
 # Brainstorming Ideas Into Designs
@@ -67,9 +68,22 @@ digraph brainstorming {
 
 ## The Process
 
+### Optional issue-ID entry
+
+If `$ARGUMENTS` contains a recognized Beads issue ID:
+
+1. Require `.beads/` and `bd`
+2. Run `bd show <id> --json`
+3. Fail fast if the issue cannot be loaded
+4. Use the issue's title, description, labels, and dependency relationships as starting context
+5. Continue the normal brainstorming flow
+6. Do **not** skip clarifying questions; the issue is a seed context, not a finished spec
+7. If `$ARGUMENTS` is empty or not a Beads issue ID, stay in the normal brainstorming flow.
+
 **Understanding the idea:**
 
 - Check out the current project state first (files, docs, recent commits)
+- If brainstorming started from an issue ID, treat that issue as seed context and still ask follow-up questions until purpose, constraints, and success criteria are clear
 - Before asking detailed questions, assess scope: if the request describes multiple independent subsystems (e.g., "build a platform with chat, file storage, billing, and analytics"), flag this immediately. Don't spend questions refining details of a project that needs to be decomposed first.
 - If the project is too large for a single spec, help the user decompose into sub-projects: what are the independent pieces, how do they relate, what order should they be built? Then brainstorm the first sub-project through the normal design flow. Each sub-project gets its own spec → plan → implementation cycle.
 - For appropriately-scoped projects, ask questions one at a time to refine the idea
@@ -131,14 +145,15 @@ connect the spec to the Beads issue tracker if `.beads/` directory exists in the
 
 **HARD GATE:** If `.beads/` exists and `bd` is available, do not proceed to the User Review Gate until the spec is linked to a Beads **parent** issue.
 
-1. Search for a related **parent** bead via `bd list --json`:
+1. Resolve the target **parent** bead in this priority order:
+   - If `$ARGUMENTS` included an explicit issue ID, use that issue as the first-resolution candidate
    - A bead whose `spec-id` field matches the current spec path
    - A bead whose title/description matches the same topic
-2. Do **not** attach the spec to a child issue. If a match has a parent, re-resolve to the intended parent issue or ask the user.
+2. Do **not** attach the spec to a child issue. If the explicit issue or a matched issue has a parent, use it as context but re-resolve to the intended parent issue or ask the user.
 3. If a matching parent bead exists, inspect its status first via `bd show <id> --json`.
 4. If the matched parent bead status is `open` or `in_progress` → `bd update <id> --spec-id <path> --add-label has:spec`
 5. Re-check that `spec-id` is set correctly on the parent bead.
-6. If the matched parent bead status is `resolved` or `closed`, do **not** overwrite its `spec-id`.
+6. If the explicit issue or matched parent bead status is `resolved` or `closed`, do **not** overwrite its `spec-id`.
    - Treat this as follow-up work beyond the original bead scope.
    - Ask the user whether to create a new follow-up parent bead instead.
    - If approved, create the new bead and connect it back to the original bead with `discovered-from` when possible (for example: `bd dep add <new-id> <old-id> --type discovered-from`).

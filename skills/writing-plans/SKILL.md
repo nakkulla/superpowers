@@ -11,6 +11,8 @@ Write comprehensive implementation plans assuming the engineer has zero context 
 
 Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
 
+This skill's normal completion boundary is the saved plan document. After the plan is written, self-reviewed, and linked to Beads when applicable, report the plan path and stop. Do not proactively start implementation or offer execution routing in the same turn.
+
 **Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
 **Do NOT use EnterPlanMode** during superpowers skill flows. Use the skill's own plan document workflow instead.
@@ -192,29 +194,23 @@ yet have `reviewed:plan`.
 
 **IMPORTANT: If you dispatch a plan-document-reviewer subagent using the companion prompt template, you MUST include `model: "sonnet"` in the Agent tool call parameters.**
 
-## Execution Handoff
+## Completion Boundary
 
 ### Default interactive branch
 
-After saving the plan, offer execution choice:
+After saving the plan, completing the built-in self-review, and finishing any
+Beads linkage:
 
-**"Plan complete and saved to `docs/superpowers/plans/<filename>.md`. Two execution options:**
+- Report that the plan was saved and include the final plan path.
+- Stop after planning in this turn.
+- Do **not** proactively offer execution choices in the same response.
 
-**1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
-
-**2. Inline Execution** - Execute tasks in this session using executing-plans, batch execution with checkpoints
-
-**Which approach?"**
-
-**If Subagent-Driven chosen:**
-- **REQUIRED SUB-SKILL:** Use superpowers:subagent-driven-development
-- Fresh subagent per task + two-stage review
-
-**If Inline Execution chosen:**
-- **REQUIRED SUB-SKILL:** Use superpowers:executing-plans
-- Batch execution with checkpoints for review
+If the user later asks how to execute the plan or asks you to start
+implementation, that later turn may invoke:
+- **superpowers:subagent-driven-development** for subagent execution
+- **superpowers:executing-plans** for direct execution
 
 ### `--auto` branch
 
-Do not offer execution options; return the plan path and stop.
+Return the plan path and stop.
 즉, `--auto`에서는 execution choice 질문 없이 종료한다.

@@ -48,7 +48,7 @@ handoff_style: gsd
 
 <context>
 - 브랜치 상태는 clean이고 검증도 끝났다.
-- worktree 경로: `/Users/isy_macstudio/Documents/GitHub/superpowers/.worktrees/superpowers-ihk`
+- worktree 경로: `.worktrees/superpowers-ihk`
 - 핵심 변경 commit은 `f64ffd4`, `e422836`이다.
 - duplicate search는 exact duplicate를 찾지 못했고, broad brainstorming-related PR들만 보였다.
 </context>

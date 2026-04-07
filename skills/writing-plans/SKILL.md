@@ -30,6 +30,7 @@ When invoked with `--auto`, this skill must:
 - exit without asking the execution-choice question.
 
 If the parent issue cannot be resolved safely in auto mode, fail fast instead of asking.
+In particular, if the best-matching parent issue is already `resolved` or `closed`, auto mode must fail fast instead of overwriting its `metadata.plan`.
 
 ## Skill-Target Hard Gate
 
@@ -172,10 +173,17 @@ to the Beads issue tracker if `.beads/` directory exists in the project:
    - A bead whose `metadata.plan` matches the current plan path
    - A bead whose title matches the same topic
 2. Do **not** attach `metadata.plan` to a child bead. If a match has a parent, re-resolve to the intended parent issue or ask the user.
-3. If found → `bd update <id> --set-metadata plan=<path> --add-label has:plan`
-4. Re-check that `metadata.plan` is set correctly.
-5. If not found → ask user via AskUserQuestion, then create per the Beads spec/plan linking rules
-6. `bd dolt push`
+3. If a matching parent bead exists, inspect its status first via `bd show <id> --json`.
+4. If the matched parent bead status is `open` or `in_progress` → `bd update <id> --set-metadata plan=<path> --add-label has:plan`
+5. Re-check that `metadata.plan` is set correctly.
+6. If the matched parent bead status is `resolved` or `closed`, do **not** overwrite its `metadata.plan`.
+   - Treat this as follow-up work beyond the original bead scope.
+   - Ask the user whether to create a new follow-up parent bead instead.
+   - If approved, create the new bead and connect it back to the original bead with `discovered-from` when possible (for example: `bd dep add <new-id> <old-id> --type discovered-from`).
+   - Immediately after creation: `bd update <new-id> --set-metadata plan=<path> --add-label has:plan`
+   - Re-check that `metadata.plan` is set correctly on the new parent bead.
+7. If not found → ask user via AskUserQuestion, then create per the Beads spec/plan linking rules
+8. `bd dolt push`
 
 If `.beads/` does not exist, skip this step entirely.
 

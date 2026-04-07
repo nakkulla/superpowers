@@ -1,4 +1,5 @@
 # Brainstorming Issue-ID Entry Design
+Parent bead: superpowers-ihk
 
 **Status:** Draft for review  
 **Date:** 2026-04-08

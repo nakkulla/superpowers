@@ -82,6 +82,7 @@ Before proposing changes to skill design, workflow philosophy, or architecture, 
 This repo is the **source of truth**. After making any changes here, you MUST sync them to all installed plugin locations:
 
 ```
+/Users/isy_macstudio/GitHub/superpowers
 ~/.claude/plugins/marketplaces/superpowers-custom
 ~/.claude/plugins/cache/superpowers-custom
 ~/.codex/superpowers

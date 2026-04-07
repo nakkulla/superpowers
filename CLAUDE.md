@@ -90,7 +90,7 @@ This repo is the **source of truth**. After making any changes here, you MUST sy
 
 These are separate copies (not symlinks). Changes made only in the repo will not take effect until synced. Changes made only in the plugin directories will be lost on next sync/install.
 
-**Sync order:** Always edit in this repo first, then copy to the plugin directories.
+**Sync order:** Always edit in this repo first. Copy changes to `/Users/isy_macstudio/GitHub/superpowers`, `~/.claude/plugins/marketplaces/superpowers-custom`, and `~/.claude/plugins/cache/superpowers-custom`. For `~/.codex/superpowers`, do **not** sync via `cp`; commit and push from this repo first, then run `git pull` there to reflect the change.
 
 ## General
 

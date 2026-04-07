@@ -145,26 +145,27 @@ connect the spec to the Beads issue tracker if `.beads/` directory exists in the
 
 **HARD GATE:** If `.beads/` exists and `bd` is available, do not proceed to the User Review Gate until the spec is linked to a Beads **parent** issue.
 
-1. Resolve the target **parent** bead in this priority order:
+1. If you need to search beyond an explicit issue ID, start by collecting candidate beads with `bd list --json`.
+2. Resolve the target **parent** bead in this priority order:
    - If `$ARGUMENTS` included an explicit issue ID, use that issue as the first-resolution candidate
    - A bead whose `spec-id` field matches the current spec path
    - A bead whose title/description matches the same topic
-2. Do **not** attach the spec to a child issue. If the explicit issue or a matched issue has a parent, use it as context but re-resolve to the intended parent issue or ask the user.
-3. If a matching parent bead exists, inspect its status first via `bd show <id> --json`.
-4. If the matched parent bead status is `open` or `in_progress` → `bd update <id> --spec-id <path> --add-label has:spec`
-5. Re-check that `spec-id` is set correctly on the parent bead.
-6. If the explicit issue or matched parent bead status is `resolved` or `closed`, do **not** overwrite its `spec-id`.
+3. Do **not** attach the spec to a child issue. If the explicit issue or a matched issue has a parent, use it as context but re-resolve to the intended parent issue or ask the user.
+4. If a matching parent bead exists, inspect its status first via `bd show <id> --json`.
+5. If the matched parent bead status is `open` or `in_progress` → `bd update <id> --spec-id <path> --add-label has:spec`
+6. Re-check that `spec-id` is set correctly on the parent bead.
+7. If the explicit issue or matched parent bead status is `resolved` or `closed`, do **not** overwrite its `spec-id`.
    - Treat this as follow-up work beyond the original bead scope.
    - Ask the user whether to create a new follow-up parent bead instead.
    - If approved, create the new bead and connect it back to the original bead with `discovered-from` when possible (for example: `bd dep add <new-id> <old-id> --type discovered-from`).
    - Immediately after creation: `bd update <new-id> --spec-id <path> --add-label has:spec`
    - Re-check that `spec-id` is set correctly on the new parent bead.
-7. If no match → ask user via AskUserQuestion, then create:
+8. If no match → ask user via AskUserQuestion, then create:
    - Type: `epic` if child task decomposition is expected, `feature` otherwise
    - `bd create --type <type> --title "<title>"`
    - Immediately after: `bd update <id> --spec-id <path> --add-label has:spec`
    - Re-check that `spec-id` is set correctly
-8. `bd dolt push`
+9. `bd dolt push`
 
 If `.beads/` does not exist, skip this step entirely.
 

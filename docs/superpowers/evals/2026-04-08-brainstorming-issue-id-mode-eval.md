@@ -4,7 +4,7 @@
 - **Harness:** file-diff evidence + targeted skill-text verification + adversarial CLI smoke tests
 - **Baseline:** `HEAD~2`
 - **Candidate:** working tree / branch tip after implementation
-- **Purpose:** Verify that `brainstorming` can accept an explicit issue ID, still requires clarifying questions, and gives that issue higher precedence during spec linkage.
+- **Purpose:** Verify that `brainstorming` can accept an explicit issue ID, still requires clarifying questions, gives that issue higher precedence during spec linkage, and reuses same-scope standalone issues instead of creating duplicates.
 - **Limitations:** This is a focused documentation-behavior eval with targeted CLI smoke tests, not a full multi-session campaign.
 
 ## Verification Summary
@@ -34,6 +34,15 @@
     - the CLI session surfaced the updated linkage rules from the installed skill copy
     - the relevant rules explicitly say `Do **not** attach the spec to a child issue` and to use the explicit child issue as context but re-resolve to the intended parent issue
   - Conclusion: the updated installed copy preserves parent-only linkage even when the entry point is a child issue.
+
+- **Session C — open standalone issue is promoted in place**
+  - Prompt: “Start from open standalone task `superpowers-ihk`. The spec only concretizes the same work, but the issue type should become `feature`.”
+  - Harness: file-level verification of the updated Beads Integration block
+  - Observed result:
+    - the skill now says to reuse the explicit open standalone issue as the canonical Beads identity when the approved design is the same scope
+    - it explicitly forbids creating a new bead just to change type
+    - it instructs the agent to promote the existing issue in place before linking `spec-id`
+  - Conclusion: the updated skill closes the duplicate-issue gap for same-scope type promotion.
 
 ## Baseline vs Candidate
 
@@ -118,10 +127,33 @@ If `$ARGUMENTS` contains a recognized Beads issue ID:
 
 - Confirms explicit issue IDs now win before fuzzy matching while preserving parent-only linkage.
 
+### 4. Same-scope standalone issue promotion
+
+**Baseline (`HEAD~2`)**
+
+```text
+3. Do **not** attach the spec to a child issue. If the explicit issue or a matched issue has a parent, use it as context but re-resolve to the intended parent issue or ask the user.
+4. If a matching parent bead exists, inspect its status first via `bd show <id> --json`.
+```
+
+**Candidate**
+
+```text
+4. If the explicit issue is `open` or `in_progress`, has no parent, and the approved design is a concretization of the same scope rather than new follow-up scope:
+   - Reuse that issue as the canonical Beads identity.
+   - Do **not** create a new bead just to change its type.
+   - If the issue type is too narrow for the approved design, promote it in place to the appropriate parent type ...
+```
+
+**Observed effect**
+
+- Confirms same-scope standalone issues are now reused and promoted in place instead of being duplicated as new parent beads.
+
 ## Remaining Gap vs Full Skill-Eval Ideal
 
 - A broader multi-session campaign was **not** run here.
-- However, this change now has checked-in evidence for the three required behaviors:
+- However, this change now has checked-in evidence for the four required behaviors:
   1. optional issue-ID entry,
   2. preserved clarifying-question discipline, and
-  3. explicit issue-ID precedence during Beads linkage.
+  3. explicit issue-ID precedence during Beads linkage, and
+  4. same-scope standalone issue promotion without duplicate bead creation.

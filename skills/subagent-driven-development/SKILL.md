@@ -1,7 +1,7 @@
 ---
 name: subagent-driven-development
 description: Use when executing implementation plans with independent tasks in the current session
-argument-hint: "[plan-path] [--auto] [--parent-issue <id>] [--beads full|parent|skip] [--finishing run|skip]"
+argument-hint: "[plan-path] [--auto] [--parent-issue <parent-id>] [--beads full|parent|skip] [--finishing run|skip]"
 ---
 
 # Subagent-Driven Development
@@ -35,7 +35,7 @@ When invoked with `--auto`:
 
 ## Beads Integration
 
-Controlled by `--beads` and `--parent-issue` flags. `--parent-issue <id>` is required when `--beads` is `full` or `parent`.
+Controlled by `--beads` and `--parent-issue` flags. `--parent-issue <parent-id>` is required when `--beads` is `full` or `parent`.
 
 ### --beads skip (default)
 
@@ -52,10 +52,10 @@ No Beads updates. TodoWrite progress tracking only.
 - Claim the parent issue at start: `bd update <parent-id> --claim`
 - Inspect existing children via `bd children <parent-id> --json` for resume:
   - If children exist: rebuild Task-to-Bead mapping (match plan task titles to child bead titles), mark already-resolved children as completed in TodoWrite
-  - If no children exist: invoke `$seed-beads-from-plan --auto`
+  - If no children exist: invoke `seed-beads-from-plan --auto`
 - Per-task updates (in the main controller loop, NOT inside subagents):
   - Task start: `bd update <child-id> --claim`
-  - Task complete (after both review stages pass): `bd update <child-id> --status resolved --set-metadata git_sha=<SHA>`
+  - Task complete (after both review stages pass): `bd update <child-id> --status resolved --set-metadata git_sha=$(git rev-parse HEAD)`
 - `bd dolt push` on completion or interruption
 - All `bd` write commands are serialized (no parallel bd writes)
 

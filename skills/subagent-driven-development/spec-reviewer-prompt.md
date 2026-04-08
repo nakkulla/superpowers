@@ -15,6 +15,10 @@ Task tool (general-purpose):
 
     [FULL TEXT of task requirements]
 
+    BASE_SHA: [commit before this task]
+    CHANGED_FILES: [files changed for this task]
+    OPTIONAL_CHANGED_HUNKS_SUMMARY: [brief summary of touched areas]
+
     ## What Implementer Claims They Built
 
     [From implementer's report]
@@ -56,7 +60,13 @@ Task tool (general-purpose):
 
     **Verify by reading code, not by trusting report.**
 
+    Review only the changes introduced for this task relative to BASE_SHA.
+
+    Do not flag pre-existing code outside the touched diff unless the current task modified it.
+    If the diff scope is missing or ambiguous, return NEEDS_CONTEXT instead of broad speculation.
+
     Report:
-    - ✅ Spec compliant (if everything matches after code inspection)
-    - ❌ Issues found: [list specifically what's missing or extra, with file:line references]
+    - ✅ Spec compliant
+    - ❌ Issues found: [only issues introduced by this task's diff, with file:line references]
+    - NEEDS_CONTEXT: [if BASE_SHA or diff scope is too unclear to judge safely]
 ```

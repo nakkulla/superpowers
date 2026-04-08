@@ -1,7 +1,7 @@
 ---
 name: subagent-driven-development
 description: Use when executing implementation plans with independent tasks in the current session
-argument-hint: "[plan-path] [--auto] [--parent-issue <parent-id>] [--beads full|parent|skip] [--finishing run|skip]"
+argument-hint: "[plan-path] [--auto] [--parent-issue <id>] [--beads full|parent|skip] [--finishing run|skip]"
 ---
 
 # Subagent-Driven Development
@@ -23,23 +23,14 @@ When invoked with `--auto`:
 | Decision Point | Interactive | --auto |
 |----------------|------------|--------|
 | Plan file load failure | Ask user for path | Fail fast |
-| Subagent BLOCKED | Escalate to user | Context supplement 1x retry, then fail fast with a structured error report |
+| Subagent BLOCKED | Escalate to user | Context supplement 1x retry, then fail fast |
 | Subagent NEEDS_CONTEXT | Supplement context, re-dispatch | Same (already automatic) |
 | Review loop fails 3 consecutive times | Ask user for judgment | Fail fast with error report |
 | finishing-a-development-branch | Invoke | `--finishing skip`: omit, return control to caller |
 
-### `--auto` Failure Reporting
-
-In `--auto`, when the interactive path says "escalate to the human" or "ask user for judgment", do not pause for input. Return control immediately with a structured error report that gives the caller enough information to decide the next step.
-
-The error report must include:
-
-- `failure_kind`: stable category such as `PLAN_LOAD_FAILURE`, `SUBAGENT_BLOCKED`, or `REVIEW_LOOP_EXHAUSTED`
-- `task`: the task id/title and current phase that failed
-- `attempts`: what was tried, including whether the one allowed context-supplement retry was used
-- `reason`: the blocking constraint, missing prerequisite, or concise review-failure summary
-- `recommended_next_action`: the specific human or orchestrator action needed to unblock progress
-- `artifacts`: pointers to the relevant plan section, task output, review findings, logs, or patch/diff identifiers
+In `--auto`, review-family retries must stay bounded:
+- On reviewer timeout, retry at most once with a smaller, more explicit context packet
+- If the second reviewer also times out or cannot judge safely, fail fast with a concrete error report
 
 ## Finishing Flag
 
@@ -48,7 +39,7 @@ The error report must include:
 
 ## Beads Integration
 
-Controlled by `--beads` and `--parent-issue` flags. `--parent-issue <parent-id>` is required when `--beads` is `full` or `parent`.
+Controlled by `--beads` and `--parent-issue` flags. `--parent-issue <id>` is required when `--beads` is `full` or `parent`.
 
 ### --beads skip (default)
 
@@ -65,7 +56,7 @@ No Beads updates. TodoWrite progress tracking only.
 - Claim the parent issue at start: `bd update <parent-id> --claim`
 - Inspect existing children via `bd children <parent-id> --json` for resume:
   - If children exist: rebuild Task-to-Bead mapping (match plan task titles to child bead titles), mark already-resolved children as completed in TodoWrite
-  - If no children exist: invoke `seed-beads-from-plan --auto`
+  - If no children exist: invoke `$seed-beads-from-plan --auto`
 - Per-task updates (in the main controller loop, NOT inside subagents):
   - Task start: `bd update <child-id> --claim`
   - Task complete (after both review stages pass): `bd update <child-id> --status resolved --set-metadata git_sha=$(git rev-parse HEAD)`
@@ -168,7 +159,13 @@ Use the least powerful model that can handle each role to conserve cost and incr
 
 Implementer subagents report one of four statuses. Handle each appropriately:
 
-**DONE:** Proceed to spec compliance review.
+**DONE:** Proceed to spec compliance review only after the controller verifies target-worktree evidence:
+- exact `pwd`
+- exact branch
+- task-scoped diff in the target workspace
+- raw verification command output
+
+If the reported completion does not match the target workspace, treat it as invalid completion and re-dispatch instead of reviewing it.
 
 **DONE_WITH_CONCERNS:** The implementer completed the work but flagged doubts. Read the concerns before proceeding. If the concerns are about correctness or scope, address them before review. If they're observations (e.g., "this file is getting large"), note them and proceed to review.
 
@@ -312,6 +309,8 @@ Done!
 - Let implementer self-review replace actual review (both are needed)
 - **Start code quality review before spec compliance is ✅** (wrong order)
 - Move to next task while either review has open issues
+- Accept DONE without checking target-worktree diff and raw test output
+- Let reviewers judge the whole file when the task should be reviewed against a bounded diff
 
 **If subagent asks questions:**
 - Answer clearly and completely

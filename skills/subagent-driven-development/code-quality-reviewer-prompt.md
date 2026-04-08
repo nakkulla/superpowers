@@ -22,5 +22,8 @@ Task tool (superpowers:code-reviewer):
 - Are units decomposed so they can be understood and tested independently?
 - Is the implementation following the file structure from the plan?
 - Did this implementation create new files that are already large, or significantly grow existing files? (Don't flag pre-existing file sizes — focus on what this change contributed.)
+- Review only issues introduced by this task's diff relative to `BASE_SHA`.
+- Do not report unrelated pre-existing issues outside the touched files or hunks.
+- Prefer concrete file:line references within the task's changed scope.
 
 **Code reviewer returns:** Strengths, Issues (Critical/Important/Minor), Assessment

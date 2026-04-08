@@ -28,6 +28,10 @@ When invoked with `--auto`:
 | Review loop fails 3 consecutive times | Ask user for judgment | Fail fast with error report |
 | finishing-a-development-branch | Invoke | `--finishing skip`: omit, return control to caller |
 
+In `--auto`, review-family retries must stay bounded:
+- On reviewer timeout, retry at most once with a smaller, more explicit context packet
+- If the second reviewer also times out or cannot judge safely, fail fast with a concrete error report
+
 ## Finishing Flag
 
 - `--finishing run` (default): invoke `finishing-a-development-branch` after all tasks complete, as described in the Integration section
@@ -155,7 +159,13 @@ Use the least powerful model that can handle each role to conserve cost and incr
 
 Implementer subagents report one of four statuses. Handle each appropriately:
 
-**DONE:** Proceed to spec compliance review.
+**DONE:** Proceed to spec compliance review only after the controller verifies target-worktree evidence:
+- exact `pwd`
+- exact branch
+- task-scoped diff in the target workspace
+- raw verification command output
+
+If the reported completion does not match the target workspace, treat it as invalid completion and re-dispatch instead of reviewing it.
 
 **DONE_WITH_CONCERNS:** The implementer completed the work but flagged doubts. Read the concerns before proceeding. If the concerns are about correctness or scope, address them before review. If they're observations (e.g., "this file is getting large"), note them and proceed to review.
 
@@ -299,6 +309,8 @@ Done!
 - Let implementer self-review replace actual review (both are needed)
 - **Start code quality review before spec compliance is ✅** (wrong order)
 - Move to next task while either review has open issues
+- Accept DONE without checking target-worktree diff and raw test output
+- Let reviewers judge the whole file when the task should be reviewed against a bounded diff
 
 **If subagent asks questions:**
 - Answer clearly and completely

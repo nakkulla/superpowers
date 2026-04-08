@@ -108,6 +108,7 @@ Task tool (general-purpose):
     - `git branch --show-current`
     - task-scoped diff evidence from the target workspace (capture `git diff -- [files changed for this task]` before committing, or include the exact commit SHA plus `git show --stat --patch <SHA>` after committing)
     - raw output of the verification commands you ran
+    - if a verification command could print secrets or credentials, avoid it or redact sensitive values before reporting
 
     If you cannot provide task-scoped diff evidence from the target workspace or resulting commit, do not report DONE.
     If tests were not run in the target workspace, do not claim they passed.

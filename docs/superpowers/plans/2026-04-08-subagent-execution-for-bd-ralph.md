@@ -165,6 +165,8 @@ No Beads updates. TodoWrite progress tracking only.
 
 **Important:** Subagents never call `bd` directly. All Beads updates happen in the controller's main loop between subagent dispatches.
 
+**Scope boundary:** This skill does not resolve issue/spec/plan metadata; `bd-ralph` remains responsible for that orchestration.
+
 ```
 
 - [ ] **Step 2: Verify the Beads section**
@@ -318,12 +320,15 @@ git commit -m "docs(bd-ralph): execution_strategy direct|subagent 설명 추가"
 ### Task 6: Sync plugin copies and verify
 
 **Files:**
+- Sync target: `/Users/isy_macstudio/GitHub/superpowers/skills/subagent-driven-development/SKILL.md`
 - Sync target: `~/.claude/plugins/marketplaces/superpowers-custom/skills/subagent-driven-development/SKILL.md`
 - Sync target: `~/.claude/plugins/cache/superpowers-custom/skills/subagent-driven-development/SKILL.md`
+- Sync target: `~/.codex/superpowers/skills/subagent-driven-development/SKILL.md`
 
 - [ ] **Step 1: Sync subagent-driven-development to plugin locations**
 
 ```bash
+cp skills/subagent-driven-development/SKILL.md /Users/isy_macstudio/GitHub/superpowers/skills/subagent-driven-development/SKILL.md
 cp skills/subagent-driven-development/SKILL.md ~/.claude/plugins/marketplaces/superpowers-custom/skills/subagent-driven-development/SKILL.md
 cp skills/subagent-driven-development/SKILL.md ~/.claude/plugins/cache/superpowers-custom/skills/subagent-driven-development/SKILL.md
 ```
@@ -331,13 +336,19 @@ cp skills/subagent-driven-development/SKILL.md ~/.claude/plugins/cache/superpowe
 - [ ] **Step 2: Verify sync parity**
 
 ```bash
+diff skills/subagent-driven-development/SKILL.md /Users/isy_macstudio/GitHub/superpowers/skills/subagent-driven-development/SKILL.md
 diff skills/subagent-driven-development/SKILL.md ~/.claude/plugins/marketplaces/superpowers-custom/skills/subagent-driven-development/SKILL.md
 diff skills/subagent-driven-development/SKILL.md ~/.claude/plugins/cache/superpowers-custom/skills/subagent-driven-development/SKILL.md
 ```
 
 Expected: no diff output (files are identical).
 
-- [ ] **Step 3: Verify spec verification checklist**
+- [ ] **Step 3: Update the Codex installation**
+
+After the final commit/push from this repo, run `git pull` in `~/.codex/superpowers` so the Codex-installed copy reflects the same skill content.
+Verify the pulled file with `git -C ~/.codex/superpowers diff -- skills/subagent-driven-development/SKILL.md` (expected: no diff).
+
+- [ ] **Step 4: Verify spec verification checklist**
 
 Manually confirm against the spec's Verification section:
 1. `bd-ralph/SKILL.md` declares `--execution direct|subagent` in argument-hint

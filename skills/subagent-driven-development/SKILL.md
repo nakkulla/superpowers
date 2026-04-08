@@ -25,12 +25,14 @@ When invoked with `--auto`:
 | Plan file load failure | Ask user for path | Fail fast |
 | Subagent BLOCKED | Escalate to user | Context supplement 1x retry, then fail fast |
 | Subagent NEEDS_CONTEXT | Supplement context, re-dispatch | Same (already automatic) |
+| Reviewer NEEDS_CONTEXT | Supplement review context, re-review | Supplement missing review context 1x, then fail fast if still not judgeable |
 | Review loop fails 3 consecutive times | Ask user for judgment | Fail fast with error report |
 | finishing-a-development-branch | Invoke | `--finishing skip`: omit, return control to caller |
 
 In `--auto`, review-family retries must stay bounded:
 - On reviewer timeout, retry at most once with a smaller, more explicit context packet
-- If the second reviewer also times out or cannot judge safely, fail fast with a concrete error report
+- On reviewer `NEEDS_CONTEXT`, supplement only the missing review context (for example: diff scope, touched files, acceptance criteria), then re-run the same review stage at most once
+- If the second review attempt also times out, returns `NEEDS_CONTEXT`, or otherwise cannot judge safely, fail fast with a concrete error report
 
 ## Finishing Flag
 

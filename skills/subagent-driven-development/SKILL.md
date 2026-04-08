@@ -1,6 +1,7 @@
 ---
 name: subagent-driven-development
 description: Use when executing implementation plans with independent tasks in the current session
+argument-hint: "[plan-path] [--auto] [--parent-issue <id>] [--beads full|parent|skip] [--finishing run|skip]"
 ---
 
 # Subagent-Driven Development
@@ -10,6 +11,57 @@ Execute plan by dispatching fresh subagent per task, with two-stage review after
 **Why subagents:** You delegate tasks to specialized agents with isolated context. By precisely crafting their instructions and context, you ensure they stay focused and succeed at their task. They should never inherit your session's context or history — you construct exactly what they need. This also preserves your own context for coordination work.
 
 **Core principle:** Fresh subagent per task + two-stage review (spec then quality) = high quality, fast iteration
+
+## Auto Mode
+
+When invoked with `--auto`:
+
+- `plan-path` is required (fail fast if missing)
+- Do not call `AskUserQuestion` or request human input
+- All decision points use explicit override flags; if a flag is missing and the decision is ambiguous, fail fast
+
+| Decision Point | Interactive | --auto |
+|----------------|------------|--------|
+| Plan file load failure | Ask user for path | Fail fast |
+| Subagent BLOCKED | Escalate to user | Context supplement 1x retry, then fail fast |
+| Subagent NEEDS_CONTEXT | Supplement context, re-dispatch | Same (already automatic) |
+| Review loop fails 3 consecutive times | Ask user for judgment | Fail fast with error report |
+| finishing-a-development-branch | Invoke | `--finishing skip`: omit, return control to caller |
+
+## Finishing Flag
+
+- `--finishing run` (default): invoke `finishing-a-development-branch` after all tasks complete, as described in the Integration section
+- `--finishing skip`: omit the finishing step entirely and return control to the caller. Use this when an upper orchestrator (e.g., bd-ralph) owns the finishing workflow.
+
+## Beads Integration
+
+Controlled by `--beads` and `--parent-issue` flags. `--parent-issue <id>` is required when `--beads` is `full` or `parent`.
+
+### --beads skip (default)
+
+No Beads updates. TodoWrite progress tracking only.
+
+### --beads parent
+
+- Claim the parent issue at start: `bd update <parent-id> --claim`
+- No child issue management
+- `bd dolt push` on completion or interruption
+
+### --beads full
+
+- Claim the parent issue at start: `bd update <parent-id> --claim`
+- Inspect existing children via `bd children <parent-id> --json` for resume:
+  - If children exist: rebuild Task-to-Bead mapping (match plan task titles to child bead titles), mark already-resolved children as completed in TodoWrite
+  - If no children exist: invoke `$seed-beads-from-plan --auto`
+- Per-task updates (in the main controller loop, NOT inside subagents):
+  - Task start: `bd update <child-id> --claim`
+  - Task complete (after both review stages pass): `bd update <child-id> --status resolved --set-metadata git_sha=<SHA>`
+- `bd dolt push` on completion or interruption
+- All `bd` write commands are serialized (no parallel bd writes)
+
+**Important:** Subagents never call `bd` directly. All Beads updates happen in the controller's main loop between subagent dispatches.
+
+**Scope boundary:** This skill does not resolve issue/spec/plan metadata; `bd-ralph` remains responsible for that orchestration.
 
 ## When to Use
 
@@ -269,7 +321,7 @@ Done!
 - **superpowers:using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
 - **superpowers:writing-plans** - Creates the plan this skill executes
 - **superpowers:requesting-code-review** - Code review template for reviewer subagents
-- **superpowers:finishing-a-development-branch** - Complete development after all tasks
+- **superpowers:finishing-a-development-branch** - Complete development after all tasks (skipped when `--finishing skip`)
 
 **Subagents should use:**
 - **superpowers:test-driven-development** - Subagents follow TDD for each task

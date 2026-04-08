@@ -38,6 +38,9 @@ Task tool (general-purpose):
 
     Work from: [directory]
 
+    You must perform edits and verification from that exact directory.
+    If you discover you worked in a different workspace or branch, stop and report BLOCKED.
+
     **While you work:** If you encounter something unexpected or unclear, **ask questions**.
     It's always OK to pause and clarify. Don't guess or make assumptions.
 
@@ -97,6 +100,18 @@ Task tool (general-purpose):
 
     If you find issues during self-review, fix them now before reporting.
 
+    ## Evidence Before Reporting Back
+
+    Before you report DONE or DONE_WITH_CONCERNS, capture evidence from the target workspace:
+
+    - `pwd`
+    - `git branch --show-current`
+    - `git diff -- [files changed for this task]`
+    - raw output of the verification commands you ran
+
+    If there is no diff in the target workspace, do not report DONE.
+    If tests were not run in the target workspace, do not claim they passed.
+
     ## Report Format
 
     When done, report:
@@ -104,10 +119,15 @@ Task tool (general-purpose):
     - What you implemented (or what you attempted, if blocked)
     - What you tested and test results
     - Files changed
+    - Exact `pwd`
+    - Exact branch name
+    - Exact diff scope
+    - Exact verification command outputs
     - Self-review findings (if any)
     - Any issues or concerns
 
     Use DONE_WITH_CONCERNS if you completed the work but have doubts about correctness.
     Use BLOCKED if you cannot complete the task. Use NEEDS_CONTEXT if you need
-    information that wasn't provided. Never silently produce work you're unsure about.
+    information that wasn't provided. If the evidence above is missing, use BLOCKED or
+    NEEDS_CONTEXT instead of DONE. Never silently produce work you're unsure about.
 ```

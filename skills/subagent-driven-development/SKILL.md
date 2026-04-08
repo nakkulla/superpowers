@@ -23,10 +23,23 @@ When invoked with `--auto`:
 | Decision Point | Interactive | --auto |
 |----------------|------------|--------|
 | Plan file load failure | Ask user for path | Fail fast |
-| Subagent BLOCKED | Escalate to user | Context supplement 1x retry, then fail fast |
+| Subagent BLOCKED | Escalate to user | Context supplement 1x retry, then fail fast with a structured error report |
 | Subagent NEEDS_CONTEXT | Supplement context, re-dispatch | Same (already automatic) |
 | Review loop fails 3 consecutive times | Ask user for judgment | Fail fast with error report |
 | finishing-a-development-branch | Invoke | `--finishing skip`: omit, return control to caller |
+
+### `--auto` Failure Reporting
+
+In `--auto`, when the interactive path says "escalate to the human" or "ask user for judgment", do not pause for input. Return control immediately with a structured error report that gives the caller enough information to decide the next step.
+
+The error report must include:
+
+- `failure_kind`: stable category such as `PLAN_LOAD_FAILURE`, `SUBAGENT_BLOCKED`, or `REVIEW_LOOP_EXHAUSTED`
+- `task`: the task id/title and current phase that failed
+- `attempts`: what was tried, including whether the one allowed context-supplement retry was used
+- `reason`: the blocking constraint, missing prerequisite, or concise review-failure summary
+- `recommended_next_action`: the specific human or orchestrator action needed to unblock progress
+- `artifacts`: pointers to the relevant plan section, task output, review findings, logs, or patch/diff identifiers
 
 ## Finishing Flag
 

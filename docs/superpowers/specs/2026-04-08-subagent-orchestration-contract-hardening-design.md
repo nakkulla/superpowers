@@ -1,4 +1,5 @@
 # Subagent Orchestration Contract Hardening Design
+Parent bead: superpowers-86t
 
 **Status:** Draft for review
 **Date:** 2026-04-08

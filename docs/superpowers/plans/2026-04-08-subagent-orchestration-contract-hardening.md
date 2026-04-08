@@ -373,4 +373,3 @@ Expected: `superpowers-86t` remains the open parent for this follow-up work and 
 git status --short
 git commit --allow-empty -m "docs: orchestration contract 하드닝 검증 메타데이터 정리"
 ```
-

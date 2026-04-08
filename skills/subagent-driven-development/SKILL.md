@@ -61,7 +61,7 @@ No Beads updates. TodoWrite progress tracking only.
   - If no children exist: invoke `$seed-beads-from-plan --auto`
 - Per-task updates (in the main controller loop, NOT inside subagents):
   - Task start: `bd update <child-id> --claim`
-  - Task complete (after both review stages pass): `bd update <child-id> --status resolved --set-metadata git_sha=<SHA>`
+  - Task complete (after both review stages pass): `bd update <child-id> --status resolved --set-metadata git_sha=$(git rev-parse HEAD)`
 - `bd dolt push` on completion or interruption
 - All `bd` write commands are serialized (no parallel bd writes)
 

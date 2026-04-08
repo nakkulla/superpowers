@@ -106,10 +106,10 @@ Task tool (general-purpose):
 
     - `pwd`
     - `git branch --show-current`
-    - `git diff -- [files changed for this task]`
+    - task-scoped diff evidence from the target workspace (capture `git diff -- [files changed for this task]` before committing, or include the exact commit SHA plus `git show --stat --patch <SHA>` after committing)
     - raw output of the verification commands you ran
 
-    If there is no diff in the target workspace, do not report DONE.
+    If you cannot provide task-scoped diff evidence from the target workspace or resulting commit, do not report DONE.
     If tests were not run in the target workspace, do not claim they passed.
 
     ## Report Format

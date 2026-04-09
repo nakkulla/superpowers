@@ -26,11 +26,13 @@ You MUST create a task for each of these items and complete them in order:
 2. **Offer visual companion** (if topic will involve visual questions) — this is its own message, not combined with a clarifying question. See the Visual Companion section below.
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
-5. **Present design** — in sections scaled to their complexity, get user approval after each section
-6. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
-7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-8. **User reviews written spec** — ask user to review the spec file before proceeding
-9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+5. **Optional Codex collaboration (Claude Code only)** — if Claude Code has `codex-plugin-cc` available and a second design pass would materially help, delegate exactly one bounded advisory design-analysis task to Codex. Treat Codex output as advisory only.
+6. **Present design** — in sections scaled to their complexity, get user approval after each section
+7. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
+8. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
+9. **Optional Codex challenge pass (Claude Code only)** — if a written spec exists and a challenge review would materially help, run one bounded Codex critique pass. Treat Codex output as advisory only.
+10. **User reviews written spec** — ask user to review the spec file before proceeding
+11. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
 ## Process Flow
 
@@ -41,10 +43,14 @@ digraph brainstorming {
     "Offer Visual Companion\n(own message, no other content)" [shape=box];
     "Ask clarifying questions" [shape=box];
     "Propose 2-3 approaches" [shape=box];
+    "Need bounded Codex design pass?" [shape=diamond];
+    "Run optional Codex collaboration" [shape=box];
     "Present design sections" [shape=box];
     "User approves design?" [shape=diamond];
     "Write design doc" [shape=box];
     "Spec self-review\n(fix inline)" [shape=box];
+    "Need bounded Codex challenge pass?" [shape=diamond];
+    "Run optional Codex challenge pass" [shape=box];
     "User reviews spec?" [shape=diamond];
     "Invoke writing-plans skill" [shape=doublecircle];
 
@@ -53,12 +59,18 @@ digraph brainstorming {
     "Visual questions ahead?" -> "Ask clarifying questions" [label="no"];
     "Offer Visual Companion\n(own message, no other content)" -> "Ask clarifying questions";
     "Ask clarifying questions" -> "Propose 2-3 approaches";
-    "Propose 2-3 approaches" -> "Present design sections";
+    "Propose 2-3 approaches" -> "Need bounded Codex design pass?";
+    "Need bounded Codex design pass?" -> "Run optional Codex collaboration" [label="yes"];
+    "Need bounded Codex design pass?" -> "Present design sections" [label="no"];
+    "Run optional Codex collaboration" -> "Present design sections";
     "Present design sections" -> "User approves design?";
     "User approves design?" -> "Present design sections" [label="no, revise"];
     "User approves design?" -> "Write design doc" [label="yes"];
     "Write design doc" -> "Spec self-review\n(fix inline)";
-    "Spec self-review\n(fix inline)" -> "User reviews spec?";
+    "Spec self-review\n(fix inline)" -> "Need bounded Codex challenge pass?";
+    "Need bounded Codex challenge pass?" -> "Run optional Codex challenge pass" [label="yes"];
+    "Need bounded Codex challenge pass?" -> "User reviews spec?" [label="no"];
+    "Run optional Codex challenge pass" -> "User reviews spec?";
     "User reviews spec?" -> "Write design doc" [label="changes requested"];
     "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
 }
@@ -97,6 +109,56 @@ If `$ARGUMENTS` contains a recognized Beads issue ID:
 - Propose 2-3 different approaches with trade-offs
 - Present options conversationally with your recommendation and reasoning
 - Lead with your recommended option and explain why
+- If a second design opinion would materially improve the discussion and optional Codex collaboration is available in Claude Code, you may run one bounded advisory Codex pass here before presenting your final recommendation.
+- Treat Codex output as advisory input, not as the final recommendation.
+
+## Optional Codex Collaboration (Claude Code only)
+
+When Claude Code has `codex-plugin-cc` installed and Codex is available, you MAY use Codex as an optional sidecar during brainstorming.
+
+Codex collaboration is advisory only. Claude remains responsible for:
+- user conversation
+- clarifying questions
+- approach recommendation
+- design presentation
+- design approval checkpoints
+- spec writing and revision
+- transition to writing-plans
+
+Use Codex only for one bounded task at a time, such as:
+- proposing additional design approaches
+- pressure-testing assumptions
+- identifying ambiguities, contradictions, or missing edge cases
+- challenging the recommended approach
+- reviewing a written spec for hidden failure modes
+
+Do NOT delegate the full brainstorming conversation to Codex.
+Do NOT let Codex ask the user clarifying questions in place of Claude.
+Do NOT let Codex own the final design or approval flow.
+Do NOT treat Codex availability as a hard requirement.
+If Codex is unavailable, continue the normal brainstorming flow without it.
+
+Prefer `/codex:rescue` for ideation-stage or pre-spec bounded design tasks.
+Prefer `/codex:adversarial-review` only after a written spec exists and you want a challenge review of the current design.
+
+When delegating to Codex, provide a compact task packet:
+- Goal
+- Constraints
+- Relevant existing patterns
+- Current recommendation or open question
+- Required output format
+
+Explicitly instruct Codex:
+- not to ask the user questions
+- not to take ownership of the brainstorming flow
+- not to implement or edit code
+- to return bounded advisory analysis only
+
+After Codex returns:
+- extract only the useful findings
+- reconcile them against the current project context
+- present the integrated recommendation in Claude's own brainstorming flow
+- do not outsource final judgment to Codex
 
 **Presenting the design:**
 
@@ -137,6 +199,8 @@ After writing the spec document, look at it with fresh eyes:
 4. **Ambiguity check:** Could any requirement be interpreted two different ways? If so, pick one and make it explicit.
 
 Fix any issues inline. No need to re-review — just fix and move on.
+
+If a written spec exists and optional Codex collaboration is available in Claude Code, you may run one bounded Codex challenge pass after self-review and before the User Review Gate. Use this only when a real second-opinion challenge review would materially improve the design quality.
 
 ### Beads Integration (Post-Spec-Review)
 

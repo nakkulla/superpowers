@@ -32,7 +32,7 @@ You MUST create a task for each of these items and complete them in order:
 8. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 9. **Main-agent spec-review** — invoke the `spec-review` skill in the main agent after self-review and before user review; apply the resulting revisions inline before continuing.
 10. **Codex re-review loop** — in Codex, after the main-agent `spec-review` fixes, dispatch a bounded read-only re-review subagent that uses the `spec-review` skill/rubric. The subagent is advisory only; the main agent applies revisions and owns final judgment. Cap this loop at 3 re-review passes.
-11. **Optional Codex challenge pass (Claude Code only)** — if a written spec exists and a challenge review would materially help, run one bounded Codex critique pass. Treat Codex output as advisory only.
+11. **Optional Codex challenge re-review loop (Claude Code only)** — if a written spec exists and Claude Code has `codex-plugin-cc` available, default to one bounded advisory Codex critique pass after the main-agent `spec-review`. If substantive spec edits are made and material findings remain, you may re-run it up to 3 total advisory passes per brainstorming run.
 12. **User reviews written spec** — ask user to review the spec file before proceeding
 13. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
@@ -58,7 +58,8 @@ digraph brainstorming {
     "Main agent applies\nre-review fixes" [shape=box];
     "Re-review passes\n< 3 and substantive changes made?" [shape=diamond];
     "Need optional Claude Code\nchallenge pass?" [shape=diamond];
-    "Run optional Codex challenge pass" [shape=box];
+    "Run optional Codex\nchallenge pass" [shape=box];
+    "Claude Code advisory passes\n< 3 and substantive changes remain?" [shape=diamond];
     "User reviews spec?" [shape=diamond];
     "Invoke writing-plans skill" [shape=doublecircle];
 
@@ -84,9 +85,11 @@ digraph brainstorming {
     "Main agent applies\nre-review fixes" -> "Re-review passes\n< 3 and substantive changes made?";
     "Re-review passes\n< 3 and substantive changes made?" -> "Dispatch re-review\nsubagent" [label="yes"];
     "Re-review passes\n< 3 and substantive changes made?" -> "Need optional Claude Code\nchallenge pass?" [label="no"];
-    "Need optional Claude Code\nchallenge pass?" -> "Run optional Codex challenge pass" [label="yes"];
+    "Need optional Claude Code\nchallenge pass?" -> "Run optional Codex\nchallenge pass" [label="yes"];
     "Need optional Claude Code\nchallenge pass?" -> "User reviews spec?" [label="no"];
-    "Run optional Codex challenge pass" -> "User reviews spec?";
+    "Run optional Codex\nchallenge pass" -> "Claude Code advisory passes\n< 3 and substantive changes remain?";
+    "Claude Code advisory passes\n< 3 and substantive changes remain?" -> "Run optional Codex\nchallenge pass" [label="yes"];
+    "Claude Code advisory passes\n< 3 and substantive changes remain?" -> "User reviews spec?" [label="no"];
     "User reviews spec?" -> "Write design doc" [label="changes requested"];
     "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
 }
@@ -231,7 +234,14 @@ In Codex, after the main-agent `spec-review` fixes and before the User Review Ga
 
 If subagents are unavailable, continue the normal flow without blocking.
 
-If a written spec exists and optional Codex collaboration is available in Claude Code, you may run one bounded Codex challenge pass after the main-agent `spec-review` and any Codex re-review loop, and before the User Review Gate. Use this only when a real second-opinion challenge review would materially improve the design quality.
+If a written spec exists and optional Codex collaboration is available in Claude Code, you may run a bounded Codex advisory challenge pass after the main-agent `spec-review` and any Codex re-review loop, and before the User Review Gate.
+
+- Default to **one** advisory Codex challenge pass.
+- Re-run it only after **substantive spec edits** and only when material findings still remain.
+- Cap it at **3 total advisory Codex challenge passes per brainstorming run**, counted cumulatively across the entire run.
+- Treat Codex output as advisory only; Claude Code remains responsible for final judgment, revisions, and user-facing review flow.
+
+Use this only when a real second-opinion challenge review would materially improve the design quality.
 
 ### Beads Integration (Post-Spec-Review)
 

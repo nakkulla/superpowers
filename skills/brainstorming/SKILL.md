@@ -32,6 +32,12 @@ You MUST create a task for each of these items and complete them in order:
 8. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 9. **Main-agent spec-review** — invoke the `spec-review` skill in the main agent after self-review and before user review; apply the resulting revisions inline before continuing.
 10. **Codex re-review loop** — in Codex, after the main-agent `spec-review` fixes, dispatch a bounded read-only re-review subagent that uses the `spec-review` skill/rubric. The subagent is advisory only; the main agent applies revisions and owns final judgment. Cap this loop at 3 re-review passes.
+    Hard gate:
+    - In Codex, if `spawn_agent` is available, this re-review subagent pass is mandatory.
+    - Do NOT mark `reviewed:spec`.
+    - Do NOT invoke `writing-plans`.
+    - Do NOT say the spec gate is complete.
+    until the subagent pass has finished and its findings have been reconciled by the main agent.
 11. **Optional Codex challenge re-review loop (Claude Code only)** — if a written spec exists and Claude Code has `codex-plugin-cc` available, default to one bounded advisory Codex critique pass after the main-agent `spec-review`. If substantive spec edits are made and material findings remain, you may re-run it up to 3 total advisory passes per brainstorming run.
 12. **User reviews written spec** — ask user to review the spec file before proceeding
 13. **Mark parent bead `reviewed:spec`** — after the full spec gate passes, the main brainstorming flow labels the linked parent bead

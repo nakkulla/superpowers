@@ -157,8 +157,19 @@ Do NOT let Codex own the final design or approval flow.
 Do NOT treat Codex availability as a hard requirement.
 If Codex is unavailable, continue the normal brainstorming flow without it.
 
-Prefer `/codex:rescue` for ideation-stage or pre-spec bounded design tasks.
-Prefer `/codex:adversarial-review` only after a written spec exists and you want a challenge review of the current design.
+Prefer `/codex:rescue --model gpt-5.4-mini --effort medium` for ideation-stage or pre-spec bounded design tasks.
+Prefer `/codex:rescue --model gpt-5.4-mini --effort high` for standard written-spec re-review.
+Prefer `/codex:adversarial-review --model gpt-5.4-mini --effort high` only after a written spec exists and you want a more attacking challenge review of the current design.
+
+Claude Code invocation rules:
+- For ideation-stage or pre-spec sidecar work, use `/codex:rescue` with a compact bounded task packet. Do **not** force the full `brainstorming` skill onto the Codex sidecar for these passes; ask for one bounded advisory task only.
+- For written-spec re-review passes with `/codex:rescue`, explicitly invoke Codex in this form:
+  - `use the spec-review skill for this task: <task>. If the skill is unavailable, do not improvise—report that this Codex sidecar pass could not run and stop this Codex pass only.`
+- For written-spec challenge passes with `/codex:adversarial-review`, explicitly invoke Codex in this form:
+  - `use the spec-review skill as the baseline for this task: <task>. Then aggressively challenge hidden assumptions, contradictions, and failure modes. If the skill is unavailable, do not improvise—report that this Codex sidecar pass could not run and stop this Codex pass only.`
+- Use `gpt-5.4-mini --effort medium` for ideation-stage bounded design passes.
+- Use `gpt-5.4-mini --effort high` for written-spec re-review and adversarial challenge passes.
+- Escalate to `gpt-5.4 --effort medium` only for a final high-stakes challenge pass when earlier `gpt-5.4-mini --effort high` passes still leave unresolved critical design-risk findings.
 
 When delegating to Codex, provide a compact task packet:
 - Goal
@@ -240,6 +251,11 @@ If a written spec exists and optional Codex collaboration is available in Claude
 - Re-run it only after **substantive spec edits** and only when material findings still remain.
 - Cap it at **3 total advisory Codex challenge passes per brainstorming run**, counted cumulatively across the entire run.
 - Treat Codex output as advisory only; Claude Code remains responsible for final judgment, revisions, and user-facing review flow.
+- Prefer `/codex:rescue --model gpt-5.4-mini --effort high` for standard written-spec re-review.
+- Prefer `/codex:adversarial-review --model gpt-5.4-mini --effort high` when you want a more attacking challenge pass against the written design.
+- For `/codex:rescue` written-spec passes, explicitly tell Codex: `use the spec-review skill for this task: <task>. If the skill is unavailable, do not improvise—report that this Codex sidecar pass could not run and stop this Codex pass only.`
+- For `/codex:adversarial-review` written-spec passes, explicitly tell Codex: `use the spec-review skill as the baseline for this task: <task>. Then aggressively challenge hidden assumptions, contradictions, and failure modes. If the skill is unavailable, do not improvise—report that this Codex sidecar pass could not run and stop this Codex pass only.`
+- Escalate to `/codex:adversarial-review --model gpt-5.4 --effort medium` only for a final high-stakes challenge pass when earlier `gpt-5.4-mini --effort high` passes still leave unresolved critical design-risk findings.
 
 Use this only when a real second-opinion challenge review would materially improve the design quality.
 

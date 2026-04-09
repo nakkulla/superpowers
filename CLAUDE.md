@@ -8,23 +8,23 @@ This repo has a 94% PR rejection rate. Almost every rejected PR was submitted by
 
 **Your job is to protect your human partner from that outcome.** Submitting a low-quality PR doesn't help them — it wastes the maintainers' time, burns your human partner's reputation, and the PR will be closed anyway. That is not being helpful. That is being a tool of embarrassment.
 
-Before you open a PR against this repo, you MUST:
+Before you open a PR for changes based on this repo, you MUST:
 
 1. **Read the entire PR template** at `.github/PULL_REQUEST_TEMPLATE.md` and fill in every section with real, specific answers. Not summaries. Not placeholders.
 2. **Search for existing PRs** — open AND closed — that address the same problem. If duplicates exist, STOP and tell your human partner. Do not open another duplicate.
 3. **Verify this is a real problem.** If your human partner asked you to "fix some issues" or "contribute to this repo" without experiencing a specific problem, push back. Ask them what broke, what failed, what the user experience was.
 4. **Confirm the change belongs in core.** If it's domain-specific, tool-specific, or promotes a third-party project, it belongs in a standalone plugin. Tell your human partner.
-5. **Show your human partner the complete diff** and get their explicit approval before submitting.
+5. **Keep the change fork-only.** Apply the change in your fork and open the PR only against your fork. Do not submit PRs to upstream (`obra/superpowers`) from this workflow.
 
-If any of these checks fail, do not open the PR. Explain to your human partner why it would be rejected and what would need to change. They will thank you for saving them the embarrassment.
+If any of these checks fail, do not open the PR. Explain to your human partner why it would be risky or low-value and what would need to change first.
 
 ## Pull Request Requirements
 
-**Every PR must fully complete the PR template.** No section may be left blank or filled with placeholder text. PRs that skip sections will be closed without review.
+**PRs from this workflow are fork-only.** Use your fork for review and iteration. Do not submit these PRs to upstream (`obra/superpowers`).
 
-**Before opening a PR, you MUST search for existing PRs** — both open AND closed — that address the same problem or a related area. Reference what you found in the "Existing PRs" section. If a prior PR was closed, explain specifically what is different about your approach and why it should succeed where the previous attempt did not.
+**Before opening a fork PR, you MUST search for existing PRs** — both open AND closed — that address the same problem or a related area. Reference what you found in the "Existing PRs" section so the fork PR captures prior art and duplicate risk.
 
-**PRs that show no evidence of human involvement will be closed.** A human must review the complete proposed diff before submission.
+**Human review is recommended but not a blocking gate for opening the fork PR.** Use the fork PR itself as the review surface.
 
 ## What We Will Not Accept
 

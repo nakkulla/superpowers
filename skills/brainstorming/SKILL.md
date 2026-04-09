@@ -30,9 +30,10 @@ You MUST create a task for each of these items and complete them in order:
 6. **Present design** — in sections scaled to their complexity, get user approval after each section
 7. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
 8. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-9. **Optional Codex challenge pass (Claude Code only)** — if a written spec exists and a challenge review would materially help, run one bounded Codex critique pass. Treat Codex output as advisory only.
-10. **User reviews written spec** — ask user to review the spec file before proceeding
-11. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+9. **Automatic spec-review in Codex** — in Codex, if subagents are available, dispatch one bounded read-only spec-review subagent after self-review and before user review. Treat the result as advisory; the main agent remains responsible for revisions and final judgment.
+10. **Optional Codex challenge pass (Claude Code only)** — if a written spec exists and a challenge review would materially help, run one bounded Codex critique pass. Treat Codex output as advisory only.
+11. **User reviews written spec** — ask user to review the spec file before proceeding
+12. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
 ## Process Flow
 
@@ -49,7 +50,9 @@ digraph brainstorming {
     "User approves design?" [shape=diamond];
     "Write design doc" [shape=box];
     "Spec self-review\n(fix inline)" [shape=box];
-    "Need bounded Codex challenge pass?" [shape=diamond];
+    "Running in Codex\nwith subagents?" [shape=diamond];
+    "Dispatch automatic\nspec-review subagent" [shape=box];
+    "Need optional Claude Code\nchallenge pass?" [shape=diamond];
     "Run optional Codex challenge pass" [shape=box];
     "User reviews spec?" [shape=diamond];
     "Invoke writing-plans skill" [shape=doublecircle];
@@ -67,9 +70,12 @@ digraph brainstorming {
     "User approves design?" -> "Present design sections" [label="no, revise"];
     "User approves design?" -> "Write design doc" [label="yes"];
     "Write design doc" -> "Spec self-review\n(fix inline)";
-    "Spec self-review\n(fix inline)" -> "Need bounded Codex challenge pass?";
-    "Need bounded Codex challenge pass?" -> "Run optional Codex challenge pass" [label="yes"];
-    "Need bounded Codex challenge pass?" -> "User reviews spec?" [label="no"];
+    "Spec self-review\n(fix inline)" -> "Running in Codex\nwith subagents?";
+    "Running in Codex\nwith subagents?" -> "Dispatch automatic\nspec-review subagent" [label="yes"];
+    "Running in Codex\nwith subagents?" -> "Need optional Claude Code\nchallenge pass?" [label="no"];
+    "Dispatch automatic\nspec-review subagent" -> "Need optional Claude Code\nchallenge pass?";
+    "Need optional Claude Code\nchallenge pass?" -> "Run optional Codex challenge pass" [label="yes"];
+    "Need optional Claude Code\nchallenge pass?" -> "User reviews spec?" [label="no"];
     "Run optional Codex challenge pass" -> "User reviews spec?";
     "User reviews spec?" -> "Write design doc" [label="changes requested"];
     "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
@@ -200,11 +206,14 @@ After writing the spec document, look at it with fresh eyes:
 
 Fix any issues inline. No need to re-review — just fix and move on.
 
+**Codex automatic spec-review:**
+In Codex, after self-review and before the User Review Gate, automatically dispatch one bounded read-only spec-review subagent when subagents are available. This is the default Codex path, not an optional extra. The subagent should review the written spec for completeness, contradictions, ambiguity, scope, and implementation-planning readiness, then return advisory findings only. The main agent remains responsible for deciding what to change, applying any revisions inline, and keeping the user-facing review flow. If subagents are unavailable, continue the normal flow without blocking.
+
 If a written spec exists and optional Codex collaboration is available in Claude Code, you may run one bounded Codex challenge pass after self-review and before the User Review Gate. Use this only when a real second-opinion challenge review would materially improve the design quality.
 
 ### Beads Integration (Post-Spec-Review)
 
-After the spec review loop passes and before presenting the spec to the user for review,
+After self-review and any Codex spec-review pass have been resolved, and before presenting the spec to the user for review,
 connect the spec to the Beads issue tracker if `.beads/` directory exists in the project:
 
 **HARD GATE:** If `.beads/` exists and `bd` is available, do not proceed to the User Review Gate until the spec is linked to a Beads **parent** issue, or the explicit open standalone issue has been promoted in place to the appropriate parent type and linked.
@@ -243,11 +252,11 @@ If `.beads/` does not exist, skip this step entirely.
 
 **User Review Gate:**
 
-After the spec review loop passes, ask the user to review the written spec before proceeding:
+After self-review and any Codex spec-review pass are complete, ask the user to review the written spec before proceeding:
 
 > "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we proceed to the next step."
 
-Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
+Wait for the user's response. If they request changes, make them and re-run self-review plus any Codex spec-review pass that applies. Only proceed once the user approves.
 
 **Implementation:**
 

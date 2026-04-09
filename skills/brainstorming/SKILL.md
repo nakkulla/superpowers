@@ -320,7 +320,11 @@ After the user approves the written spec, the **brainstorming** flow owns the fi
   - `bd update <parent-id> --add-label reviewed:spec`
   - `bd dolt push`
 - If the label already exists, leave it in place.
-- If the user later requests additional spec changes, re-run the full spec gate before proceeding again. `spec-review` itself remains review-only and does not own this label.
+- If substantive spec edits are made **after** `reviewed:spec` was applied, first invalidate the stale label with:
+  - `bd update <parent-id> --remove-label reviewed:spec`
+  - `bd dolt push`
+  Then re-run the full spec gate and re-apply the label only after the updated spec passes again.
+- `spec-review` itself remains review-only and does not own this label.
 
 **Implementation:**
 

@@ -34,7 +34,8 @@ You MUST create a task for each of these items and complete them in order:
 10. **Codex re-review loop** — in Codex, after the main-agent `spec-review` fixes, dispatch a bounded read-only re-review subagent that uses the `spec-review` skill/rubric. The subagent is advisory only; the main agent applies revisions and owns final judgment. Cap this loop at 3 re-review passes.
 11. **Optional Codex challenge re-review loop (Claude Code only)** — if a written spec exists and Claude Code has `codex-plugin-cc` available, default to one bounded advisory Codex critique pass after the main-agent `spec-review`. If substantive spec edits are made and material findings remain, you may re-run it up to 3 total advisory passes per brainstorming run.
 12. **User reviews written spec** — ask user to review the spec file before proceeding
-13. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+13. **Mark parent bead `reviewed:spec`** — after the full spec gate passes, the main brainstorming flow labels the linked parent bead
+14. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
 ## Process Flow
 
@@ -61,6 +62,7 @@ digraph brainstorming {
     "Run optional Codex\nchallenge pass" [shape=box];
     "Claude Code advisory passes\n< 3 and substantive changes remain?" [shape=diamond];
     "User reviews spec?" [shape=diamond];
+    "Mark parent bead\nreviewed:spec" [shape=box];
     "Invoke writing-plans skill" [shape=doublecircle];
 
     "Explore project context" -> "Visual questions ahead?";
@@ -91,7 +93,8 @@ digraph brainstorming {
     "Claude Code advisory passes\n< 3 and substantive changes remain?" -> "Run optional Codex\nchallenge pass" [label="yes"];
     "Claude Code advisory passes\n< 3 and substantive changes remain?" -> "User reviews spec?" [label="no"];
     "User reviews spec?" -> "Write design doc" [label="changes requested"];
-    "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
+    "User reviews spec?" -> "Mark parent bead\nreviewed:spec" [label="approved"];
+    "Mark parent bead\nreviewed:spec" -> "Invoke writing-plans skill";
 }
 ```
 
@@ -305,6 +308,19 @@ After self-review, the main-agent `spec-review`, and any Codex re-review loop ar
 > "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we proceed to the next step."
 
 Wait for the user's response. If they request changes, make them and re-run self-review, the main-agent `spec-review`, and any applicable Codex re-review loop. Only proceed once the user approves.
+
+### Beads Review Gate Completion
+
+After the user approves the written spec, the **brainstorming** flow owns the final Beads review-gate transition.
+
+- If `.beads/` does not exist, skip this step.
+- Reuse the same **parent** bead resolved in the Beads Integration step. Do **not** label a child issue.
+- Add the label only after the full spec gate passes: self-review, main-agent `spec-review`, any applicable Codex/Claude re-review loops, and user approval of the written spec.
+- Apply the label with:
+  - `bd update <parent-id> --add-label reviewed:spec`
+  - `bd dolt push`
+- If the label already exists, leave it in place.
+- If the user later requests additional spec changes, re-run the full spec gate before proceeding again. `spec-review` itself remains review-only and does not own this label.
 
 **Implementation:**
 

@@ -6,8 +6,6 @@ Use this template when dispatching a spec document reviewer subagent.
 
 **Dispatch after:** Spec document is written to docs/superpowers/specs/
 
-**Legacy Codex prompt-injection path (not the default anymore):** Read this file in the main agent, render the placeholders, and quote the rendered rubric directly into the subagent prompt. Do **not** only pass the file path and ask the subagent to read it later. Keep the subagent run read-only and advisory.
-
 ```
 Task tool (general-purpose):
   description: "Review spec document"

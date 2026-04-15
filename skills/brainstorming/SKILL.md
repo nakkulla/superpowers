@@ -30,16 +30,16 @@ You MUST create a task for each of these items and complete them in order:
 6. **Present design** — in sections scaled to their complexity, get user approval after each section
 7. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
 8. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-9. **Main-agent spec-review** — invoke the `spec-review` skill in the main agent after self-review and before user review; apply the resulting revisions inline before continuing. Reading `spec-review` references, doing a checklist pass, or saying "spec-review 기준으로 점검" does **not** satisfy this step. This step is complete only after the main agent has produced the formal `spec-review` output, including `## Spec Review` and `Verdict:`.
-10. **Codex re-review loop** — in Codex, after the main-agent `spec-review` fixes, dispatch a bounded read-only re-review subagent whose prompt is rendered from the companion `./spec-document-reviewer-prompt.md` template and injected inline. The subagent is advisory only; the main agent applies revisions and owns final judgment. Cap this loop at 3 re-review passes. This step is complete only after the spawned reviewer has returned and the main agent has explicitly summarized which findings were applied, deferred, or rejected.
+9. **Formal spec-review gate** — after self-review and before user review, run a formal `spec-review`. In Codex, if `spawn_agent` is available, the default path is a bounded read-only subagent that invokes the `spec-review` skill on the current spec path. If subagents are unavailable, the main agent may invoke `spec-review` directly as a fallback. Reading `spec-review` references, doing a checklist pass, or saying "spec-review 기준으로 점검" does **not** satisfy this step. This step is complete only after the transcript contains the formal `## Spec Review` output with `Verdict:` and the main agent has summarized what changed.
+10. **Automatic Codex spec-review loop** — in Codex, when `spawn_agent` is available, re-dispatch a bounded read-only subagent that invokes `spec-review` after each **substantive** spec edit until the review reaches a non-blocking verdict (`APPROVE` or `APPROVE_WITH_CHANGES`), the pass cap is reached, or the same material findings repeat without substantive progress. The subagent is advisory only; the main agent applies revisions and owns final judgment. Cap this loop at 3 automatic passes. Do **not** ask the user whether to run this mandatory loop.
     Hard gate:
-    - In Codex, if `spawn_agent` is available, this re-review subagent pass is mandatory.
+    - In Codex, if `spawn_agent` is available, this spec-review subagent path is mandatory.
     - Do NOT mark `reviewed:spec`.
     - Do NOT invoke `writing-plans`.
     - Do NOT say the spec gate is complete.
-    - Do NOT proceed if the transcript lacks both the formal main-agent `spec-review` output and, when subagents are available, a completed spawned re-review result plus reconciliation summary.
-    until the subagent pass has finished and its findings have been reconciled by the main agent.
-11. **Optional Codex challenge re-review loop (Claude Code only)** — if a written spec exists and Claude Code has `codex-plugin-cc` available, default to one bounded advisory Codex critique pass after the main-agent `spec-review`. If substantive spec edits are made and material findings remain, you may re-run it up to 3 total advisory passes per brainstorming run.
+    - Do NOT proceed if the transcript lacks a completed formal `spec-review` result and, when subagents are available, the main agent's reconciliation summary for the latest pass.
+    until the latest pass has finished and its findings have been reconciled by the main agent.
+11. **Optional Codex challenge re-review loop (Claude Code only)** — if a written spec exists and Claude Code has `codex-plugin-cc` available, default to one bounded advisory Codex critique pass after the formal `spec-review` gate is already non-blocking. If substantive spec edits are made and material findings remain, you may re-run it up to 3 total advisory passes per brainstorming run.
 12. **User reviews written spec** — ask user to review the spec file before proceeding
 13. **Mark parent bead `reviewed:spec`** — after the full spec gate passes, the main brainstorming flow labels the linked parent bead
 14. **Transition to implementation** — invoke writing-plans skill to create implementation plan. Do **not** transition from a chat-only draft: planning starts only after a written spec file exists, is linked via `spec_id`, and passes the spec gate.
@@ -59,12 +59,9 @@ digraph brainstorming {
     "User approves design?" [shape=diamond];
     "Write design doc" [shape=box];
     "Spec self-review\n(fix inline)" [shape=box];
-    "Run main-agent\nspec-review" [shape=box];
-    "Apply main-agent\nspec-review fixes" [shape=box];
-    "Running in Codex\nwith subagents?" [shape=diamond];
-    "Dispatch re-review\nsubagent" [shape=box];
-    "Main agent applies\nre-review fixes" [shape=box];
-    "Re-review passes\n< 3 and substantive changes made?" [shape=diamond];
+    "Run formal\nspec-review" [shape=box];
+    "Apply spec-review\nfixes" [shape=box];
+    "Need another automatic\nspec-review pass?" [shape=diamond];
     "Need optional Claude Code\nchallenge pass?" [shape=diamond];
     "Run optional Codex\nchallenge pass" [shape=box];
     "Claude Code advisory passes\n< 3 and substantive changes remain?" [shape=diamond];
@@ -85,15 +82,11 @@ digraph brainstorming {
     "User approves design?" -> "Present design sections" [label="no, revise"];
     "User approves design?" -> "Write design doc" [label="yes"];
     "Write design doc" -> "Spec self-review\n(fix inline)";
-    "Spec self-review\n(fix inline)" -> "Run main-agent\nspec-review";
-    "Run main-agent\nspec-review" -> "Apply main-agent\nspec-review fixes";
-    "Apply main-agent\nspec-review fixes" -> "Running in Codex\nwith subagents?";
-    "Running in Codex\nwith subagents?" -> "Dispatch re-review\nsubagent" [label="yes"];
-    "Running in Codex\nwith subagents?" -> "Need optional Claude Code\nchallenge pass?" [label="no"];
-    "Dispatch re-review\nsubagent" -> "Main agent applies\nre-review fixes";
-    "Main agent applies\nre-review fixes" -> "Re-review passes\n< 3 and substantive changes made?";
-    "Re-review passes\n< 3 and substantive changes made?" -> "Dispatch re-review\nsubagent" [label="yes"];
-    "Re-review passes\n< 3 and substantive changes made?" -> "Need optional Claude Code\nchallenge pass?" [label="no"];
+    "Spec self-review\n(fix inline)" -> "Run formal\nspec-review";
+    "Run formal\nspec-review" -> "Apply spec-review\nfixes";
+    "Apply spec-review\nfixes" -> "Need another automatic\nspec-review pass?";
+    "Need another automatic\nspec-review pass?" -> "Run formal\nspec-review" [label="yes"];
+    "Need another automatic\nspec-review pass?" -> "Need optional Claude Code\nchallenge pass?" [label="no"];
     "Need optional Claude Code\nchallenge pass?" -> "Run optional Codex\nchallenge pass" [label="yes"];
     "Need optional Claude Code\nchallenge pass?" -> "User reviews spec?" [label="no"];
     "Run optional Codex\nchallenge pass" -> "Claude Code advisory passes\n< 3 and substantive changes remain?";
@@ -173,8 +166,8 @@ Prefer `/codex:adversarial-review --model gpt-5.4-mini --effort high` only after
 
 Claude Code invocation rules:
 - For ideation-stage or pre-spec sidecar work, use `/codex:rescue` with a compact bounded task packet. Do **not** force the full `brainstorming` skill onto the Codex sidecar for these passes; ask for one bounded advisory task only.
-- For written-spec re-review passes with `/codex:rescue`, render the companion `./spec-document-reviewer-prompt.md` template with the current spec path and inject that rubric inline into the Codex sidecar prompt. Do not rely on Codex-side skill availability for this default path.
-- For written-spec challenge passes with `/codex:adversarial-review`, render the companion `./spec-document-reviewer-prompt.md` template inline as the baseline rubric, then explicitly tell Codex to aggressively challenge hidden assumptions, contradictions, and failure modes on top of that rubric.
+- For written-spec re-review passes with `/codex:rescue`, tell Codex to invoke the `spec-review` skill on the current spec path and return the formal review block. Do **not** inject `./spec-document-reviewer-prompt.md`.
+- For written-spec challenge passes with `/codex:adversarial-review`, pass the current spec path plus the explicit challenge focus. Do **not** inject `./spec-document-reviewer-prompt.md` as the baseline rubric.
 - Use `gpt-5.4-mini --effort medium` for ideation-stage bounded design passes.
 - Use `gpt-5.4-mini --effort high` for written-spec re-review and adversarial challenge passes.
 - Escalate to `gpt-5.4 --effort medium` only for a final high-stakes challenge pass when earlier `gpt-5.4-mini --effort high` passes still leave unresolved critical design-risk findings.
@@ -238,37 +231,36 @@ After writing the spec document, look at it with fresh eyes:
 
 Fix any issues inline before moving to the formal review pass.
 
-**Main-agent spec-review:**
-After self-review, run the `spec-review` skill in the main agent before the User Review Gate. This is the official first-pass review for the written spec. Resolve the resulting findings inline before continuing. The main agent owns the review outcome, decides what changes to apply, and remains responsible for the user-facing summary and approval flow.
+**Formal spec-review gate:**
+After self-review, run a formal `spec-review` before the User Review Gate. In Codex, if `spawn_agent` is available, the default path is a bounded read-only subagent that invokes the `spec-review` skill on the current spec path. If subagents are unavailable, the main agent may invoke `spec-review` directly as a fallback. Resolve the resulting findings inline before continuing. The main agent owns the final judgment, decides what changes to apply, and remains responsible for the user-facing summary and approval flow.
 
-Do **not** substitute this with a self-check against `spec-review/references/*`, a generic criteria read-through, or wording like "spec-review 기준으로 점검했다." The requirement is satisfied only when the main agent actually invokes the `spec-review` skill and produces the formal review output before continuing.
+Do **not** substitute this with a self-check against `spec-review/references/*`, a generic criteria read-through, or wording like "spec-review 기준으로 점검했다." The requirement is satisfied only when the transcript actually contains the formal `spec-review` output before continuing.
 
 Completion evidence for this step:
 - The user-facing transcript contains the formal `spec-review` output block, including `## Spec Review` and `Verdict:`.
 - The main agent records what changed after that review, even if the answer is "no spec changes were needed."
 - If you cannot produce that formal review output yet, you are still before the User Review Gate.
 
-**Codex re-review loop:**
-In Codex, after the main-agent `spec-review` fixes and before the User Review Gate, dispatch a bounded read-only re-review subagent when subagents are available. This is the default Codex follow-up path after the main-agent review.
+**Automatic Codex spec-review loop:**
+In Codex, after each substantive spec edit and before the User Review Gate, dispatch a bounded read-only subagent when subagents are available and have it invoke the `spec-review` skill on the current spec path. This is the default Codex review path for written specs.
 
-- Prefer the `code-reviewer` agent type for this re-review pass.
+- Prefer the `code-reviewer` agent type for this review pass.
 - Use `spawn_agent` for this pass when that tool is available in Codex.
-- Render the companion `./spec-document-reviewer-prompt.md` template with the current spec path and inject that rendered rubric directly into the subagent prompt.
-- Do **not** just pass the file path and ask the subagent to go read it later.
-- Do **not** rely on the subagent having the `spec-review` skill available for the default Codex path.
+- Instruct the subagent to invoke the `spec-review` skill on the current spec path. Do **not** inject `./spec-document-reviewer-prompt.md`.
+- Do **not** ask the user whether to run this mandatory loop.
 - Treat subagent output as advisory only; the main agent remains responsible for deciding what to change and for applying revisions inline.
-- Re-dispatch the re-review subagent only after **substantive spec edits** — edits that materially resolve findings, clarify requirements, tighten scope, or change implementation-planning readiness. Do not spend a re-review pass on cosmetic wording-only changes.
-- Cap the automatic re-review loop at **3 total subagent re-review passes per brainstorming run**, counted cumulatively across the entire run, including any later user-requested spec revision cycles.
-- Stop early if the spec is already clean enough for user review or if another loop is unlikely to materially improve the spec.
+- Re-dispatch the review subagent only after **substantive spec edits** — edits that materially resolve findings, clarify requirements, tighten scope, or change implementation-planning readiness. Do not spend a pass on cosmetic wording-only changes.
+- Cap the automatic loop at **3 total subagent spec-review passes per brainstorming run**, counted cumulatively across the entire run, including any later user-requested spec revision cycles.
+- Stop the loop when the latest formal verdict is non-blocking (`APPROVE` or `APPROVE_WITH_CHANGES`), or when repeated blocking findings show no substantive progress. If the cap is reached while the verdict is still blocking, surface the remaining blockers to the user instead of silently proceeding.
 
 If subagents are unavailable, continue the normal flow without blocking.
 
 Completion evidence for this step:
 - The transcript shows the actual subagent dispatch plus a completed result, unless subagents are unavailable.
-- The main agent then summarizes what it adopted, deferred, or rejected from that re-review.
+- The main agent then summarizes what it adopted, deferred, or rejected from that review pass.
 - If `spawn_agent` is available and you skipped this anyway, the spec gate has not passed.
 
-If a written spec exists and optional Codex collaboration is available in Claude Code, you may run a bounded Codex advisory challenge pass after the main-agent `spec-review` and any Codex re-review loop, and before the User Review Gate.
+If a written spec exists and optional Codex collaboration is available in Claude Code, you may run a bounded Codex advisory challenge pass after the formal `spec-review` gate is already non-blocking and before the User Review Gate.
 
 - Default to **one** advisory Codex challenge pass.
 - Re-run it only after **substantive spec edits** and only when material findings still remain.
@@ -276,15 +268,15 @@ If a written spec exists and optional Codex collaboration is available in Claude
 - Treat Codex output as advisory only; Claude Code remains responsible for final judgment, revisions, and user-facing review flow.
 - Prefer `/codex:rescue --model gpt-5.4-mini --effort high` for standard written-spec re-review.
 - Prefer `/codex:adversarial-review --model gpt-5.4-mini --effort high` when you want a more attacking challenge pass against the written design.
-- For `/codex:rescue` written-spec passes, render the companion `./spec-document-reviewer-prompt.md` template with the current spec path and inject it inline into the Codex prompt as the review rubric.
-- For `/codex:adversarial-review` written-spec passes, render the companion `./spec-document-reviewer-prompt.md` template inline as the baseline rubric, then explicitly tell Codex to aggressively challenge hidden assumptions, contradictions, and failure modes on top of that rubric.
+- For `/codex:rescue` written-spec passes, tell Codex to invoke the `spec-review` skill on the current spec path and return the formal review block.
+- For `/codex:adversarial-review` written-spec passes, pass the current spec path plus explicit instructions to aggressively challenge hidden assumptions, contradictions, and failure modes. Do **not** inject `./spec-document-reviewer-prompt.md`.
 - Escalate to `/codex:adversarial-review --model gpt-5.4 --effort medium` only for a final high-stakes challenge pass when earlier `gpt-5.4-mini --effort high` passes still leave unresolved critical design-risk findings.
 
 Use this only when a real second-opinion challenge review would materially improve the design quality.
 
 ### Beads Integration (Post-Spec-Review)
 
-After self-review, the main-agent `spec-review`, and any Codex re-review loop have been resolved, and before presenting the spec to the user for review,
+After self-review, the formal `spec-review` gate, and any Codex challenge pass have been resolved, and before presenting the spec to the user for review,
 connect the spec to the Beads issue tracker if `.beads/` directory exists in the project:
 
 **HARD GATE:** If `.beads/` exists and `bd` is available, do not proceed to the User Review Gate until the spec is linked to a Beads **parent** issue, or the explicit open standalone issue has been promoted in place to the appropriate parent type and linked.
@@ -319,24 +311,22 @@ connect the spec to the Beads issue tracker if `.beads/` directory exists in the
 
 If `.beads/` does not exist, skip this step entirely.
 
-**IMPORTANT: If you dispatch a spec-document-reviewer subagent using the companion prompt template, you MUST include `model: "sonnet"` in the Agent tool call parameters.**
-
 **User Review Gate:**
 
-After self-review, the main-agent `spec-review`, and any Codex re-review loop are complete, ask the user to review the written spec before proceeding.
+After self-review, the formal `spec-review` gate, and any Codex challenge pass are complete, ask the user to review the written spec before proceeding.
 
 Do **not** enter this gate unless all of the following are true:
 - the spec is written to a real file path
-- the main-agent `spec-review` output was actually produced
-- the resulting main-agent fixes were reconciled
-- any mandatory Codex re-review pass was completed and reconciled
+- the latest formal `spec-review` output was actually produced
+- the resulting fixes were reconciled
+- any mandatory Codex automatic review pass was completed and reconciled
 - any required Beads parent linkage via `spec_id` is already in place
 
 Then ask the user:
 
 > "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we proceed to the next step."
 
-Wait for the user's response. If they request changes, make them and re-run self-review, the main-agent `spec-review`, and any applicable Codex re-review loop. Only proceed once the user approves.
+Wait for the user's response. If they request changes, make them and re-run self-review, the formal `spec-review` gate, and any applicable Codex automatic review loop. Only proceed once the user approves.
 
 ### Beads Review Gate Completion
 
@@ -344,7 +334,7 @@ After the user approves the written spec, the **brainstorming** flow owns the fi
 
 - If `.beads/` does not exist, skip this step.
 - Reuse the same **parent** bead resolved in the Beads Integration step. Do **not** label a child issue.
-- Add the label only after the full spec gate passes: self-review, main-agent `spec-review`, any applicable Codex/Claude re-review loops, and user approval of the written spec.
+- Add the label only after the full spec gate passes: self-review, the formal `spec-review` gate, any applicable Codex/Claude challenge loops, and user approval of the written spec.
 - Apply the label with:
   - `bd update <parent-id> --add-label reviewed:spec`
   - `bd dolt push`

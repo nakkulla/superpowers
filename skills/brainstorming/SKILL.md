@@ -41,7 +41,7 @@ You MUST create a task for each of these items and complete them in order:
 11. **Optional Codex challenge re-review loop (Claude Code only)** — if a written spec exists and Claude Code has `codex-plugin-cc` available, default to one bounded advisory Codex critique pass after the main-agent `spec-review`. If substantive spec edits are made and material findings remain, you may re-run it up to 3 total advisory passes per brainstorming run.
 12. **User reviews written spec** — ask user to review the spec file before proceeding
 13. **Mark parent bead `reviewed:spec`** — after the full spec gate passes, the main brainstorming flow labels the linked parent bead
-14. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+14. **Transition to implementation** — invoke writing-plans skill to create implementation plan. Do **not** transition from a chat-only draft: planning starts only after a written spec file exists, is linked via `spec_id`, and passes the spec gate.
 
 ## Process Flow
 

@@ -30,7 +30,7 @@ You MUST create a task for each of these items and complete them in order:
 6. **Present design** — in sections scaled to their complexity, get user approval after each section
 7. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
 8. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-9. **Main-agent spec-review** — invoke the `spec-review` skill in the main agent after self-review and before user review; apply the resulting revisions inline before continuing.
+9. **Main-agent spec-review** — invoke the `spec-review` skill in the main agent after self-review and before user review; apply the resulting revisions inline before continuing. Reading `spec-review` references, doing a checklist pass, or saying "spec-review 기준으로 점검" does **not** satisfy this step.
 10. **Codex re-review loop** — in Codex, after the main-agent `spec-review` fixes, dispatch a bounded read-only re-review subagent whose prompt is rendered from the companion `./spec-document-reviewer-prompt.md` template and injected inline. The subagent is advisory only; the main agent applies revisions and owns final judgment. Cap this loop at 3 re-review passes.
     Hard gate:
     - In Codex, if `spawn_agent` is available, this re-review subagent pass is mandatory.
@@ -239,6 +239,8 @@ Fix any issues inline before moving to the formal review pass.
 
 **Main-agent spec-review:**
 After self-review, run the `spec-review` skill in the main agent before the User Review Gate. This is the official first-pass review for the written spec. Resolve the resulting findings inline before continuing. The main agent owns the review outcome, decides what changes to apply, and remains responsible for the user-facing summary and approval flow.
+
+Do **not** substitute this with a self-check against `spec-review/references/*`, a generic criteria read-through, or wording like "spec-review 기준으로 점검했다." The requirement is satisfied only when the main agent actually invokes the `spec-review` skill and produces the formal review output before continuing.
 
 **Codex re-review loop:**
 In Codex, after the main-agent `spec-review` fixes and before the User Review Gate, dispatch a bounded read-only re-review subagent when subagents are available. This is the default Codex follow-up path after the main-agent review.

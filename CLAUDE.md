@@ -91,7 +91,18 @@ This repo is the **source of truth**. After making any changes here, you MUST sy
 
 These are separate copies (not symlinks). Changes made only in the repo will not take effect until synced. Changes made only in the plugin directories will be lost on next sync/install.
 
-**Sync order:** Always edit in this repo first. Copy changes to `/Users/isy_macstudio/GitHub/superpowers`, `~/.claude/plugins/marketplaces/superpowers-custom`, `~/.claude/plugins/cache/superpowers-custom`, and the active Claude cache version directory at `~/.claude/plugins/cache/superpowers-custom/superpowers/<active-version>` when present. Do **not** hardcode the version number — inspect the installed cache first. For `~/.codex/superpowers`, do **not** sync via `cp`; commit and push from this repo first, then run `git pull` there to reflect the change.
+**Preferred workflow:** Always edit in this repo first, then use the sync script instead of hand-copying paths:
+
+```bash
+scripts/sync-local-plugin-copies.sh copy
+scripts/sync-local-plugin-copies.sh verify
+scripts/sync-local-plugin-copies.sh after-commit
+```
+
+- `copy` syncs tracked working-tree files to installed Claude/plugin copies, including discovered Claude cache version directories
+- `verify` checks those copies for drift and also reports whether `~/.codex/superpowers` matches repo HEAD
+- `after-commit` is the Codex step: commit/push from this repo first, then let the script run `git pull --ff-only` in `~/.codex/superpowers`
+- Do **not** sync `~/.codex/superpowers` via `cp`
 
 ## General
 

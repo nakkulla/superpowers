@@ -168,6 +168,16 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 After saving the plan and completing the built-in self-review, connect the plan
 to the Beads issue tracker if `.beads/` directory exists in the project:
 
+**Hard gate:** When `.beads/` exists, the plan is not complete until one of the
+following is true:
+- an `open` or `in_progress` parent bead is linked to the current plan
+- a new follow-up parent bead has been created and linked to the current spec/plan
+- the user explicitly chose to defer bead creation/linkage for now
+
+Do **not** stop with "no matching parent bead found" or "linkage not done yet".
+If the closest related bead is `resolved` or `closed`, treat that as
+"new follow-up parent bead required", not as a reason to end the turn.
+
 **Safety check:** Link the plan to the Beads **parent** issue only.
 
 1. Search for a related **parent** bead via `bd list --json` (priority order):
@@ -180,11 +190,18 @@ to the Beads issue tracker if `.beads/` directory exists in the project:
 5. Re-check that `metadata.plan` is set correctly.
 6. If the matched parent bead status is `resolved` or `closed`, do **not** overwrite its `metadata.plan`.
    - Treat this as follow-up work beyond the original bead scope.
-   - Ask the user whether to create a new follow-up parent bead instead.
+   - Ask the user via the platform-appropriate confirmation tool whether to create a new follow-up parent bead instead.
    - If approved, create the new bead and connect it back to the original bead with `discovered-from` when possible (for example: `bd dep add <new-id> <old-id> --type discovered-from`).
+   - If the current plan was written from a saved spec, set the new bead's `spec_id` to that spec path before finishing linkage.
    - Immediately after creation: `bd update <new-id> --set-metadata plan=<path> --add-label has:plan`
-   - Re-check that `metadata.plan` is set correctly on the new parent bead.
-7. If not found → ask user via AskUserQuestion, then create per the Beads spec/plan linking rules
+   - Re-check that both `spec_id` (when applicable) and `metadata.plan` are set correctly on the new parent bead.
+7. If not found:
+   - Ask the user via the platform-appropriate confirmation tool whether to create a new parent bead now or explicitly defer it.
+   - If approved, create the new parent bead per the Beads spec/plan linking rules.
+   - If the current plan was written from a saved spec, set the new bead's `spec_id` to that spec path.
+   - Immediately after creation: `bd update <new-id> --set-metadata plan=<path> --add-label has:plan`
+   - Re-check that both `spec_id` (when applicable) and `metadata.plan` are set correctly on the new parent bead.
+   - If the user explicitly defers creation, report that choice clearly instead of implying linkage is already done.
 8. `bd dolt push`
 
 If `.beads/` does not exist, skip this step entirely.
@@ -201,6 +218,9 @@ yet have `reviewed:plan`.
 After saving the plan, completing the built-in self-review, and finishing any
 Beads linkage:
 
+- If `.beads/` exists, do **not** stop until the current plan is linked to an
+  active parent bead, a new follow-up parent bead has been created and linked,
+  or the user explicitly deferred bead creation/linkage.
 - Report that the plan was saved and include the final plan path.
 - Stop after planning in this turn.
 - Do **not** proactively offer execution choices in the same response.

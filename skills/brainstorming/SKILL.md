@@ -30,7 +30,7 @@ You MUST create a task for each of these items and complete them in order:
 6. **Present design** — in sections scaled to their complexity, get user approval after each section
 7. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
 8. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-9. **Formal spec-review gate** — after self-review and before user review, run a formal `spec-review`. In Codex, if `spawn_agent` is available, the default path is a bounded read-only subagent that invokes the `spec-review` skill on the current spec path. If subagents are unavailable, the main agent may invoke `spec-review` directly as a fallback. Reading `spec-review` references, doing a checklist pass, or saying "spec-review 기준으로 점검" does **not** satisfy this step. This step is complete only after the transcript contains the formal `## Spec Review` output with `Verdict:` and the main agent has summarized what changed.
+9. **Formal spec-review gate** — after self-review and before user review, run a formal `spec-review`. In Codex, if `spawn_agent` is available, the default path is a bounded read-only subagent that invokes the `spec-review` skill on the current spec path. If subagents are unavailable, the main agent may invoke `spec-review` directly as a fallback. Reading `spec-review` references, doing a checklist pass, or saying "spec-review 기준으로 점검" does **not** satisfy this step. This step is complete only after the transcript contains the formal `## Spec Review` output with `Verdict:` and the main agent has summarized what changed. When the formal review was produced by a subagent, the main agent must surface that latest formal review block into the main transcript before or alongside the reconciliation summary.
 10. **Automatic Codex spec-review loop** — in Codex, when `spawn_agent` is available, re-dispatch a bounded read-only subagent that invokes `spec-review` after each **substantive** spec edit until the review reaches a non-blocking verdict (`APPROVE` or `APPROVE_WITH_CHANGES`), the pass cap is reached, or the same material findings repeat without substantive progress. The subagent is advisory only; the main agent applies revisions and owns final judgment. Cap this loop at 3 automatic passes. Do **not** ask the user whether to run this mandatory loop.
     Hard gate:
     - In Codex, if `spawn_agent` is available, this spec-review subagent path is mandatory.
@@ -257,6 +257,7 @@ If subagents are unavailable, continue the normal flow without blocking.
 
 Completion evidence for this step:
 - The transcript shows the actual subagent dispatch plus a completed result, unless subagents are unavailable.
+- If the review was performed by a subagent, the main agent surfaces the latest formal `## Spec Review` block in the main transcript before or alongside its reconciliation summary.
 - The main agent then summarizes what it adopted, deferred, or rejected from that review pass.
 - If `spawn_agent` is available and you skipped this anyway, the spec gate has not passed.
 

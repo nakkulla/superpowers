@@ -31,7 +31,7 @@ You MUST create a task for each of these items and complete them in order:
 7. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
 8. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 9. **Main-agent spec-review** — invoke the `spec-review` skill in the main agent after self-review and before user review; apply the resulting revisions inline before continuing.
-10. **Codex re-review loop** — in Codex, after the main-agent `spec-review` fixes, dispatch a bounded read-only re-review subagent that uses the `spec-review` skill/rubric. The subagent is advisory only; the main agent applies revisions and owns final judgment. Cap this loop at 3 re-review passes.
+10. **Codex re-review loop** — in Codex, after the main-agent `spec-review` fixes, dispatch a bounded read-only re-review subagent whose prompt is rendered from the companion `./spec-document-reviewer-prompt.md` template and injected inline. The subagent is advisory only; the main agent applies revisions and owns final judgment. Cap this loop at 3 re-review passes.
     Hard gate:
     - In Codex, if `spawn_agent` is available, this re-review subagent pass is mandatory.
     - Do NOT mark `reviewed:spec`.
@@ -172,10 +172,8 @@ Prefer `/codex:adversarial-review --model gpt-5.4-mini --effort high` only after
 
 Claude Code invocation rules:
 - For ideation-stage or pre-spec sidecar work, use `/codex:rescue` with a compact bounded task packet. Do **not** force the full `brainstorming` skill onto the Codex sidecar for these passes; ask for one bounded advisory task only.
-- For written-spec re-review passes with `/codex:rescue`, explicitly invoke Codex in this form:
-  - `use the spec-review skill for this task: <task>. If the skill is unavailable, do not improvise—report that this Codex sidecar pass could not run and stop this Codex pass only.`
-- For written-spec challenge passes with `/codex:adversarial-review`, explicitly invoke Codex in this form:
-  - `use the spec-review skill as the baseline for this task: <task>. Then aggressively challenge hidden assumptions, contradictions, and failure modes. If the skill is unavailable, do not improvise—report that this Codex sidecar pass could not run and stop this Codex pass only.`
+- For written-spec re-review passes with `/codex:rescue`, render the companion `./spec-document-reviewer-prompt.md` template with the current spec path and inject that rubric inline into the Codex sidecar prompt. Do not rely on Codex-side skill availability for this default path.
+- For written-spec challenge passes with `/codex:adversarial-review`, render the companion `./spec-document-reviewer-prompt.md` template inline as the baseline rubric, then explicitly tell Codex to aggressively challenge hidden assumptions, contradictions, and failure modes on top of that rubric.
 - Use `gpt-5.4-mini --effort medium` for ideation-stage bounded design passes.
 - Use `gpt-5.4-mini --effort high` for written-spec re-review and adversarial challenge passes.
 - Escalate to `gpt-5.4 --effort medium` only for a final high-stakes challenge pass when earlier `gpt-5.4-mini --effort high` passes still leave unresolved critical design-risk findings.
@@ -246,7 +244,9 @@ After self-review, run the `spec-review` skill in the main agent before the User
 In Codex, after the main-agent `spec-review` fixes and before the User Review Gate, dispatch a bounded read-only re-review subagent when subagents are available. This is the default Codex follow-up path after the main-agent review.
 
 - Prefer the `code-reviewer` agent type for this re-review pass.
-- Explicitly instruct the subagent to use the available `spec-review` skill/rubric rather than doing a generic review.
+- Render the companion `./spec-document-reviewer-prompt.md` template with the current spec path and inject that rendered rubric directly into the subagent prompt.
+- Do **not** just pass the file path and ask the subagent to go read it later.
+- Do **not** rely on the subagent having the `spec-review` skill available for the default Codex path.
 - Treat subagent output as advisory only; the main agent remains responsible for deciding what to change and for applying revisions inline.
 - Re-dispatch the re-review subagent only after **substantive spec edits** — edits that materially resolve findings, clarify requirements, tighten scope, or change implementation-planning readiness. Do not spend a re-review pass on cosmetic wording-only changes.
 - Cap the automatic re-review loop at **3 total subagent re-review passes per brainstorming run**, counted cumulatively across the entire run, including any later user-requested spec revision cycles.
@@ -262,8 +262,8 @@ If a written spec exists and optional Codex collaboration is available in Claude
 - Treat Codex output as advisory only; Claude Code remains responsible for final judgment, revisions, and user-facing review flow.
 - Prefer `/codex:rescue --model gpt-5.4-mini --effort high` for standard written-spec re-review.
 - Prefer `/codex:adversarial-review --model gpt-5.4-mini --effort high` when you want a more attacking challenge pass against the written design.
-- For `/codex:rescue` written-spec passes, explicitly tell Codex: `use the spec-review skill for this task: <task>. If the skill is unavailable, do not improvise—report that this Codex sidecar pass could not run and stop this Codex pass only.`
-- For `/codex:adversarial-review` written-spec passes, explicitly tell Codex: `use the spec-review skill as the baseline for this task: <task>. Then aggressively challenge hidden assumptions, contradictions, and failure modes. If the skill is unavailable, do not improvise—report that this Codex sidecar pass could not run and stop this Codex pass only.`
+- For `/codex:rescue` written-spec passes, render the companion `./spec-document-reviewer-prompt.md` template with the current spec path and inject it inline into the Codex prompt as the review rubric.
+- For `/codex:adversarial-review` written-spec passes, render the companion `./spec-document-reviewer-prompt.md` template inline as the baseline rubric, then explicitly tell Codex to aggressively challenge hidden assumptions, contradictions, and failure modes on top of that rubric.
 - Escalate to `/codex:adversarial-review --model gpt-5.4 --effort medium` only for a final high-stakes challenge pass when earlier `gpt-5.4-mini --effort high` passes still leave unresolved critical design-risk findings.
 
 Use this only when a real second-opinion challenge review would materially improve the design quality.

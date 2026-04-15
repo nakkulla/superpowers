@@ -6,12 +6,19 @@ Use this template when dispatching a spec document reviewer subagent.
 
 **Dispatch after:** Spec document is written to docs/superpowers/specs/
 
+**Codex default path:** Read this file in the main agent, render the placeholders, and quote the rendered rubric directly into the subagent prompt. Do **not** only pass the file path and ask the subagent to read it later. Keep the subagent run read-only and advisory.
+
 ```
 Task tool (general-purpose):
   description: "Review spec document"
   model: sonnet
   prompt: |
     You are a spec document reviewer. Verify this spec is complete and ready for planning.
+
+    This is an advisory review only.
+    Do not ask the user questions.
+    Do not edit files, commit changes, or take ownership of the workflow.
+    The main agent will decide what to change.
 
     **Spec to review:** [SPEC_FILE_PATH]
 

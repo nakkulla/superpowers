@@ -30,13 +30,14 @@ You MUST create a task for each of these items and complete them in order:
 6. **Present design** — in sections scaled to their complexity, get user approval after each section
 7. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
 8. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-9. **Main-agent spec-review** — invoke the `spec-review` skill in the main agent after self-review and before user review; apply the resulting revisions inline before continuing. Reading `spec-review` references, doing a checklist pass, or saying "spec-review 기준으로 점검" does **not** satisfy this step.
-10. **Codex re-review loop** — in Codex, after the main-agent `spec-review` fixes, dispatch a bounded read-only re-review subagent whose prompt is rendered from the companion `./spec-document-reviewer-prompt.md` template and injected inline. The subagent is advisory only; the main agent applies revisions and owns final judgment. Cap this loop at 3 re-review passes.
+9. **Main-agent spec-review** — invoke the `spec-review` skill in the main agent after self-review and before user review; apply the resulting revisions inline before continuing. Reading `spec-review` references, doing a checklist pass, or saying "spec-review 기준으로 점검" does **not** satisfy this step. This step is complete only after the main agent has produced the formal `spec-review` output, including `## Spec Review` and `Verdict:`.
+10. **Codex re-review loop** — in Codex, after the main-agent `spec-review` fixes, dispatch a bounded read-only re-review subagent whose prompt is rendered from the companion `./spec-document-reviewer-prompt.md` template and injected inline. The subagent is advisory only; the main agent applies revisions and owns final judgment. Cap this loop at 3 re-review passes. This step is complete only after the spawned reviewer has returned and the main agent has explicitly summarized which findings were applied, deferred, or rejected.
     Hard gate:
     - In Codex, if `spawn_agent` is available, this re-review subagent pass is mandatory.
     - Do NOT mark `reviewed:spec`.
     - Do NOT invoke `writing-plans`.
     - Do NOT say the spec gate is complete.
+    - Do NOT proceed if the transcript lacks both the formal main-agent `spec-review` output and, when subagents are available, a completed spawned re-review result plus reconciliation summary.
     until the subagent pass has finished and its findings have been reconciled by the main agent.
 11. **Optional Codex challenge re-review loop (Claude Code only)** — if a written spec exists and Claude Code has `codex-plugin-cc` available, default to one bounded advisory Codex critique pass after the main-agent `spec-review`. If substantive spec edits are made and material findings remain, you may re-run it up to 3 total advisory passes per brainstorming run.
 12. **User reviews written spec** — ask user to review the spec file before proceeding
@@ -242,10 +243,16 @@ After self-review, run the `spec-review` skill in the main agent before the User
 
 Do **not** substitute this with a self-check against `spec-review/references/*`, a generic criteria read-through, or wording like "spec-review 기준으로 점검했다." The requirement is satisfied only when the main agent actually invokes the `spec-review` skill and produces the formal review output before continuing.
 
+Completion evidence for this step:
+- The user-facing transcript contains the formal `spec-review` output block, including `## Spec Review` and `Verdict:`.
+- The main agent records what changed after that review, even if the answer is "no spec changes were needed."
+- If you cannot produce that formal review output yet, you are still before the User Review Gate.
+
 **Codex re-review loop:**
 In Codex, after the main-agent `spec-review` fixes and before the User Review Gate, dispatch a bounded read-only re-review subagent when subagents are available. This is the default Codex follow-up path after the main-agent review.
 
 - Prefer the `code-reviewer` agent type for this re-review pass.
+- Use `spawn_agent` for this pass when that tool is available in Codex.
 - Render the companion `./spec-document-reviewer-prompt.md` template with the current spec path and inject that rendered rubric directly into the subagent prompt.
 - Do **not** just pass the file path and ask the subagent to go read it later.
 - Do **not** rely on the subagent having the `spec-review` skill available for the default Codex path.
@@ -255,6 +262,11 @@ In Codex, after the main-agent `spec-review` fixes and before the User Review Ga
 - Stop early if the spec is already clean enough for user review or if another loop is unlikely to materially improve the spec.
 
 If subagents are unavailable, continue the normal flow without blocking.
+
+Completion evidence for this step:
+- The transcript shows the actual subagent dispatch plus a completed result, unless subagents are unavailable.
+- The main agent then summarizes what it adopted, deferred, or rejected from that re-review.
+- If `spawn_agent` is available and you skipped this anyway, the spec gate has not passed.
 
 If a written spec exists and optional Codex collaboration is available in Claude Code, you may run a bounded Codex advisory challenge pass after the main-agent `spec-review` and any Codex re-review loop, and before the User Review Gate.
 
@@ -311,7 +323,16 @@ If `.beads/` does not exist, skip this step entirely.
 
 **User Review Gate:**
 
-After self-review, the main-agent `spec-review`, and any Codex re-review loop are complete, ask the user to review the written spec before proceeding:
+After self-review, the main-agent `spec-review`, and any Codex re-review loop are complete, ask the user to review the written spec before proceeding.
+
+Do **not** enter this gate unless all of the following are true:
+- the spec is written to a real file path
+- the main-agent `spec-review` output was actually produced
+- the resulting main-agent fixes were reconciled
+- any mandatory Codex re-review pass was completed and reconciled
+- any required Beads parent linkage via `spec_id` is already in place
+
+Then ask the user:
 
 > "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we proceed to the next step."
 

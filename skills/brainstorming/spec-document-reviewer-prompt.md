@@ -1,16 +1,12 @@
 # Spec Document Reviewer Prompt Template
 
-> Deprecated for the default brainstorming path.
->
-> `skills/brainstorming/SKILL.md` now directs Codex review subagents to invoke the
-> `spec-review` skill directly on the current spec path instead of using prompt
-> injection from this file. Keep this document only as legacy reference for older
-> transcripts and historical notes.
+Use this template when dispatching a spec document reviewer subagent.
 
-Legacy behavior:
-- dispatch a spec document reviewer subagent
-- inject a rendered rubric inline
-- keep the run read-only and advisory
+**Purpose:** Verify the spec is complete, consistent, and ready for implementation planning.
+
+**Dispatch after:** Spec document is written to docs/superpowers/specs/
+
+**Codex default path:** Read this file in the main agent, render the placeholders, and quote the rendered rubric directly into the subagent prompt. Do **not** only pass the file path and ask the subagent to read it later. Keep the subagent run read-only and advisory.
 
 ```
 Task tool (general-purpose):

@@ -193,12 +193,16 @@ If the closest related bead is `resolved` or `closed`, treat that as
    - Ask the user via the platform-appropriate confirmation tool whether to create a new follow-up parent bead instead.
    - If approved, create the new bead and connect it back to the original bead with `discovered-from` when possible (for example: `bd dep add <new-id> <old-id> --type discovered-from`).
    - If the current plan was written from a saved spec, set the new bead's `spec_id` to that spec path before finishing linkage.
+   - Treat `bd create --json` output as a single issue object and extract the id from `["id"]`, not `[0]["id"]`.
+   - If create-response parsing fails, do **not** run a second `bd create` immediately; first verify via an independent read path such as `bd list --json`, `bd show`, or a spec-id/title match and reuse the already-created bead when found.
    - Immediately after creation: `bd update <new-id> --set-metadata plan=<path> --add-label has:plan`
    - Re-check that both `spec_id` (when applicable) and `metadata.plan` are set correctly on the new parent bead.
 7. If not found:
    - Ask the user via the platform-appropriate confirmation tool whether to create a new parent bead now or explicitly defer it.
    - If approved, create the new parent bead per the Beads spec/plan linking rules.
    - If the current plan was written from a saved spec, set the new bead's `spec_id` to that spec path.
+   - Treat `bd create --json` output as a single issue object and extract the id from `["id"]`, not `[0]["id"]`.
+   - If create-response parsing fails, do **not** run a second `bd create` immediately; first verify via an independent read path such as `bd list --json`, `bd show`, or a spec-id/title match and reuse the already-created bead when found.
    - Immediately after creation: `bd update <new-id> --set-metadata plan=<path> --add-label has:plan`
    - Re-check that both `spec_id` (when applicable) and `metadata.plan` are set correctly on the new parent bead.
    - If the user explicitly defers creation, report that choice clearly instead of implying linkage is already done.

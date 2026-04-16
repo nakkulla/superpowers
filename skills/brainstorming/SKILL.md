@@ -306,6 +306,8 @@ connect the spec to the Beads issue tracker if `.beads/` directory exists in the
 9. If no match → ask user via AskUserQuestion, then create:
    - Type: `epic` if child task decomposition is expected, `feature` otherwise
    - `bd create --type <type> --title "<title>"`
+   - Treat `bd create --json` output as a single issue object and extract the id from `["id"]`, not `[0]["id"]`.
+   - If create-response parsing fails, do **not** run a second `bd create` immediately; first verify via an independent read path such as `bd list --json`, `bd show`, or a title/spec-id match and reuse the already-created bead when found.
    - Immediately after: `bd update <id> --spec-id <path> --add-label has:spec`
    - Re-check that `spec-id` is set correctly
 10. `bd dolt push`

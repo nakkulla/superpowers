@@ -30,14 +30,20 @@ You MUST create a task for each of these items and complete them in order:
 6. **Present design** — in sections scaled to their complexity, get user approval after each section
 7. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
 8. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-9. **Formal spec-review gate** — after self-review and before user review, run a formal `spec-review`. In Codex, if `spawn_agent` is available, the default path is a bounded read-only subagent that invokes the `spec-review` skill on the current spec path. If subagents are unavailable, the main agent may invoke `spec-review` directly as a fallback. Reading `spec-review` references, doing a checklist pass, or saying "spec-review 기준으로 점검" does **not** satisfy this step. This step is complete only after the transcript contains the formal `## Spec Review` output with `Verdict:` and the main agent has summarized what changed. When the formal review was produced by a subagent, the main agent must surface that latest formal review block into the main transcript before or alongside the reconciliation summary.
-10. **Automatic Codex spec-review loop** — in Codex, when `spawn_agent` is available, re-dispatch a bounded read-only subagent that invokes `spec-review` after each **substantive** spec edit until the review reaches a non-blocking verdict (`APPROVE` or `APPROVE_WITH_CHANGES`), the pass cap is reached, or the same material findings repeat without substantive progress. The subagent is advisory only; the main agent applies revisions and owns final judgment. Cap this loop at 3 automatic passes. Do **not** ask the user whether to run this mandatory loop.
+9. **Formal independent spec-review gate** — after self-review and before user review, run a formal `spec-review` through an independent reviewer. This gate is mandatory for written specs. Harness-specific executor:
+   - **Codex:** dispatch a bounded read-only subagent via `spawn_agent` and instruct it to invoke the `spec-review` skill on the current spec path.
+   - **Claude Code:** use `/codex:rescue` and instruct Codex to invoke the `spec-review` skill on the current spec path and return the formal review block.
+   Reading `spec-review` references, doing a checklist pass, or saying "spec-review 기준으로 점검" does **not** satisfy this step. This step is complete only after the transcript contains the formal `## Spec Review` output with `Verdict:` from the harness's independent-review executor, and the main agent has summarized what changed. When the formal review was produced by a sidecar or subagent, the main agent must surface that latest formal review block into the main transcript before or alongside the reconciliation summary.
+10. **Automatic independent spec-review loop** — after each **substantive** spec edit and before the User Review Gate, re-run the harness's independent-review executor until the review reaches a non-blocking verdict (`APPROVE` or `APPROVE_WITH_CHANGES`), the pass cap is reached, or the same material findings repeat without substantive progress. The reviewer remains advisory only; the main agent applies revisions and owns final judgment. Cap this loop at 3 automatic passes. Do **not** ask the user whether to run this mandatory loop.
     Hard gate:
-    - In Codex, if `spawn_agent` is available, this spec-review subagent path is mandatory.
+    - In Codex, if `spawn_agent` is available, the spec-review subagent path is mandatory.
+    - In Claude Code, if `/codex:rescue` is available, the Codex sidecar spec-review path is mandatory.
+    - Do NOT silently replace the harness's independent-review executor with a main-agent direct review.
+    - If the independent-review executor is unavailable or policy-blocked, say so explicitly. A direct `spec-review` fallback is informational only and does **not** complete the normal gate.
     - Do NOT mark `reviewed:spec`.
     - Do NOT invoke `writing-plans`.
     - Do NOT say the spec gate is complete.
-    - Do NOT proceed if the transcript lacks a completed formal `spec-review` result and, when subagents are available, the main agent's reconciliation summary for the latest pass.
+    - Do NOT proceed if the transcript lacks a completed formal `spec-review` result from the harness's independent-review executor and the main agent's reconciliation summary for the latest pass.
     until the latest pass has finished and its findings have been reconciled by the main agent.
 11. **Optional Codex challenge re-review loop (Claude Code only)** — if a written spec exists and Claude Code has `codex-plugin-cc` available, default to one bounded advisory Codex critique pass after the formal `spec-review` gate is already non-blocking. If substantive spec edits are made and material findings remain, you may re-run it up to 3 total advisory passes per brainstorming run.
 12. **User reviews written spec** — ask user to review the spec file before proceeding
@@ -136,7 +142,7 @@ If `$ARGUMENTS` contains a recognized Beads issue ID:
 
 ## Optional Codex Collaboration (Claude Code only)
 
-When Claude Code has `codex-plugin-cc` installed and Codex is available, you MAY use Codex as an optional sidecar during brainstorming.
+When Claude Code has `codex-plugin-cc` installed and Codex is available, you MAY use Codex as an optional sidecar during brainstorming for ideation-stage advisory work or an optional challenge pass after the mandatory written-spec independent review is already non-blocking. Do **not** use this section to redefine or weaken the mandatory written-spec independent review gate.
 
 Codex collaboration is advisory only. Claude remains responsible for:
 - user conversation
@@ -152,7 +158,7 @@ Use Codex only for one bounded task at a time, such as:
 - pressure-testing assumptions
 - identifying ambiguities, contradictions, or missing edge cases
 - challenging the recommended approach
-- reviewing a written spec for hidden failure modes
+- challenging a written spec for hidden failure modes after the formal independent review gate is already non-blocking
 
 Do NOT delegate the full brainstorming conversation to Codex.
 Do NOT let Codex ask the user clarifying questions in place of Claude.
@@ -161,15 +167,13 @@ Do NOT treat Codex availability as a hard requirement.
 If Codex is unavailable, continue the normal brainstorming flow without it.
 
 Prefer `/codex:rescue --model gpt-5.4-mini --effort medium` for ideation-stage or pre-spec bounded design tasks.
-Prefer `/codex:rescue --model gpt-5.4-mini --effort high` for standard written-spec re-review.
-Prefer `/codex:adversarial-review --model gpt-5.4-mini --effort high` only after a written spec exists and you want a more attacking challenge review of the current design.
+Prefer `/codex:adversarial-review --model gpt-5.4-mini --effort high` only after a written spec exists, the formal independent review gate is already non-blocking, and you want a more attacking challenge review of the current design.
 
 Claude Code invocation rules:
 - For ideation-stage or pre-spec sidecar work, use `/codex:rescue` with a compact bounded task packet. Do **not** force the full `brainstorming` skill onto the Codex sidecar for these passes; ask for one bounded advisory task only.
-- For written-spec re-review passes with `/codex:rescue`, tell Codex to invoke the `spec-review` skill on the current spec path and return the formal review block. Do **not** inject `./spec-document-reviewer-prompt.md`.
 - For written-spec challenge passes with `/codex:adversarial-review`, pass the current spec path plus the explicit challenge focus. Do **not** inject `./spec-document-reviewer-prompt.md` as the baseline rubric.
 - Use `gpt-5.4-mini --effort medium` for ideation-stage bounded design passes.
-- Use `gpt-5.4-mini --effort high` for written-spec re-review and adversarial challenge passes.
+- Use `gpt-5.4-mini --effort high` for adversarial challenge passes.
 - Escalate to `gpt-5.4 --effort medium` only for a final high-stakes challenge pass when earlier `gpt-5.4-mini --effort high` passes still leave unresolved critical design-risk findings.
 
 When delegating to Codex, provide a compact task packet:
@@ -231,35 +235,41 @@ After writing the spec document, look at it with fresh eyes:
 
 Fix any issues inline before moving to the formal review pass.
 
-**Formal spec-review gate:**
-After self-review, run a formal `spec-review` before the User Review Gate. In Codex, if `spawn_agent` is available, the default path is a bounded read-only subagent that invokes the `spec-review` skill on the current spec path. If subagents are unavailable, the main agent may invoke `spec-review` directly as a fallback. Resolve the resulting findings inline before continuing. The main agent owns the final judgment, decides what changes to apply, and remains responsible for the user-facing summary and approval flow.
+**Formal independent spec-review gate:**
+After self-review, run a formal `spec-review` through an independent reviewer before the User Review Gate. This gate is mandatory for written specs.
+
+Harness-specific executor:
+- **Codex:** `spawn_agent` subagent (bounded, read-only)
+- **Claude Code:** `/codex:rescue`
+
+In both harnesses, instruct the independent reviewer to invoke the `spec-review` skill on the current spec path and return the formal review block. Resolve the resulting findings inline before continuing. The main agent owns the final judgment, decides what changes to apply, and remains responsible for the user-facing summary and approval flow.
 
 Do **not** substitute this with a self-check against `spec-review/references/*`, a generic criteria read-through, or wording like "spec-review 기준으로 점검했다." The requirement is satisfied only when the transcript actually contains the formal `spec-review` output before continuing.
 
 Completion evidence for this step:
 - The user-facing transcript contains the formal `spec-review` output block, including `## Spec Review` and `Verdict:`.
+- That review block came from the harness's independent-review executor, not from the main agent standing in for it.
 - The main agent records what changed after that review, even if the answer is "no spec changes were needed."
 - If you cannot produce that formal review output yet, you are still before the User Review Gate.
 
-**Automatic Codex spec-review loop:**
-In Codex, after each substantive spec edit and before the User Review Gate, dispatch a bounded read-only subagent when subagents are available and have it invoke the `spec-review` skill on the current spec path. This is the default Codex review path for written specs.
+**Automatic independent spec-review loop:**
+After each substantive spec edit and before the User Review Gate, re-run the harness's independent-review executor on the current spec path.
 
-- Prefer the `code-reviewer` agent type for this review pass.
-- Use `spawn_agent` for this pass when that tool is available in Codex.
-- Instruct the subagent to invoke the `spec-review` skill on the current spec path. Do **not** inject `./spec-document-reviewer-prompt.md`.
+- **Codex:** prefer the `code-reviewer` agent type and use `spawn_agent` for this pass when that tool is available.
+- **Claude Code:** use `/codex:rescue` for the mandatory written-spec independent review pass.
+- Instruct the reviewer to invoke the `spec-review` skill on the current spec path. Do **not** inject `./spec-document-reviewer-prompt.md`.
 - Do **not** ask the user whether to run this mandatory loop.
-- Treat subagent output as advisory only; the main agent remains responsible for deciding what to change and for applying revisions inline.
-- Re-dispatch the review subagent only after **substantive spec edits** — edits that materially resolve findings, clarify requirements, tighten scope, or change implementation-planning readiness. Do not spend a pass on cosmetic wording-only changes.
-- Cap the automatic loop at **3 total subagent spec-review passes per brainstorming run**, counted cumulatively across the entire run, including any later user-requested spec revision cycles.
+- Treat reviewer output as advisory only; the main agent remains responsible for deciding what to change and for applying revisions inline.
+- Re-run the review only after **substantive spec edits** — edits that materially resolve findings, clarify requirements, tighten scope, or change implementation-planning readiness. Do not spend a pass on cosmetic wording-only changes.
+- Cap the automatic loop at **3 total independent-review spec-review passes per brainstorming run**, counted cumulatively across the entire run, including any later user-requested spec revision cycles.
 - Stop the loop when the latest formal verdict is non-blocking (`APPROVE` or `APPROVE_WITH_CHANGES`), or when repeated blocking findings show no substantive progress. If the cap is reached while the verdict is still blocking, surface the remaining blockers to the user instead of silently proceeding.
-
-If subagents are unavailable, continue the normal flow without blocking.
+- If the harness's independent-review executor is unavailable or policy-blocked, state that explicitly. You may run a direct `spec-review` only as an informational degraded fallback, but do **not** mark the spec gate complete, do **not** mark `reviewed:spec`, and do **not** invoke `writing-plans` until a proper independent-review pass succeeds.
 
 Completion evidence for this step:
-- The transcript shows the actual subagent dispatch plus a completed result, unless subagents are unavailable.
-- If the review was performed by a subagent, the main agent surfaces the latest formal `## Spec Review` block in the main transcript before or alongside its reconciliation summary.
+- The transcript shows the actual independent-review executor result plus a completed result, unless that executor is unavailable or policy-blocked.
+- If the review was performed by a sidecar or subagent, the main agent surfaces the latest formal `## Spec Review` block in the main transcript before or alongside its reconciliation summary.
 - The main agent then summarizes what it adopted, deferred, or rejected from that review pass.
-- If `spawn_agent` is available and you skipped this anyway, the spec gate has not passed.
+- If the harness's independent-review executor is available and you skipped it anyway, the spec gate has not passed.
 
 If a written spec exists and optional Codex collaboration is available in Claude Code, you may run a bounded Codex advisory challenge pass after the formal `spec-review` gate is already non-blocking and before the User Review Gate.
 
@@ -267,9 +277,7 @@ If a written spec exists and optional Codex collaboration is available in Claude
 - Re-run it only after **substantive spec edits** and only when material findings still remain.
 - Cap it at **3 total advisory Codex challenge passes per brainstorming run**, counted cumulatively across the entire run.
 - Treat Codex output as advisory only; Claude Code remains responsible for final judgment, revisions, and user-facing review flow.
-- Prefer `/codex:rescue --model gpt-5.4-mini --effort high` for standard written-spec re-review.
 - Prefer `/codex:adversarial-review --model gpt-5.4-mini --effort high` when you want a more attacking challenge pass against the written design.
-- For `/codex:rescue` written-spec passes, tell Codex to invoke the `spec-review` skill on the current spec path and return the formal review block.
 - For `/codex:adversarial-review` written-spec passes, pass the current spec path plus explicit instructions to aggressively challenge hidden assumptions, contradictions, and failure modes. Do **not** inject `./spec-document-reviewer-prompt.md`.
 - Escalate to `/codex:adversarial-review --model gpt-5.4 --effort medium` only for a final high-stakes challenge pass when earlier `gpt-5.4-mini --effort high` passes still leave unresolved critical design-risk findings.
 

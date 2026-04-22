@@ -18,6 +18,39 @@ Do NOT invoke any implementation skill, write any code, scaffold any project, or
 
 Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but you MUST present it and get approval.
 
+## quick_edit Preflight Exception
+
+`quick_edit` is a **conservative preflight exception** owned by `brainstorming`, not the default path for small work.
+
+- Use it only when the request is a narrow one-shot change with low intent ambiguity, obvious verification, and easy rollback.
+- If the request is even slightly ambiguous, **ambiguous cases stay on the normal brainstorming → spec path**.
+- This exception is about how `brainstorming` classifies the request before plan authoring; it does not turn all small requests into automatic implementation work.
+
+### Allowed examples
+
+- small bugfix
+- copy / text edit
+- config / flag / path tweak
+- other narrow one-shot changes where verification is already clear
+
+### Disallowed examples
+
+- multi-step work
+- broad behavior changes
+- shared contract / policy wording
+- cross-skill changes
+- cross-repo changes
+- anything that still needs design clarification before implementation
+
+### Beads handling for quick_edit
+
+In a Beads-enabled repo, when `brainstorming` explicitly chooses the quick_edit path:
+
+- create a **new standalone execution issue** for that quick-edit work
+- **label that new issue `quick_edit`**
+- do **not** treat the parent bead as the quick-edit issue
+- this **does not change the normal spec-path parent** / `spec_id` / `reviewed:spec` rules used by regular brainstorming → spec runs
+
 ## Checklist
 
 You MUST create a task for each of these items and complete them in order:

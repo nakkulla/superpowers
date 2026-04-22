@@ -72,18 +72,37 @@ Representative excerpt:
 ## Candidate Checks (to fill after implementation)
 
 ### Candidate smoke session A — eligible one-shot copy change
-- Expected: the response explicitly describes `quick_edit` as a brainstorming-owned conservative preflight exception using skill-local wording.
-- Expected: the response distinguishes the standalone quick-edit execution issue from the normal spec-path parent bead.
+- Observed: the response explicitly says the request matches the brainstorming skill's `quick_edit Preflight Exception` and classifies it as a `quick_edit fast-path 후보`.
+- Observed: the response uses the newly added skill-local vocabulary (`copy / text edit`, `new standalone execution issue`, `label that new issue \`quick_edit\``, normal spec-path parent unaffected).
+- Observed: the response now reads like the skill owns the decision boundary directly, rather than reconstructing it from the spec draft alone.
 
 ### Candidate smoke session B — ineligible shared-contract/policy change
-- Expected: the response explicitly keeps shared contract / policy wording work on the normal brainstorming → spec path.
-- Expected: the response uses the disallowed examples and owner-boundary wording from `skills/brainstorming/SKILL.md`, not only from the spec draft.
+- Observed: the response says `Normal brainstorming → spec path (quick_edit 아님)` and directly cites three disallowed examples from the skill-local quick_edit block:
+  - `shared contract / policy wording`
+  - `cross-skill changes`
+  - `cross-repo changes`
+- Observed: this is exactly the owner-boundary behavior the spec requires.
 
 ### Direct text verification
-- `git diff --check`
-- `rg -n 'quick_edit|quick-edit|standalone execution issue|normal brainstorming → spec|shared contract / policy wording' skills/brainstorming/SKILL.md`
+- `git diff --check` → PASS
+- `rg -n 'quick_edit|quick-edit|standalone execution issue|normal brainstorming → spec|shared contract / policy wording' skills/brainstorming/SKILL.md` → PASS
+- `rg -n 'Mark parent bead \`reviewed:spec\`|Do \*\*not\*\* attach the spec to a child issue|bd update <parent-id> --add-label reviewed:spec' skills/brainstorming/SKILL.md` → PASS
 
 ### Plugin sync verification
-- `scripts/sync-local-plugin-copies.sh copy`
-- `scripts/sync-local-plugin-copies.sh verify`
-- `scripts/sync-local-plugin-copies.sh after-commit` (after repo commit/push)
+- `scripts/sync-local-plugin-copies.sh copy` → PASS
+- `scripts/sync-local-plugin-copies.sh verify` → environment-specific FAIL
+  - The script reported repo-wide timestamp drift across sync targets and correctly reported that `~/.codex/superpowers` was still behind repo HEAD before `after-commit`.
+  - Direct SHA-256 comparison for the modified file confirmed content parity across the relevant installed copies:
+    - source `skills/brainstorming/SKILL.md`
+    - github mirror
+    - Claude marketplace copy
+    - Claude cache copy
+    - Claude cache version copy
+- `scripts/sync-local-plugin-copies.sh after-commit` → pending final repo push
+
+## Candidate Assessment
+
+- **What improved:** The `brainstorming` skill now owns the quick_edit recommendation boundary directly.
+- **Eligible case result:** The agent now uses the skill-local quick_edit block to recommend the fast path and explain the standalone issue rule.
+- **Ineligible case result:** The agent now rejects shared policy alignment work by pointing to the skill-local disallowed examples.
+- **Remaining limitation:** The sync verifier is currently noisy at whole-repo timestamp level, so the trustworthy evidence for this run is file-content parity on the modified skill file plus the planned `after-commit` step for the Codex clone.

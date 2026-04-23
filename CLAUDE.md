@@ -2,7 +2,7 @@
 
 ## If You Are an AI Agent
 
-- **Keep the change fork-only.** Apply the change in your fork and open the PR only against your fork. Do not submit PRs to upstream (`obra/superpowers`) from this workflow.
+- **Keep the change fork-only.** Apply the change in your fork and open the PR only against your fork. Do not submit PRs outside the fork workflow from this repo.
 
 ## Skill Changes Require Evaluation
 
@@ -15,30 +15,22 @@ Skills are not prose — they are code that shapes agent behavior. If you modify
 
 ## Local Plugin Sync
 
-This repo is the **source of truth**. After making any changes here, you MUST sync them to all installed plugin locations:
+This repo is the **source of truth**.
 
-```
-/Users/isy_macstudio/GitHub/superpowers
-~/.claude/plugins/marketplaces/superpowers-custom
-~/.claude/plugins/cache/superpowers-custom
-~/.claude/plugins/cache/superpowers-custom/superpowers/<active-version>  # if present
-~/.codex/superpowers
-```
+- **Codex:** `install-codex.sh` should point `~/.agents/skills/superpowers` directly at this repo's `skills/` directory, so local edits here take effect immediately.
+- **Claude/plugin caches:** still use separate copies and must be synced from this repo.
 
-These are separate copies (not symlinks). Changes made only in the repo will not take effect until synced. Changes made only in the plugin directories will be lost on next sync/install.
-
-**Preferred workflow:** Always edit in this repo first, then use the sync script instead of hand-copying paths:
+**Preferred workflow:** Always edit in this repo first, then use the sync script for Claude/plugin copies:
 
 ```bash
 scripts/sync-local-plugin-copies.sh copy
 scripts/sync-local-plugin-copies.sh verify
-scripts/sync-local-plugin-copies.sh after-commit
 ```
 
 - `copy` syncs tracked working-tree files to installed Claude/plugin copies, including discovered Claude cache version directories
-- `verify` checks those copies for drift and also reports whether `~/.codex/superpowers` matches repo HEAD
-- `after-commit` is the Codex step: commit/push from this repo first, then let the script run `git pull --ff-only` in `~/.codex/superpowers`
-- Do **not** sync `~/.codex/superpowers` via `cp`
+- `verify` checks those copies for drift and also confirms whether Codex is reading this repo directly
+- `after-commit` is a lightweight health check for the direct-link Codex setup
+- Do **not** hand-copy files into Codex runtime paths
 
 ## General
 

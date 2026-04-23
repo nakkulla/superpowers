@@ -22,7 +22,8 @@ Every project goes through this process. A todo list, a single-function utility,
 
 `quick_edit` is a **conservative preflight exception** owned by `brainstorming`, not the default path for small work.
 
-- Use it only when the request is a narrow one-shot change with low intent ambiguity, obvious verification, and easy rollback.
+- Use it only when the request is bounded single-repo work whose intent, acceptance, touched surface, and verification path are already clear enough that separate plan authoring would add little coordination value.
+- It is not restricted to strictly one-shot edits; small multi-step work may still qualify when ambiguity and coordination overhead stay low.
 - If the request is even slightly ambiguous, **ambiguous cases stay on the normal brainstorming → spec path**.
 - This exception is about how `brainstorming` classifies the request before plan authoring; it does not turn all small requests into automatic implementation work.
 
@@ -31,15 +32,15 @@ Every project goes through this process. A todo list, a single-function utility,
 - small bugfix
 - copy / text edit
 - config / flag / path tweak
-- other narrow one-shot changes where verification is already clear
+- other bounded same-repo changes where verification is already clear
 
 ### Disallowed examples
 
-- multi-step work
 - broad behavior changes
-- shared contract / policy wording
+- shared contract / policy wording with meaningful downstream coordination
 - cross-skill changes
 - cross-repo changes
+- rollout / migration choreography
 - anything that still needs design clarification before implementation
 
 ### Beads handling for quick_edit

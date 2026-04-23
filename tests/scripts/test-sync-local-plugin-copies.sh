@@ -12,7 +12,7 @@ CLAUDE_MARKETPLACE="$TEST_ROOT/claude-marketplace"
 CLAUDE_CACHE="$TEST_ROOT/claude-cache"
 CLAUDE_VERSION_PARENT="$CLAUDE_CACHE/superpowers"
 CLAUDE_VERSION_DIR="$CLAUDE_VERSION_PARENT/9.9.9-test"
-CODEX_CLONE="$TEST_ROOT/codex-clone"
+CODEX_SKILLS_LINK="$TEST_ROOT/agents-skills/superpowers"
 
 cleanup() {
   rm -rf "$TEST_ROOT"
@@ -34,7 +34,7 @@ run_sync() {
   SUPERPOWERS_CLAUDE_MARKETPLACE_ROOT="$CLAUDE_MARKETPLACE" \
   SUPERPOWERS_CLAUDE_CACHE_ROOT="$CLAUDE_CACHE" \
   SUPERPOWERS_CLAUDE_VERSION_PARENT="$CLAUDE_VERSION_PARENT" \
-  SUPERPOWERS_CODEX_ROOT="$CODEX_CLONE" \
+  SUPERPOWERS_CODEX_SKILLS_LINK="$CODEX_SKILLS_LINK" \
   "$SYNC_SCRIPT" "$@"
 }
 
@@ -57,7 +57,8 @@ git -C "$SOURCE_REPO" add .
 git -C "$SOURCE_REPO" commit -m "initial snapshot" --quiet
 
 mkdir -p "$GITHUB_MIRROR" "$CLAUDE_MARKETPLACE" "$CLAUDE_CACHE" "$CLAUDE_VERSION_DIR"
-git clone --quiet "$SOURCE_REPO" "$CODEX_CLONE"
+mkdir -p "$(dirname "$CODEX_SKILLS_LINK")"
+ln -s "$SOURCE_REPO/skills" "$CODEX_SKILLS_LINK"
 
 cat > "$SOURCE_REPO/skills/demo/SKILL.md" <<'EOF'
 # Demo Skill
@@ -97,27 +98,21 @@ else
 fi
 pass "copy repaired drift and verify passed"
 
-echo "Test 4: after-commit rejects dirty source repo..."
+echo "Test 4: after-commit no-ops when Codex already reads the repo..."
 if run_sync after-commit >/tmp/superpowers-sync-after-commit-dirty.out 2>&1; then
-  fail "after-commit should fail for dirty repo"
-fi
-pass "after-commit rejected dirty repo"
-
-echo "Test 5: after-commit fast-forwards Codex clone after commit..."
-git -C "$SOURCE_REPO" add skills/demo/SKILL.md
-git -C "$SOURCE_REPO" commit -m "update demo skill" --quiet
-run_sync after-commit >/tmp/superpowers-sync-after-commit-clean.out
-
-repo_sha="$(git -C "$SOURCE_REPO" rev-parse HEAD)"
-codex_sha="$(git -C "$CODEX_CLONE" rev-parse HEAD)"
-if [[ "$repo_sha" != "$codex_sha" ]]; then
-  fail "Codex clone SHA did not match source repo"
-fi
-if grep -q "version two" "$CODEX_CLONE/skills/demo/SKILL.md"; then
-  pass "after-commit fast-forwarded Codex clone"
+  :
 else
-  fail "Codex clone content did not update"
+  cat /tmp/superpowers-sync-after-commit-dirty.out
+  fail "after-commit should succeed when direct Codex link is active"
 fi
+pass "after-commit no-op succeeded with direct Codex link"
+
+echo "Test 5: after-commit fails when direct Codex link is missing..."
+rm -f "$CODEX_SKILLS_LINK"
+if run_sync after-commit >/tmp/superpowers-sync-after-commit-clean.out 2>&1; then
+  fail "after-commit should fail when direct Codex link is missing"
+fi
+pass "after-commit failed as expected without direct Codex link"
 
 echo ""
 echo "=== All sync-local-plugin-copies tests passed ==="

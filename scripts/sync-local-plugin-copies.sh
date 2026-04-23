@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # sync-local-plugin-copies.sh — sync this repo's tracked files to installed
-# local plugin copies, and update the Codex clone after commit/push.
+# Claude/plugin copies and verify that Codex reads this repo directly.
 #
 # Usage:
 #   sync-local-plugin-copies.sh copy
@@ -18,7 +18,7 @@ GITHUB_MIRROR="${SUPERPOWERS_GITHUB_MIRROR:-$HOME/GitHub/superpowers}"
 CLAUDE_MARKETPLACE_ROOT="${SUPERPOWERS_CLAUDE_MARKETPLACE_ROOT:-$HOME/.claude/plugins/marketplaces/superpowers-custom}"
 CLAUDE_CACHE_ROOT="${SUPERPOWERS_CLAUDE_CACHE_ROOT:-$HOME/.claude/plugins/cache/superpowers-custom}"
 CLAUDE_VERSION_PARENT="${SUPERPOWERS_CLAUDE_VERSION_PARENT:-$HOME/.claude/plugins/cache/superpowers-custom/superpowers}"
-CODEX_ROOT="${SUPERPOWERS_CODEX_ROOT:-$HOME/.codex/superpowers}"
+CODEX_SKILLS_LINK="${SUPERPOWERS_CODEX_SKILLS_LINK:-$HOME/.agents/skills/superpowers}"
 
 declare -a COPY_TARGET_LABELS=()
 declare -a COPY_TARGET_PATHS=()
@@ -28,8 +28,8 @@ usage() {
 Usage: sync-local-plugin-copies.sh copy | verify | after-commit
 
   copy          Sync tracked working-tree files to installed Claude/plugin copies
-  verify        Verify installed Claude/plugin copies match the repo snapshot
-  after-commit  Fast-forward ~/.codex/superpowers after repo commit/push
+  verify        Verify installed Claude/plugin copies and Codex link status
+  after-commit  Confirm direct-link Codex setup (no-op when healthy)
 
 Environment overrides:
   SUPERPOWERS_REPO_ROOT
@@ -37,7 +37,7 @@ Environment overrides:
   SUPERPOWERS_CLAUDE_MARKETPLACE_ROOT
   SUPERPOWERS_CLAUDE_CACHE_ROOT
   SUPERPOWERS_CLAUDE_VERSION_PARENT
-  SUPERPOWERS_CODEX_ROOT
+  SUPERPOWERS_CODEX_SKILLS_LINK
 EOF
 }
 
@@ -155,6 +155,9 @@ verify_snapshot_against_target() {
   fi
 
   diff_output="$(rsync "${rsync_args[@]}" "$snapshot/" "$target/" || true)"
+  if [[ -n "$diff_output" ]]; then
+    diff_output="$(printf '%s\n' "$diff_output" | grep -vF '.d..t.... ' | sed '/^$/d' || true)"
+  fi
   if [[ -z "$diff_output" ]]; then
     echo "OK      [$label] $target"
     return 0
@@ -165,36 +168,21 @@ verify_snapshot_against_target() {
   return 1
 }
 
-verify_codex_clone_status() {
-  if [[ ! -d "$CODEX_ROOT/.git" ]]; then
-    echo "SKIP    [codex] missing git clone: $CODEX_ROOT"
+verify_codex_link_status() {
+  if [[ ! -e "$CODEX_SKILLS_LINK" ]]; then
+    echo "SKIP    [codex] missing skills link: $CODEX_SKILLS_LINK"
     return 0
   fi
 
-  local repo_sha codex_sha
-  repo_sha="$(git -C "$REPO_ROOT" rev-parse HEAD)"
-  codex_sha="$(git -C "$CODEX_ROOT" rev-parse HEAD)"
-
-  if git_worktree_is_dirty "$CODEX_ROOT"; then
-    echo "DRIFT   [codex] dirty worktree: $CODEX_ROOT"
-    return 1
-  fi
-
-  if repo_is_dirty; then
-    echo "NOTE    [codex] repo has uncommitted changes; compare Codex after commit/push"
-    echo "        repo HEAD:  $repo_sha"
-    echo "        codex HEAD: $codex_sha"
+  if same_realpath "$CODEX_SKILLS_LINK" "$REPO_ROOT/skills"; then
+    echo "OK      [codex] skills link points to repo: $CODEX_SKILLS_LINK"
     return 0
   fi
 
-  if [[ "$repo_sha" == "$codex_sha" ]]; then
-    echo "OK      [codex] HEAD matches repo ($repo_sha)"
-    return 0
-  fi
-
-  echo "DRIFT   [codex] HEAD differs"
-  echo "        repo HEAD:  $repo_sha"
-  echo "        codex HEAD: $codex_sha"
+  echo "DRIFT   [codex] skills link points elsewhere"
+  echo "        link path: $CODEX_SKILLS_LINK"
+  echo "        resolved:  $(canonical_path "$CODEX_SKILLS_LINK")"
+  echo "        expected:  $(canonical_path "$REPO_ROOT/skills")"
   return 1
 }
 
@@ -222,7 +210,7 @@ cmd_copy() {
 
   echo ""
   echo "Done. Run '$0 verify' to confirm parity."
-  echo "For ~/.codex/superpowers, commit/push here first, then run '$0 after-commit'."
+  echo "Codex should usually read this repo directly via $CODEX_SKILLS_LINK."
 }
 
 cmd_verify() {
@@ -248,7 +236,7 @@ cmd_verify() {
     done
   fi
 
-  if ! verify_codex_clone_status; then
+  if ! verify_codex_link_status; then
     failures=$((failures + 1))
   fi
 
@@ -266,36 +254,13 @@ cmd_after_commit() {
   ensure_repo_root
   require_cmd git
 
-  if [[ ! -d "$CODEX_ROOT/.git" ]]; then
-    echo "error: Codex clone not found at $CODEX_ROOT" >&2
-    exit 1
+  if [[ -e "$CODEX_SKILLS_LINK" ]] && same_realpath "$CODEX_SKILLS_LINK" "$REPO_ROOT/skills"; then
+    echo "OK      [codex] direct repo link already active: $CODEX_SKILLS_LINK"
+    return 0
   fi
 
-  if repo_is_dirty; then
-    echo "error: repo has uncommitted changes. Commit/stash before after-commit." >&2
-    exit 1
-  fi
-
-  if git_worktree_is_dirty "$CODEX_ROOT"; then
-    echo "error: Codex clone is dirty. Clean $CODEX_ROOT before pulling." >&2
-    exit 1
-  fi
-
-  git -C "$CODEX_ROOT" pull --ff-only
-
-  local repo_sha codex_sha
-  repo_sha="$(git -C "$REPO_ROOT" rev-parse HEAD)"
-  codex_sha="$(git -C "$CODEX_ROOT" rev-parse HEAD)"
-
-  if [[ "$repo_sha" != "$codex_sha" ]]; then
-    echo "error: Codex clone still does not match repo HEAD." >&2
-    echo "repo HEAD:  $repo_sha" >&2
-    echo "codex HEAD: $codex_sha" >&2
-    echo "Did you commit and push this repo before running after-commit?" >&2
-    exit 1
-  fi
-
-  echo "OK      [codex] fast-forwarded to $codex_sha"
+  echo "error: Codex is not reading this repo directly. Re-run install-codex.sh to restore the direct skills link." >&2
+  exit 1
 }
 
 case "${1:-}" in

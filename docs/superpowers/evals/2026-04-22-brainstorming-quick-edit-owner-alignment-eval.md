@@ -69,7 +69,7 @@ Representative excerpt:
 - **What is still missing:** The `brainstorming` skill itself does not own that contract text yet, so the behavior is not anchored where future runs should discover it.
 - **Why this change is still needed:** Without a skill-local quick_edit block, future runs can regress, under-explain the owner boundary, or treat the parent-bead/spec-path rules as the only visible Beads model.
 
-## Candidate Checks (to fill after implementation)
+## Candidate Checks
 
 ### Candidate smoke session A — eligible one-shot copy change
 - Observed: the response explicitly says the request matches the brainstorming skill's `quick_edit Preflight Exception` and classifies it as a `quick_edit fast-path 후보`.

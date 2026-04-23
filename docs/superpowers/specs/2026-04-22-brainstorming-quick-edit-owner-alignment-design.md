@@ -1,7 +1,7 @@
 # Brainstorming Quick Edit Owner Alignment Design
 Parent bead: superpowers-a91
 
-**Status:** Draft for review
+**Status:** Draft for review  
 **Date:** 2026-04-22
 
 ## Problem

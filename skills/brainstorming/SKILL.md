@@ -46,9 +46,9 @@ Every project goes through this process. A todo list, a single-function utility,
 
 In a Beads-enabled repo, when `brainstorming` explicitly chooses the quick_edit path:
 
-- create a **new standalone execution issue** for that quick-edit work
+- create a **new standalone execution issue** for that `quick_edit` work
 - **label that new issue `quick_edit`**
-- do **not** treat the parent bead as the quick-edit issue
+- do **not** treat the parent bead as the `quick_edit` issue
 - this **does not change the normal spec-path parent** / `spec_id` / `reviewed:spec` rules used by regular brainstorming → spec runs
 
 ## Checklist

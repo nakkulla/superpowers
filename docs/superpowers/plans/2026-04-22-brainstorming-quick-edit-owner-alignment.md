@@ -29,7 +29,7 @@ Parent bead: superpowers-a91
 
 - [ ] **Step 1: Capture the current quick_edit text baseline**
 
-**REQUIRED SUB-SKILL:** Use superpowers:writing-skills
+**REQUIRED SUB-SKILL:** Use superpowers:writing-skills  
 **ALSO REQUIRED:** Use skill-creator because this is an eval-driven edit of an existing skill artifact.
 
 Run:
@@ -105,7 +105,7 @@ git commit -m "docs(eval): quick_edit brainstorming 기준선 기록"
 
 - [ ] **Step 1: Capture the current insertion context**
 
-**REQUIRED SUB-SKILL:** Use superpowers:writing-skills
+**REQUIRED SUB-SKILL:** Use superpowers:writing-skills  
 **ALSO REQUIRED:** Use skill-creator because this task changes an existing skill artifact.
 
 Run:
@@ -164,7 +164,7 @@ git commit -m "docs(brainstorming): quick_edit owner 경계 명확화"
 
 - [ ] **Step 1: Re-run both smoke sessions against the candidate skill**
 
-**REQUIRED SUB-SKILL:** Use superpowers:writing-skills
+**REQUIRED SUB-SKILL:** Use superpowers:writing-skills  
 **ALSO REQUIRED:** Use skill-creator because this task closes the eval loop for a skill edit.
 
 Run the same two Claude commands from Task 1 again after the skill edit.

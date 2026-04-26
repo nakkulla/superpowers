@@ -52,6 +52,45 @@ In a Beads-enabled repo, when `brainstorming` explicitly chooses the quick_edit 
 - do **not** treat the parent bead as the `quick_edit` issue
 - this **does not change the normal spec-path parent** / `spec_id` / `reviewed:spec` rules used by regular brainstorming → spec runs
 
+## skill_eval_fast_path Preflight Exception
+
+`skill_eval_fast_path` is a conservative spec-to-execution lane for skill artifact work where a full implementation plan would add ceremony but not reduce risk.
+
+Use it only after the written spec has passed the normal spec-review and user-review gates, and only when the approved work is primarily about a skill artifact such as `SKILL.md`, `references/`, `evals/`, trigger descriptions, or bundled skill resources.
+
+Allowed examples:
+
+- creating or revising a Codex/Claude skill artifact
+- improving skill trigger descriptions
+- adding or updating skill eval prompts, assertions, or bundled references
+- small helper/resource changes whose acceptance is captured by skill evals or contract tests
+
+Disallowed examples:
+
+- Beads lifecycle, PR merge, or repo automation behavior where execution order can affect durable state
+- broad cross-skill orchestration or rollout/migration choreography
+- changes whose touched surface, acceptance criteria, or verification path remain unclear after spec-review
+- work that still needs a step-by-step implementation plan to coordinate multiple subsystems
+
+When this lane is selected:
+
+- `writing-plans` is not required, and `plan-review` may be skipped because there is no plan artifact to review.
+- Transition to `skill-creator` instead of `writing-plans`.
+- Require eval-first skill development: write or update eval cases before finalizing the skill change.
+- Require at least one positive trigger eval, one negative trigger eval, and one behavior/execution eval unless the user explicitly narrows the scope or a real blocker is documented.
+- Prefer `with_skill` vs `without_skill` comparison when the skill output can be evaluated meaningfully.
+- Treat eval-first RED → GREEN → REFACTOR as the skill equivalent of TDD.
+- `skill_eval_fast_path` never skips implementation-review, verification evidence, or follow-up capture.
+
+### Beads handling for skill_eval_fast_path
+
+In a Beads-enabled repo, when `brainstorming` explicitly chooses `skill_eval_fast_path`:
+
+- reuse the parent bead linked to the reviewed spec when the skill work is the approved parent scope
+- record the selected execution lane in human-readable output or metadata when the caller supports metadata
+- do not add `reviewed:plan` unless a real plan exists and passed `plan-review`
+- keep `reviewed:spec` owned by the normal brainstorming spec gate
+
 ## Checklist
 
 You MUST create a task for each of these items and complete them in order:
@@ -87,7 +126,7 @@ You MUST create a task for each of these items and complete them in order:
 11. **Optional Codex challenge re-review loop (Claude Code only)** — if a written spec exists and Claude Code has `codex-plugin-cc` available, default to one bounded advisory Codex critique pass after the formal independent review work is already resolved. If substantive spec edits are made and material findings remain, you may re-run it up to 3 total advisory passes per brainstorming run.
 12. **User reviews written spec** — ask user to review the spec file before proceeding
 13. **Mark parent bead `reviewed:spec`** — after the full spec gate passes, the main brainstorming flow labels the linked parent bead
-14. **Transition to implementation** — invoke writing-plans skill to create implementation plan. Do **not** transition from a chat-only draft: planning starts only after a written spec file exists, is linked via `spec_id`, and passes the spec gate.
+14. **Select execution lane** — default to invoking `writing-plans` for implementation planning. If `skill_eval_fast_path` applies, transition to `skill-creator` and its eval loop instead. Do **not** transition from a chat-only draft: either lane starts only after a written spec file exists, is linked via `spec_id`, and passes the spec gate.
 
 ## Process Flow
 
@@ -116,7 +155,9 @@ digraph brainstorming {
     "Claude Code advisory passes\n< 3 and substantive changes remain?" [shape=diamond];
     "User reviews spec?" [shape=diamond];
     "Mark parent bead\nreviewed:spec" [shape=box];
+    "Select execution lane" [shape=diamond];
     "Invoke writing-plans skill" [shape=doublecircle];
+    "Invoke skill-creator eval loop" [shape=doublecircle];
 
     "Explore project context" -> "Visual questions ahead?";
     "Visual questions ahead?" -> "Offer Visual Companion\n(own message, no other content)" [label="yes"];
@@ -151,11 +192,13 @@ digraph brainstorming {
     "Claude Code advisory passes\n< 3 and substantive changes remain?" -> "User reviews spec?" [label="no"];
     "User reviews spec?" -> "Write design doc" [label="changes requested"];
     "User reviews spec?" -> "Mark parent bead\nreviewed:spec" [label="approved"];
-    "Mark parent bead\nreviewed:spec" -> "Invoke writing-plans skill";
+    "Mark parent bead\nreviewed:spec" -> "Select execution lane";
+    "Select execution lane" -> "Invoke writing-plans skill" [label="default"];
+    "Select execution lane" -> "Invoke skill-creator eval loop" [label="skill_eval_fast_path"];
 }
 ```
 
-**The terminal state is invoking writing-plans.** Do NOT invoke frontend-design, mcp-builder, or any other implementation skill. The default next skill is writing-plans.
+**The default terminal state is invoking writing-plans.** For `skill_eval_fast_path`, the terminal state is invoking the `skill-creator` eval loop instead. Do NOT invoke frontend-design, mcp-builder, or any unrelated implementation skill.
 
 ## The Process
 
@@ -414,9 +457,10 @@ After the user approves the written spec, the **brainstorming** flow owns the fi
   Then re-run the full spec gate and re-apply the label only after the updated spec passes again.
 - `spec-review` itself remains review-only and does not own this label.
 
-**Implementation:**
+**Execution lane:**
 
-- Invoke the writing-plans skill to create a detailed implementation plan
+- Default lane: invoke the writing-plans skill to create a detailed implementation plan.
+- `skill_eval_fast_path`: invoke `skill-creator` and require eval-first skill development instead of a plan. In this lane, plan writing is not required and plan-review may skip because there is no plan artifact; positive trigger eval, negative trigger eval, behavior/execution eval, verification evidence, and implementation-review remain required.
 
 ## Key Principles
 

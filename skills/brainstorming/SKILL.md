@@ -75,7 +75,9 @@ Disallowed examples:
 When this lane is selected:
 
 - `writing-plans` is not required, and `plan-review` may be skipped because there is no plan artifact to review.
-- Transition to `skill-creator` instead of `writing-plans`.
+- Record `skill_eval_fast_path` as the selected execution lane instead of invoking `writing-plans` or `skill-creator`.
+- Do not invoke `skill-creator` from brainstorming unless the user explicitly asks to continue execution in the same session.
+- The later execution workflow owns running `skill-creator`.
 - Require eval-first skill development: write or update eval cases before finalizing the skill change.
 - Require at least one positive trigger eval, one negative trigger eval, and one behavior/execution eval unless the user explicitly narrows the scope or a real blocker is documented.
 - Prefer `with_skill` vs `without_skill` comparison when the skill output can be evaluated meaningfully.
@@ -88,7 +90,9 @@ In a Beads-enabled repo, when `brainstorming` explicitly chooses `skill_eval_fas
 
 - reuse the parent bead linked to the reviewed spec when the skill work is the approved parent scope
 - record the selected execution lane in human-readable output or metadata when the caller supports metadata
+- prefer parent metadata such as `execution_lane=skill_eval_fast_path`, `skill_eval_fast_path=yes`, and `skill_eval_fast_path_source=spec`
 - do not add `reviewed:plan` unless a real plan exists and passed `plan-review`
+- do not create child execution beads from brainstorming
 - keep `reviewed:spec` owned by the normal brainstorming spec gate
 
 ## Checklist
@@ -126,7 +130,7 @@ You MUST create a task for each of these items and complete them in order:
 11. **Optional Codex challenge re-review loop (Claude Code only)** — if a written spec exists and Claude Code has `codex-plugin-cc` available, default to one bounded advisory Codex critique pass after the formal independent review work is already resolved. If substantive spec edits are made and material findings remain, you may re-run it up to 3 total advisory passes per brainstorming run.
 12. **User reviews written spec** — ask user to review the spec file before proceeding
 13. **Mark parent bead `reviewed:spec`** — after the full spec gate passes, the main brainstorming flow labels the linked parent bead
-14. **Select execution lane** — default to invoking `writing-plans` for implementation planning. If `skill_eval_fast_path` applies, transition to `skill-creator` and its eval loop instead. Do **not** transition from a chat-only draft: either lane starts only after a written spec file exists, is linked via `spec_id`, and passes the spec gate.
+14. **Record execution lane and stop** — default to `plan`. If `skill_eval_fast_path` applies, record that lane on the parent bead or final handoff summary. Do not invoke `writing-plans` or `skill-creator` automatically. End after the reviewed spec is linked, labeled, committed, and pushed.
 
 ## Process Flow
 
@@ -155,9 +159,8 @@ digraph brainstorming {
     "Claude Code advisory passes\n< 3 and substantive changes remain?" [shape=diamond];
     "User reviews spec?" [shape=diamond];
     "Mark parent bead\nreviewed:spec" [shape=box];
-    "Select execution lane" [shape=diamond];
-    "Invoke writing-plans skill" [shape=doublecircle];
-    "Invoke skill-creator eval loop" [shape=doublecircle];
+    "Record execution lane" [shape=box];
+    "Stop after spec handoff" [shape=doublecircle];
 
     "Explore project context" -> "Visual questions ahead?";
     "Visual questions ahead?" -> "Offer Visual Companion\n(own message, no other content)" [label="yes"];
@@ -192,13 +195,12 @@ digraph brainstorming {
     "Claude Code advisory passes\n< 3 and substantive changes remain?" -> "User reviews spec?" [label="no"];
     "User reviews spec?" -> "Write design doc" [label="changes requested"];
     "User reviews spec?" -> "Mark parent bead\nreviewed:spec" [label="approved"];
-    "Mark parent bead\nreviewed:spec" -> "Select execution lane";
-    "Select execution lane" -> "Invoke writing-plans skill" [label="default"];
-    "Select execution lane" -> "Invoke skill-creator eval loop" [label="skill_eval_fast_path"];
+    "Mark parent bead\nreviewed:spec" -> "Record execution lane";
+    "Record execution lane" -> "Stop after spec handoff";
 }
 ```
 
-**The default terminal state is invoking writing-plans.** For `skill_eval_fast_path`, the terminal state is invoking the `skill-creator` eval loop instead. Do NOT invoke frontend-design, mcp-builder, or any unrelated implementation skill.
+**The default terminal state is a reviewed, linked spec with an execution lane recorded.** Brainstorming does not invoke `writing-plans`, `skill-creator`, frontend-design, mcp-builder, or any unrelated implementation skill automatically. Execution continues later through `bd-ralph`, `executing-plans`, or an explicit user request.
 
 ## The Process
 
@@ -448,19 +450,27 @@ After the user approves the written spec, the **brainstorming** flow owns the fi
 - Reuse the same **parent** bead resolved in the Beads Integration step. Do **not** label a child issue.
 - Add the label only after the full spec gate passes: self-review, at least one formal `spec-review` pass, any applicable automatic independent review loop, any used post-cap direct reconciliation loop, any applicable Codex/Claude challenge loops, and user approval of the written spec.
 - Apply the label with:
-  - `bd update <parent-id> --add-label reviewed:spec`
+  - `SPEC_REVIEWED_SHA="$(git log -n 1 --format=%H -- <spec-path>)"`
+  - `bd update <parent-id> --add-label reviewed:spec --set-metadata spec_reviewed_sha="$SPEC_REVIEWED_SHA"`
   - `bd dolt push`
 - If the label already exists, leave it in place.
+- If the label already exists but `spec_reviewed_sha` is absent or does not match the current `<spec-path>` latest commit SHA, treat the review freshness as incomplete: re-run the full spec gate before updating the metadata.
 - If substantive spec edits are made **after** `reviewed:spec` was applied, first invalidate the stale label with:
-  - `bd update <parent-id> --remove-label reviewed:spec`
+  - `bd update <parent-id> --remove-label reviewed:spec --unset-metadata spec_reviewed_sha`
   - `bd dolt push`
   Then re-run the full spec gate and re-apply the label only after the updated spec passes again.
 - `spec-review` itself remains review-only and does not own this label.
 
-**Execution lane:**
+**Execution lane recording:**
 
-- Default lane: invoke the writing-plans skill to create a detailed implementation plan.
-- `skill_eval_fast_path`: invoke `skill-creator` and require eval-first skill development instead of a plan. In this lane, plan writing is not required and plan-review may skip because there is no plan artifact; positive trigger eval, negative trigger eval, behavior/execution eval, verification evidence, and implementation-review remain required.
+- Default lane: record `execution_lane=plan`.
+- `skill_eval_fast_path`: record `execution_lane=skill_eval_fast_path`.
+- Do not invoke `writing-plans` or `skill-creator` automatically.
+- If Beads is available, persist the lane on the parent bead via metadata or labels.
+- If Beads is unavailable, include the selected lane in the final handoff summary.
+- The next execution workflow owns acting on the lane:
+  - `execution_lane=plan` → `writing-plans` / `executing-plans`
+  - `execution_lane=skill_eval_fast_path` → `bd-ralph` runs `skill-creator` in non-interactive/default eval mode
 
 ## Key Principles
 

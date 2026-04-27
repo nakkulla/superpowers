@@ -19,7 +19,12 @@ rg -q 'Record execution lane' "$SKILL"
 rg -q 'Stop after spec handoff' "$SKILL"
 rg -q 'Do not invoke `writing-plans` or `skill-creator` automatically' "$SKILL"
 rg -q 'spec_reviewed_sha' "$SKILL"
+rg -q 'spec_review_base_sha' "$SKILL"
+rg -q 'spec_freshness=fresh' "$SKILL"
+rg -q 'spec_stale_reason=none' "$SKILL"
 rg -q 'bd update <parent-id> --add-label reviewed:spec --set-metadata spec_reviewed_sha=' "$SKILL"
+rg -q -- '--set-metadata spec_review_base_sha=' "$SKILL"
 rg -q 'bd update <parent-id> --remove-label reviewed:spec --unset-metadata spec_reviewed_sha' "$SKILL"
+rg -q -- '--unset-metadata spec_review_base_sha' "$SKILL"
 
 echo 'PASS: brainstorming skill eval fast path contract'

@@ -451,12 +451,14 @@ After the user approves the written spec, the **brainstorming** flow owns the fi
 - Add the label only after the full spec gate passes: self-review, at least one formal `spec-review` pass, any applicable automatic independent review loop, any used post-cap direct reconciliation loop, any applicable Codex/Claude challenge loops, and user approval of the written spec.
 - Apply the label with:
   - `SPEC_REVIEWED_SHA="$(git log -n 1 --format=%H -- <spec-path>)"`
-  - `bd update <parent-id> --add-label reviewed:spec --set-metadata spec_reviewed_sha="$SPEC_REVIEWED_SHA"`
+  - `SPEC_REVIEW_BASE_SHA="$(git rev-parse HEAD)"`
+  - `bd update <parent-id> --add-label reviewed:spec --set-metadata spec_reviewed_sha="$SPEC_REVIEWED_SHA" --set-metadata spec_review_base_sha="$SPEC_REVIEW_BASE_SHA" --set-metadata spec_freshness=fresh --set-metadata spec_stale_reason=none`
   - `bd dolt push`
+- `spec_review_base_sha` is the repo `HEAD` whose codebase state was covered by the latest passing formal spec-review, not just a timestamp for when the label was applied. If code changed after the passing formal review and before user approval, re-check freshness or re-run the formal spec-review gate before recording the metadata.
 - If the label already exists, leave it in place.
-- If the label already exists but `spec_reviewed_sha` is absent or does not match the current `<spec-path>` latest commit SHA, treat the review freshness as incomplete: re-run the full spec gate before updating the metadata.
+- If the label already exists but `spec_reviewed_sha` is absent, `spec_review_base_sha` is absent, `spec_reviewed_sha` does not match the current `<spec-path>` latest commit SHA, or the codebase has drifted from `spec_review_base_sha` on a spec-relevant path, treat the review freshness as incomplete: re-run the full spec gate before updating the metadata.
 - If substantive spec edits are made **after** `reviewed:spec` was applied, first invalidate the stale label with:
-  - `bd update <parent-id> --remove-label reviewed:spec --unset-metadata spec_reviewed_sha`
+  - `bd update <parent-id> --remove-label reviewed:spec --unset-metadata spec_reviewed_sha --unset-metadata spec_review_base_sha --set-metadata spec_freshness=stale --set-metadata spec_stale_reason=spec-changed`
   - `bd dolt push`
   Then re-run the full spec gate and re-apply the label only after the updated spec passes again.
 - `spec-review` itself remains review-only and does not own this label.

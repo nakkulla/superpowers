@@ -10,3 +10,5 @@ triage/
 .dolt/
 *.db
 .beads-credential-key
+
+.worktrees/

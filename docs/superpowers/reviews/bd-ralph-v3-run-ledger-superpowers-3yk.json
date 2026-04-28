@@ -168,6 +168,26 @@
         "changed_files": "unknown",
         "reason": "none"
       }
+    },
+    "post_finish": {
+      "self_audit": {
+        "policy": "light",
+        "verdict": "clean_with_suggestions",
+        "note": "Delivery gates passed; one repeatable workflow hazard from worktree sync was captured via self-improve."
+      },
+      "self_improve": {
+        "delta_path": "/Users/isy_macstudio/Documents/GitHub/dotfiles/shared/skills/bd-ralph-v3/delta.md",
+        "log_path": "/Users/isy_macstudio/Documents/GitHub/dotfiles/shared/skills/bd-ralph-v3/.self-improve/delta-log.jsonl",
+        "target_skill": "shared/skills/bd-ralph-v3",
+        "target_repo_root": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
+        "appended": 1,
+        "deduped": 0,
+        "skipped": "none",
+        "persistence": "target-repo-commit"
+      },
+      "final_summary_gate": {
+        "status": "pass"
+      }
     }
   },
   "invocations": [],
@@ -228,20 +248,22 @@
   },
   "post_finish": {
     "self_audit": {
-      "policy": "unknown",
-      "verdict": "unknown"
+      "policy": "light",
+      "verdict": "clean_with_suggestions",
+      "note": "Delivery gates passed; one repeatable workflow hazard from worktree sync was captured via self-improve."
     },
     "self_improve": {
-      "delta_path": "",
-      "target_skill": "",
-      "target_repo_root": "",
-      "appended": 0,
+      "delta_path": "/Users/isy_macstudio/Documents/GitHub/dotfiles/shared/skills/bd-ralph-v3/delta.md",
+      "log_path": "/Users/isy_macstudio/Documents/GitHub/dotfiles/shared/skills/bd-ralph-v3/.self-improve/delta-log.jsonl",
+      "target_skill": "shared/skills/bd-ralph-v3",
+      "target_repo_root": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
+      "appended": 1,
       "deduped": 0,
-      "skipped": "unknown",
-      "persistence": ""
+      "skipped": "none",
+      "persistence": "target-repo-commit"
     },
     "final_summary_gate": {
-      "status": "unknown"
+      "status": "pass"
     }
   },
   "acceptance": {
@@ -265,6 +287,7 @@
     "implementation_review_verdict": "APPROVE",
     "run_started_at": "2026-04-28T05:47:00Z",
     "run_finished_at": "2026-04-28T06:21:18Z",
-    "self_improve_persistence": ""
+    "self_improve_persistence": "target-repo-commit",
+    "final_summary_gate": "pass"
   }
 }

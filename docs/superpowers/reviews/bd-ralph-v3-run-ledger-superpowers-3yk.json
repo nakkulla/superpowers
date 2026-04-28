@@ -2,7 +2,7 @@
   "schema_version": "v1",
   "workflow": "bd-ralph",
   "parent_bead_id": "superpowers-3yk",
-  "generated_at": "2026-04-28T06:20:02.021477Z",
+  "generated_at": "2026-04-28T06:21:26.163546Z",
   "artifact_path": "docs/superpowers/reviews/bd-ralph-v3-run-ledger-superpowers-3yk.json",
   "run": {
     "canonical_worktree": ".worktrees/superpowers-3yk",
@@ -11,11 +11,11 @@
     "completed_task_count": 3,
     "unresolved_task_count": 0,
     "started_at": "2026-04-28T05:47:00Z",
-    "finished_at": "2026-04-28T06:19:54Z",
+    "finished_at": "2026-04-28T06:21:18Z",
     "scope_narrowed": false,
     "tracking_repo": ".",
     "execution_repo": ".worktrees/superpowers-3yk",
-    "repo_boundary_status": "local-fork-only"
+    "repo_boundary_status": "local"
   },
   "phase_evidence": {
     "setup": {
@@ -245,7 +245,7 @@
     }
   },
   "acceptance": {
-    "status": "not_accepted",
+    "status": "accepted",
     "blocking_checks": [],
     "waived_checks": [],
     "summary": {
@@ -256,7 +256,7 @@
   "followup": [],
   "summary": {
     "audit_version": "v1",
-    "audit_status": "not_accepted",
+    "audit_status": "accepted",
     "audit_artifact": "docs/superpowers/reviews/bd-ralph-v3-run-ledger-superpowers-3yk.json",
     "canonical_worktree": ".worktrees/superpowers-3yk",
     "canonical_branch": "bd-ralph-v3/superpowers-3yk",
@@ -264,7 +264,7 @@
     "unresolved_task_count": 0,
     "implementation_review_verdict": "APPROVE",
     "run_started_at": "2026-04-28T05:47:00Z",
-    "run_finished_at": "2026-04-28T06:19:54Z",
+    "run_finished_at": "2026-04-28T06:21:18Z",
     "self_improve_persistence": ""
   }
 }

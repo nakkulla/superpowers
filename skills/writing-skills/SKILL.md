@@ -69,6 +69,18 @@ Way of thinking about problems (flatten-with-flags, test-invariants)
 ### Reference
 API docs, syntax guides, tool documentation (office docs)
 
+
+## Mandatory Modularity Gate
+
+Before writing or editing `SKILL.md`, classify the skill structure:
+
+- **Self-contained**: all essential guidance fits inline.
+- **Reference-backed**: detailed docs, APIs, or long examples belong in focused reference files.
+- **Script-backed**: deterministic, repeated, validation, parsing, or generation logic belongs in scripts.
+- **Asset-backed**: templates, static examples, or reusable resources belong in assets.
+
+Use `SKILL.md` as the dispatcher: triggers, core workflow, critical gotchas, and exact conditions for loading support files. Keep support references one level deep and avoid vague “see references/” pointers.
+
 ## Directory Structure
 
 

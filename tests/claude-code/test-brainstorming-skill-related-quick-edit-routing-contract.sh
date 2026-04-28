@@ -20,7 +20,7 @@ rg -q 'Set `execution_lane=quick_edit` only when `quick_edit=yes`' "$BRAINSTORMI
 rg -q 'Never create new `execution_lane=skill_eval_fast_path` output' "$BRAINSTORMING"
 rg -q 'Do not invoke `skill-creator` directly from brainstorming' "$BRAINSTORMING"
 
-! rg -q 'Record `skill_eval_fast_path` as the selected execution lane|execution_lane=skill_eval_fast_path|skill_eval_fast_path Preflight Exception' "$BRAINSTORMING" "$WRITING_PLANS" "$EXECUTING_PLANS"
+! rg -q 'Record `skill_eval_fast_path` as the selected execution lane|skill_eval_fast_path Preflight Exception|`skill_eval_fast_path`: record|execution_lane=skill_eval_fast_path.*→' "$BRAINSTORMING" "$WRITING_PLANS" "$EXECUTING_PLANS"
 
 rg -q '## Skill-related Plan Hard Gate' "$WRITING_PLANS"
 rg -q 'This plan is skill-related' "$WRITING_PLANS"

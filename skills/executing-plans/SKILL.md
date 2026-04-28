@@ -127,6 +127,24 @@ If `.beads/` does not exist, skip this question and proceed with Beads integrati
    - **If children exist (Resume):** Reconstruct Task→Bead mapping from existing children. Mark tasks corresponding to `resolved`/`closed` children as completed. Announce: "Resuming execution — N tasks already completed." Skip `seed-beads-from-plan`.
    - **If no children (Fresh start):** Invoke `seed-beads-from-plan` (pass plan path + parent issue ID). Receive and retain the mapping table (Task → Bead ID).
 
+## Skill-related Task Router
+
+Before editing for each task, classify whether the task is skill-related. Treat it as skill-related when any of these are true:
+
+- the linked Beads issue has a `skill-related` label or equivalent metadata;
+- the linked spec or plan records `skill_related=yes`;
+- the task touches a skill artifact path such as `SKILL.md`, `agents/openai.yaml`, or a skill's `references/`, `scripts/`, `assets/`, or eval fixture files;
+- the task text explicitly says it changes skill routing, metadata, evals, resources, trigger behavior, or eval-driven behavior.
+
+For skill-related tasks, invoke the skill-edit discipline before editing:
+
+```text
+REQUIRED SUB-SKILL: superpowers:writing-skills
+ALSO REQUIRED: skill-creator when the task changes metadata, triggers, routing behavior, resources, or eval-driven skill behavior.
+```
+
+This router does not skip plan authoring, Beads lifecycle, task verification, implementation review, or finishing workflows. It only controls how skill artifact tasks are executed.
+
 ### Step 2: Execute Tasks
 
 For each task:

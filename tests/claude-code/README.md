@@ -26,6 +26,7 @@ This test suite verifies that skills are loaded correctly and Claude follows the
 ### Run specific test:
 ```bash
 ./run-skill-tests.sh --test test-subagent-driven-development.sh
+./run-skill-tests.sh --test test-brainstorming-skill-related-quick-edit-routing-contract.sh
 ```
 
 ### Run with verbose output:
@@ -91,6 +92,13 @@ Tests skill content and requirements (~2 minutes):
 - Spec compliance reviewer skepticism documented
 - Review loops documented
 - Task context provision documented
+
+#### test-brainstorming-skill-related-quick-edit-routing-contract.sh
+Tests the brainstorming/writing-plans/executing-plans routing contract (~1 second):
+- `skill_related` classification is recorded separately from `quick_edit`
+- `execution_lane=plan|quick_edit` replaces new `skill_eval_fast_path` output
+- skill-related plan completeness and task routing gates are documented
+- ripgrep (`rg`) is available before running the contract assertions
 
 ### Integration Tests (use --integration flag)
 

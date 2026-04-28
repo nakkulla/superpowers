@@ -58,6 +58,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Tests:"
             echo "  test-subagent-driven-development.sh  Test skill loading and requirements"
+            echo "  test-brainstorming-skill-related-quick-edit-routing-contract.sh  Test skill-related quick_edit routing contract"
             echo ""
             echo "Integration Tests (use --integration):"
             echo "  test-subagent-driven-development-integration.sh  Full workflow execution"
@@ -74,12 +75,23 @@ done
 # List of skill tests to run (fast unit tests)
 tests=(
     "test-subagent-driven-development.sh"
+    "test-brainstorming-skill-related-quick-edit-routing-contract.sh"
 )
 
 # Integration tests (slow, full execution)
 integration_tests=(
     "test-subagent-driven-development-integration.sh"
 )
+
+run_with_optional_timeout() {
+    if command -v timeout >/dev/null 2>&1; then
+        timeout "$TIMEOUT" "$@"
+    elif command -v gtimeout >/dev/null 2>&1; then
+        gtimeout "$TIMEOUT" "$@"
+    else
+        "$@"
+    fi
+}
 
 # Add integration tests if requested
 if [ "$RUN_INTEGRATION" = true ]; then
@@ -118,7 +130,7 @@ for test in "${tests[@]}"; do
     start_time=$(date +%s)
 
     if [ "$VERBOSE" = true ]; then
-        if timeout "$TIMEOUT" bash "$test_path"; then
+        if run_with_optional_timeout bash "$test_path"; then
             end_time=$(date +%s)
             duration=$((end_time - start_time))
             echo ""
@@ -138,7 +150,7 @@ for test in "${tests[@]}"; do
         fi
     else
         # Capture output for non-verbose mode
-        if output=$(timeout "$TIMEOUT" bash "$test_path" 2>&1); then
+        if output=$(run_with_optional_timeout bash "$test_path" 2>&1); then
             end_time=$(date +%s)
             duration=$((end_time - start_time))
             echo "  [PASS] (${duration}s)"

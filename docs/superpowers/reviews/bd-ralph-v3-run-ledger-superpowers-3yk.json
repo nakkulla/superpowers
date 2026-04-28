@@ -1,0 +1,293 @@
+{
+  "schema_version": "v1",
+  "workflow": "bd-ralph",
+  "parent_bead_id": "superpowers-3yk",
+  "generated_at": "2026-04-28T06:21:26.163546Z",
+  "artifact_path": "docs/superpowers/reviews/bd-ralph-v3-run-ledger-superpowers-3yk.json",
+  "run": {
+    "canonical_worktree": ".worktrees/superpowers-3yk",
+    "canonical_branch": "bd-ralph-v3/superpowers-3yk",
+    "plan_path": "docs/superpowers/plans/2026-04-28-skill-related-quick-edit-routing-superpowers.md",
+    "completed_task_count": 3,
+    "unresolved_task_count": 0,
+    "started_at": "2026-04-28T05:47:00Z",
+    "finished_at": "2026-04-28T06:21:18Z",
+    "scope_narrowed": false,
+    "tracking_repo": ".",
+    "execution_repo": ".worktrees/superpowers-3yk",
+    "repo_boundary_status": "local"
+  },
+  "phase_evidence": {
+    "setup": {
+      "ready_check": "ran",
+      "ready_match": "superpowers-3yk",
+      "ready_note": "bd ready --json returned superpowers-3yk before worktree execution",
+      "baseline_verification": "PASS: old brainstorming fast-path contract passed before changes; new routing contract failed red before implementation"
+    },
+    "plan": {
+      "path": "docs/superpowers/plans/2026-04-28-skill-related-quick-edit-routing-superpowers.md",
+      "plan_review": "run",
+      "plan_review_verdict": "APPROVE_WITH_CHANGES",
+      "freshness": {
+        "base_sha": "2990c9b1740853e74c8619c1434660a45d5def18",
+        "head_sha": "97ed97d96cccee82edbc29388520bf4e85924560",
+        "source": "external_plan_review",
+        "status": "fresh",
+        "changed_files": "unknown",
+        "auto_refresh": true,
+        "reason": "external plan review feedback applied before execution"
+      },
+      "stale_after_review": false,
+      "fast_path": {
+        "execution_lane": "plan",
+        "quick_edit": false,
+        "source": "none",
+        "eligible": false,
+        "guard_result": "fail",
+        "guard_failure": "none",
+        "plan_fast_path": false,
+        "plan_skip_reason": "none",
+        "plan_required_after_spec": true,
+        "reviewed_plan_applied": true,
+        "skill_related": true,
+        "skill_creator_required": true,
+        "skill_creator_invoked": true,
+        "skill_creator_mode": "planned",
+        "skill_creator_workflow": "full",
+        "eval_direction": "run_proposed_evals",
+        "eval_evidence": {
+          "status": "pass",
+          "evidence_root": "docs/superpowers/evals",
+          "benchmark_json": "docs/superpowers/evals/2026-04-28-skill-related-quick-edit-routing-superpowers-eval.md",
+          "benchmark_md": "docs/superpowers/evals/2026-04-28-skill-related-quick-edit-routing-superpowers-eval.md",
+          "with_skill_count": 3,
+          "without_skill_count": 3,
+          "freshness": "fresh",
+          "skipped_layers": []
+        }
+      }
+    },
+    "seed": {
+      "push_ok": true,
+      "child_mapping_present": true,
+      "parent_lookup_success": true,
+      "child_lookup_success": true
+    },
+    "execute": {
+      "completed_task_count": 3,
+      "unresolved_task_count": 0,
+      "children": [
+        {
+          "id": "superpowers-3yk.3",
+          "status": "resolved",
+          "verification_summary": "PASS: eval evidence recorded, contract test passed, plugin copies synced and verified"
+        },
+        {
+          "id": "superpowers-3yk.2",
+          "status": "resolved",
+          "verification_summary": "PASS: contract test and routing rg checks passed"
+        },
+        {
+          "id": "superpowers-3yk.1",
+          "status": "resolved",
+          "verification_summary": "PASS: RED failed before skill updates as expected"
+        }
+      ],
+      "task_verification_summary": [
+        {
+          "id": "superpowers-3yk.3",
+          "status": "resolved",
+          "verification_summary": "PASS: eval evidence recorded, contract test passed, plugin copies synced and verified"
+        },
+        {
+          "id": "superpowers-3yk.2",
+          "status": "resolved",
+          "verification_summary": "PASS: contract test and routing rg checks passed"
+        },
+        {
+          "id": "superpowers-3yk.1",
+          "status": "resolved",
+          "verification_summary": "PASS: RED failed before skill updates as expected"
+        }
+      ],
+      "scope_narrowed": false
+    },
+    "review": {
+      "dispatch_history": [
+        {
+          "subject": "implementation-review",
+          "verdict": "APPROVE",
+          "final_source": "external",
+          "policy_blocked": false,
+          "external_attempts": 1,
+          "self_attempts": 0,
+          "escalated": false
+        }
+      ],
+      "review_subagent": {
+        "capable": "yes",
+        "reason": "spawn_agent_available_external_review_used"
+      },
+      "final_verdict": "APPROVE",
+      "final_source": "external",
+      "policy_blocked": false,
+      "stale_after_code_change": false,
+      "reviewed_impl_applied": true
+    },
+    "simplify": {
+      "policy": "run",
+      "status": "no-op",
+      "verification": "PASS: no code changes after simplify triage; final contract test rerun",
+      "rereview": "not_required_no_code_change",
+      "commit_sha": "",
+      "diff_source": "ef6a1b2a0500eb69adac9fbbea872bb8b7fa0c5d..d1424cea4d634370fe982efa06b93bc0394bf39c",
+      "noop_why": "reuse and efficiency reviewers clean; quality duplicate-routing finding triaged out_of_scope/low_roi because reviewed spec requires repeated local routing in each active skill and contract test"
+    },
+    "finish": {
+      "pr_url": "https://github.com/nakkulla/superpowers/pull/7",
+      "pr_number": "7",
+      "final_quality_gate_success": true,
+      "first_branch_push_success": true,
+      "final_git_status": "clean",
+      "final_parent_status": "resolved",
+      "final_children_status": "all-resolved",
+      "run_ledger_write_success": true,
+      "metadata_sync_success": true,
+      "artifact_only_second_commit_success": true,
+      "second_branch_push_success": true
+    },
+    "spec": {
+      "path": "docs/superpowers/specs/2026-04-28-skill-related-quick-edit-routing-superpowers-design.md",
+      "freshness": {
+        "reviewed_sha": "8bde1296ad290887a01f0c5753e78c65077f83f1",
+        "review_base_sha": "ef6a1b2a0500eb69adac9fbbea872bb8b7fa0c5d",
+        "codebase_head_sha": "d1424cea4d634370fe982efa06b93bc0394bf39c",
+        "source": "external_spec_review",
+        "status": "fresh",
+        "codebase_status": "fresh",
+        "changed_files": "unknown",
+        "reason": "none"
+      }
+    },
+    "post_finish": {
+      "self_audit": {
+        "policy": "light",
+        "verdict": "clean_with_suggestions",
+        "note": "Delivery gates passed; one repeatable workflow hazard from worktree sync was captured via self-improve."
+      },
+      "self_improve": {
+        "delta_path": "/Users/isy_macstudio/Documents/GitHub/dotfiles/shared/skills/bd-ralph-v3/delta.md",
+        "log_path": "/Users/isy_macstudio/Documents/GitHub/dotfiles/shared/skills/bd-ralph-v3/.self-improve/delta-log.jsonl",
+        "target_skill": "shared/skills/bd-ralph-v3",
+        "target_repo_root": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
+        "appended": 1,
+        "deduped": 0,
+        "skipped": "none",
+        "persistence": "target-repo-commit"
+      },
+      "final_summary_gate": {
+        "status": "pass"
+      }
+    }
+  },
+  "invocations": [],
+  "failures": [],
+  "usage": {
+    "scope": "direct_children",
+    "accuracy": "invocation_delta",
+    "status": "unavailable",
+    "main": {
+      "session_id": "",
+      "transcript_path": ""
+    },
+    "direct_children": [],
+    "failure_reason": "missing_inputs"
+  },
+  "review": {
+    "review_debt_summary": "none",
+    "plan_review": {
+      "final_verdict": "APPROVE_WITH_CHANGES",
+      "final_source": "external",
+      "policy_blocked": false,
+      "external_attempts": 4,
+      "self_attempts": 0,
+      "escalated": false,
+      "budget_exhausted": false,
+      "reviewed_plan_applied": true,
+      "debt_present": false
+    },
+    "implementation_review": {
+      "signals": [],
+      "final_verdict": "APPROVE",
+      "final_source": "external",
+      "policy_blocked": false,
+      "external_attempts": 1,
+      "self_attempts": 0,
+      "escalated": false,
+      "budget_exhausted": false,
+      "stale_after_code_change": false,
+      "forced_handoff": false,
+      "reviewed_impl_applied": true,
+      "scope": "full",
+      "base_sha": "ef6a1b2a0500eb69adac9fbbea872bb8b7fa0c5d",
+      "rereview_reason": "final_full_review"
+    },
+    "review_subagent": {
+      "capable": "yes",
+      "reason": "spawn_agent_available_external_review_used"
+    },
+    "simplify": {
+      "policy": "run",
+      "status": "no-op",
+      "verification": "PASS: no code changes after simplify triage; final contract test rerun",
+      "rereview": "not_required_no_code_change",
+      "commit_sha": "",
+      "diff_source": "ef6a1b2a0500eb69adac9fbbea872bb8b7fa0c5d..d1424cea4d634370fe982efa06b93bc0394bf39c",
+      "noop_why": "reuse and efficiency reviewers clean; quality duplicate-routing finding triaged out_of_scope/low_roi because reviewed spec requires repeated local routing in each active skill and contract test"
+    }
+  },
+  "post_finish": {
+    "self_audit": {
+      "policy": "light",
+      "verdict": "clean_with_suggestions",
+      "note": "Delivery gates passed; one repeatable workflow hazard from worktree sync was captured via self-improve."
+    },
+    "self_improve": {
+      "delta_path": "/Users/isy_macstudio/Documents/GitHub/dotfiles/shared/skills/bd-ralph-v3/delta.md",
+      "log_path": "/Users/isy_macstudio/Documents/GitHub/dotfiles/shared/skills/bd-ralph-v3/.self-improve/delta-log.jsonl",
+      "target_skill": "shared/skills/bd-ralph-v3",
+      "target_repo_root": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
+      "appended": 1,
+      "deduped": 0,
+      "skipped": "none",
+      "persistence": "target-repo-commit"
+    },
+    "final_summary_gate": {
+      "status": "pass"
+    }
+  },
+  "acceptance": {
+    "status": "accepted",
+    "blocking_checks": [],
+    "waived_checks": [],
+    "summary": {
+      "pr_url": "https://github.com/nakkulla/superpowers/pull/7",
+      "implementation_review_verdict": "APPROVE"
+    }
+  },
+  "followup": [],
+  "summary": {
+    "audit_version": "v1",
+    "audit_status": "accepted",
+    "audit_artifact": "docs/superpowers/reviews/bd-ralph-v3-run-ledger-superpowers-3yk.json",
+    "canonical_worktree": ".worktrees/superpowers-3yk",
+    "canonical_branch": "bd-ralph-v3/superpowers-3yk",
+    "completed_task_count": 3,
+    "unresolved_task_count": 0,
+    "implementation_review_verdict": "APPROVE",
+    "run_started_at": "2026-04-28T05:47:00Z",
+    "run_finished_at": "2026-04-28T06:21:18Z",
+    "self_improve_persistence": "target-repo-commit",
+    "final_summary_gate": "pass"
+  }
+}

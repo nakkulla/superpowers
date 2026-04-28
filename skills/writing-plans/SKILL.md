@@ -34,15 +34,21 @@ When invoked with `--auto`, this skill must:
 If the parent issue cannot be resolved safely in auto mode, fail fast instead of asking.
 In particular, if the best-matching parent issue is already `resolved` or `closed`, auto mode must fail fast instead of overwriting its `metadata.plan`.
 
-## Skill-Target Hard Gate
+## Skill-related Plan Hard Gate
 
-If the plan creates or modifies any skill artifact (`SKILL.md`, `agents/openai.yaml`, or files under a skill's `references/`, `scripts/`, or `assets/`), treat it as a skill-targeted plan.
+If the plan creates, modifies, evaluates, or changes routing for any skill artifact (`SKILL.md`, `agents/openai.yaml`, or files under a skill's `references/`, `scripts/`, `assets/`, or eval fixtures), treat it as a skill-related plan. This is a plan completeness gate, not an execution-lane decision. `quick_edit` is the only plan-skip lane.
 
-For skill-targeted plans:
-- **REQUIRED SUB-SKILL:** Use superpowers:writing-skills
-- **ALSO REQUIRED:** Use skill-creator when creating a new skill, changing skill metadata, restructuring the skill layout, or doing eval-driven iteration
+For skill-related plans, include this block near the top of the plan:
 
-If this routing is missing from the relevant tasks, the plan is incomplete.
+```markdown
+This plan is skill-related.
+REQUIRED SUB-SKILL: Use superpowers:writing-skills for skill artifact edits.
+ALSO REQUIRED: Use skill-creator when creating a new skill, changing skill metadata, restructuring skill resources, changing trigger/routing behavior, or doing eval-driven skill iteration.
+```
+
+Repeat the routing requirement inside every task that touches a skill artifact so task executors do not need to infer it from the header alone.
+
+If this routing is missing from the plan header or relevant tasks, the plan is incomplete.
 
 ## Scope Check
 
@@ -129,9 +135,9 @@ git commit -m "feat: add specific feature"
 ```
 ````
 
-> If a task touches any skill artifact (`SKILL.md`, `agents/openai.yaml`, or a skill's `references/`, `scripts/`, `assets/` files):
-> - **REQUIRED SUB-SKILL:** Use superpowers:writing-skills
-> - **ALSO REQUIRED:** Use skill-creator when creating a new skill, changing metadata, restructuring the skill, or doing eval-driven iteration
+> If a task touches any skill artifact (`SKILL.md`, `agents/openai.yaml`, or a skill's `references/`, `scripts/`, `assets/`, or eval fixture files):
+> - **REQUIRED SUB-SKILL:** Use superpowers:writing-skills for skill artifact edits
+> - **ALSO REQUIRED:** Use skill-creator when creating a new skill, changing skill metadata, restructuring skill resources, changing trigger/routing behavior, or doing eval-driven skill iteration
 
 ## No Placeholders
 
@@ -159,7 +165,7 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 
 **3. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
 
-**4. Skill routing check:** If any task touches a skill artifact, verify that `superpowers:writing-skills` is explicitly required, and that `skill-creator` is also required when applicable.
+**4. Skill routing check:** If the plan is skill-related, verify that the header says `This plan is skill-related`, that every skill artifact task explicitly requires `superpowers:writing-skills`, and that `skill-creator` is required when the task creates a new skill, changes skill metadata, restructures skill resources, changes trigger/routing behavior, or does eval-driven skill iteration. This check is about plan completeness, not an execution-lane decision.
 
 If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
 

@@ -52,48 +52,32 @@ In a Beads-enabled repo, when `brainstorming` explicitly chooses the quick_edit 
 - do **not** treat the parent bead as the `quick_edit` issue
 - this **does not change the normal spec-path parent** / `spec_id` / `reviewed:spec` rules used by regular brainstorming → spec runs
 
-## skill_eval_fast_path Preflight Exception
+## skill-related Classification
 
-`skill_eval_fast_path` is a conservative spec-to-execution lane for skill artifact work where a full implementation plan would add ceremony but not reduce risk.
+`skill-related` is a domain classification for work that creates, modifies, evaluates, or changes routing for skill artifacts or skill behavior contracts. It is independent from `quick_edit`.
 
-Use it only after the written spec has passed the normal spec-review and user-review gates, and only when the approved work is primarily about a skill artifact such as `SKILL.md`, `references/`, `evals/`, trigger descriptions, or bundled skill resources.
+Record both axes whenever a written spec reaches the execution-lane handoff:
 
-Allowed examples:
+```text
+skill_related=yes|no
+skill_related_reason=<short reason>
+quick_edit=yes|no
+quick_edit_decision_reason=<short reason>
+quick_edit_decided_by=brainstorming
+execution_lane=plan|quick_edit
+```
 
-- creating or revising a Codex/Claude skill artifact
-- improving skill trigger descriptions
-- adding or updating skill eval prompts, assertions, or bundled references
-- small helper/resource changes whose acceptance is captured by skill evals or contract tests
+Rules:
 
-Disallowed examples:
+- Default `execution_lane=plan`.
+- Set `execution_lane=quick_edit` only when `quick_edit=yes`.
+- Never create new `execution_lane=skill_eval_fast_path` output.
+- Evaluate `quick_edit` independently from `skill_related`: `skill_related=yes` does not force `quick_edit=no`, and `quick_edit=yes` does not imply `skill_related=yes`.
+- Record `quick_edit_decision_reason` for both yes and no decisions, especially when work is plausibly small or skill-related.
+- Preserve the standalone Beads issue semantics for cases where brainstorming explicitly chooses the pre-spec `quick_edit` path.
+- Do not invoke `skill-creator` directly from brainstorming unless the user explicitly asks to continue execution in the same session.
 
-- Beads lifecycle, PR merge, or repo automation behavior where execution order can affect durable state
-- broad cross-skill orchestration or rollout/migration choreography
-- changes whose touched surface, acceptance criteria, or verification path remain unclear after spec-review
-- work that still needs a step-by-step implementation plan to coordinate multiple subsystems
-
-When this lane is selected:
-
-- `writing-plans` is not required, and `plan-review` may be skipped because there is no plan artifact to review.
-- Record `skill_eval_fast_path` as the selected execution lane instead of invoking `writing-plans` or `skill-creator`.
-- Do not invoke `skill-creator` from brainstorming unless the user explicitly asks to continue execution in the same session.
-- The later execution workflow owns running `skill-creator`.
-- Require eval-first skill development: write or update eval cases before finalizing the skill change.
-- Require at least one positive trigger eval, one negative trigger eval, and one behavior/execution eval unless the user explicitly narrows the scope or a real blocker is documented.
-- Prefer `with_skill` vs `without_skill` comparison when the skill output can be evaluated meaningfully.
-- Treat eval-first RED → GREEN → REFACTOR as the skill equivalent of TDD.
-- `skill_eval_fast_path` never skips implementation-review, verification evidence, or follow-up capture.
-
-### Beads handling for skill_eval_fast_path
-
-In a Beads-enabled repo, when `brainstorming` explicitly chooses `skill_eval_fast_path`:
-
-- reuse the parent bead linked to the reviewed spec when the skill work is the approved parent scope
-- record the selected execution lane in human-readable output or metadata when the caller supports metadata
-- prefer parent metadata such as `execution_lane=skill_eval_fast_path`, `skill_eval_fast_path=yes`, and `skill_eval_fast_path_source=spec`
-- do not add `reviewed:plan` unless a real plan exists and passed `plan-review`
-- do not create child execution beads from brainstorming
-- keep `reviewed:spec` owned by the normal brainstorming spec gate
+`skill-related` means later execution must use skill-edit discipline: `superpowers:writing-skills` for skill artifact edits, and `skill-creator` when the task changes skill metadata, trigger/routing behavior, resources, or eval-driven behavior. It does not skip plan authoring.
 
 ## Checklist
 
@@ -131,7 +115,7 @@ You MUST create a task for each of these items and complete them in order:
 11. **Optional Codex challenge re-review loop (Claude Code only)** — if a written spec exists and Claude Code has `codex-plugin-cc` available, default to one bounded advisory Codex critique pass after the formal independent review work is already resolved. If substantive spec edits are made and material findings remain, you may re-run it up to 3 total advisory passes per brainstorming run.
 12. **User reviews written spec** — ask user to review the spec file before proceeding
 13. **Mark parent bead `reviewed:spec`** — after the full spec gate passes, the main brainstorming flow labels the linked parent bead
-14. **Record execution lane and stop** — default to `plan`. If `skill_eval_fast_path` applies, record that lane on the parent bead or final handoff summary. Do not invoke `writing-plans` or `skill-creator` automatically. End after the reviewed spec is linked, labeled, committed, and pushed.
+14. **Record skill-related and quick_edit decisions and stop** — default to `execution_lane=plan`; use `execution_lane=quick_edit` only when `quick_edit=yes`. Record `skill_related`, `skill_related_reason`, `quick_edit`, `quick_edit_decision_reason`, `quick_edit_decided_by=brainstorming`, and `execution_lane=plan|quick_edit` on the parent bead or final handoff summary. Do not invoke `writing-plans` or `skill-creator` automatically. End after the reviewed spec is linked, labeled, committed, and pushed.
 
 ## Process Flow
 
@@ -468,13 +452,14 @@ After the user approves the written spec, the **brainstorming** flow owns the fi
 **Execution lane recording:**
 
 - Default lane: record `execution_lane=plan`.
-- `skill_eval_fast_path`: record `execution_lane=skill_eval_fast_path`.
+- Record `execution_lane=quick_edit` only when `quick_edit=yes`.
+- Record `skill_related=yes|no`, `skill_related_reason=<short reason>`, `quick_edit=yes|no`, `quick_edit_decision_reason=<short reason>`, and `quick_edit_decided_by=brainstorming` with the lane.
 - Do not invoke `writing-plans` or `skill-creator` automatically.
-- If Beads is available, persist the lane on the parent bead via metadata or labels.
-- If Beads is unavailable, include the selected lane in the final handoff summary.
+- If Beads is available, persist these decisions on the parent bead via metadata or labels.
+- If Beads is unavailable, include them in the final handoff summary.
 - The next execution workflow owns acting on the lane:
   - `execution_lane=plan` → `writing-plans` / `executing-plans`
-  - `execution_lane=skill_eval_fast_path` → `bd-ralph` runs `skill-creator` in non-interactive/default eval mode
+  - `execution_lane=quick_edit` → bounded quick_edit execution with any required skill-related discipline
 
 ## Key Principles
 

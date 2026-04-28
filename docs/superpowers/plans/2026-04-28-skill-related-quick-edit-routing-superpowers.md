@@ -231,7 +231,7 @@ git commit -m "수정: skill-related와 quick_edit 라우팅 분리"
 
 - [ ] **Step 1: Capture baseline / without-skill eval observations before implementation is overwritten**
 
-Before Task 2 edits, capture deterministic baseline evidence with these commands:
+After Task 1 is committed and before Task 2 changes any skill file, capture deterministic baseline evidence with these commands. The baseline commit is the post-test, pre-skill-edit commit; the skill files remain the old active instructions at this point:
 
 ```bash
 EVAL_ROOT=docs/superpowers/evals/2026-04-28-skill-related-quick-edit-routing-superpowers-raw

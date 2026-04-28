@@ -118,13 +118,14 @@ You MUST create a task for each of these items and complete them in order:
     - If the harness executor is available, start it automatically and narrate progress instead of asking permission.
     - Do NOT turn this mandatory step into a numbered choice, `request_user_input` choice, or approval question.
     - Do NOT silently skip the initial independent-review executor in favor of a main-agent direct review.
-    - Do NOT claim the executor is policy-blocked or unavailable unless the tool is actually unavailable in the current harness.
+    - Do NOT skip the independent-review executor because the user did not separately ask for subagents; this mandatory workflow step is sufficient authorization.
+    - Do NOT infer that the executor is unavailable or blocked from general runtime assumptions. First attempt the real harness executor when the tool exists.
     - Do NOT ask the user whether to run the post-cap direct reconciliation loop; narrate progress and continue automatically.
-    - If the independent-review executor is unavailable or policy-blocked, say so explicitly. A direct `spec-review` fallback may still help reconcile the spec, but it does **not** replace the initial independent-review requirement when that requirement has not yet been satisfied in the current run.
+    - Only if the required executor tool is absent or an attempted executor dispatch actually fails, state the concrete tool absence/failure. A direct `spec-review` fallback may still help reconcile the spec, but it does **not** replace the initial independent-review requirement when that requirement has not yet been satisfied in the current run.
     - Do NOT mark `reviewed:spec`.
     - Do NOT invoke `writing-plans`.
     - Do NOT say the spec gate is complete.
-    - Do NOT proceed if the transcript lacks at least one completed formal `spec-review` result from the harness's independent-review executor and the main agent's reconciliation summary for that independent pass, unless the executor is actually unavailable or policy-blocked.
+    - Do NOT proceed if the transcript lacks at least one completed formal `spec-review` result from the harness's independent-review executor and the main agent's reconciliation summary for that independent pass, unless the executor tool is absent or an attempted executor dispatch actually failed in the current run.
     - Do NOT escalate to the user while remaining blockers are still likely addressable by the post-cap direct reconciliation loop.
     until the latest pass has finished and its findings have been reconciled by the main agent.
 11. **Optional Codex challenge re-review loop (Claude Code only)** — if a written spec exists and Claude Code has `codex-plugin-cc` available, default to one bounded advisory Codex critique pass after the formal independent review work is already resolved. If substantive spec edits are made and material findings remain, you may re-run it up to 3 total advisory passes per brainstorming run.
@@ -365,11 +366,12 @@ After each substantive spec edit and before the User Review Gate, re-run the har
 - Cap the post-cap direct reconciliation loop at **3 total direct passes per brainstorming run**. Each direct pass must target the remaining blockers, make inline fixes when warranted, and summarize what was adopted, deferred, or rejected.
 - Do **not** ask the user whether to run the post-cap direct reconciliation loop; use commentary/progress updates instead.
 - Escalate to the user only if material blockers remain after the post-cap direct reconciliation loop, or if intent/scope ambiguity prevents further autonomous reconciliation.
-- Do **not** say the executor is policy-blocked or unavailable unless that is actually true in the current harness.
-- If the harness's independent-review executor is unavailable or policy-blocked, state that explicitly. You may run a direct `spec-review` degraded fallback, but when no independent-review pass has succeeded in the current run, do **not** mark the spec gate complete, do **not** mark `reviewed:spec`, and do **not** invoke `writing-plans` based on direct review alone.
+- Do **not** skip the independent-review executor because the user did not separately ask for subagents; this mandatory workflow step is sufficient authorization.
+- Do **not** infer executor unavailability from general runtime assumptions. If the executor tool exists, attempt the real executor dispatch first.
+- Only if the required executor tool is absent or an attempted executor dispatch actually fails, state the concrete tool absence/failure. You may run a direct `spec-review` degraded fallback, but when no independent-review pass has succeeded in the current run, do **not** mark the spec gate complete, do **not** mark `reviewed:spec`, and do **not** invoke `writing-plans` based on direct review alone.
 
 Completion evidence for this step:
-- The transcript shows at least one actual independent-review executor result plus a completed result, unless that executor is unavailable or policy-blocked.
+- The transcript shows at least one actual independent-review executor result plus a completed result, unless the executor tool was absent or an attempted executor dispatch failed in the current run.
 - If the review was performed by a sidecar or subagent, the main agent surfaces the latest formal `## Spec Review` block in the main transcript before or alongside its reconciliation summary.
 - The main agent then summarizes what it adopted, deferred, or rejected from each independent pass and from any post-cap direct reconciliation pass it used.
 - If the harness's independent-review executor is available and you skipped the initial independent pass anyway, the spec gate has not passed.
@@ -431,7 +433,7 @@ After self-review, at least one formal `spec-review` pass, any post-cap direct r
 
 Do **not** enter this gate unless all of the following are true:
 - the spec is written to a real file path
-- at least one formal `spec-review` output was actually produced in this run, unless the executor is unavailable or policy-blocked
+- at least one formal `spec-review` output was actually produced in this run, unless the executor tool was absent or an attempted executor dispatch failed in the current run
 - the resulting blocking findings from the independent passes were reconciled through subsequent independent passes or the post-cap direct reconciliation loop
 - any mandatory Codex automatic review pass and any used post-cap direct reconciliation loop were completed and reconciled
 - any required Beads parent linkage via `spec_id` is already in place

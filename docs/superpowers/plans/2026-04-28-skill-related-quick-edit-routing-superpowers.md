@@ -136,7 +136,9 @@ Evaluate `quick_edit` independently from `skill_related`.
 Do not invoke `skill-creator` directly from brainstorming unless the user explicitly asks to continue execution in the same session.
 ```
 
-- [ ] **Step 2: Update brainstorming checklist and terminal state**
+- [ ] **Step 2: Update all active brainstorming fast-path references**
+
+Replace every active `skill_eval_fast_path` instruction in `skills/brainstorming/SKILL.md`, including the checklist, process-flow quick reference, and terminal state text. Historical docs outside active runtime skills are out of scope; active runtime instructions must not tell agents to create or select `skill_eval_fast_path`.
 
 Replace the checklist step that currently says to select `skill_eval_fast_path` with:
 ```text
@@ -148,7 +150,13 @@ execution_lane=plan → writing-plans / executing-plans
 execution_lane=quick_edit → bounded quick_edit execution with any required skill-related discipline
 ```
 
-- [ ] **Step 3: Update writing-plans hard gate**
+After editing, this command must exit non-zero and print no matching lines:
+```bash
+! rg -n 'skill_eval_fast_path|execution_lane=skill_eval_fast_path' skills/brainstorming/SKILL.md skills/writing-plans/SKILL.md skills/executing-plans/SKILL.md
+```
+Treat any remaining match in those active runtime files as a failure unless it is a quoted negative assertion that says not to create new `execution_lane=skill_eval_fast_path` output.
+
+- [ ] **Step 3: Update writing-plans hard gate and active legacy references**
 
 Rename `## Skill-Target Hard Gate` to `## Skill-related Plan Hard Gate` and require the exact plan header block:
 ```markdown
@@ -156,7 +164,7 @@ This plan is skill-related.
 REQUIRED SUB-SKILL: Use superpowers:writing-skills for skill artifact edits.
 ALSO REQUIRED: Use skill-creator when creating a new skill, changing skill metadata, restructuring skill resources, changing trigger/routing behavior, or doing eval-driven skill iteration.
 ```
-State that this is a plan completeness gate, not an execution-lane decision, and that relevant tasks must repeat the routing requirement.
+State that this is a plan completeness gate, not an execution-lane decision, and that relevant tasks must repeat the routing requirement. Replace any active wording that implies skill-targeted or skill-related work skips planning; the only plan-skip lane is `quick_edit`.
 
 - [ ] **Step 4: Add executing-plans task router**
 
@@ -175,7 +183,7 @@ bash tests/claude-code/test-brainstorming-skill-related-quick-edit-routing-contr
 rg -n 'skill_eval_fast_path|execution_lane=skill_eval_fast_path' skills/brainstorming/SKILL.md skills/writing-plans/SKILL.md skills/executing-plans/SKILL.md
 rg -n 'skill_related|skill-related|quick_edit_decision_reason|execution_lane=plan\|quick_edit|skill-creator' skills/brainstorming/SKILL.md skills/writing-plans/SKILL.md skills/executing-plans/SKILL.md
 ```
-Expected: contract test PASS; first `rg` prints no active runtime instructions telling agents to create new `execution_lane=skill_eval_fast_path`; second `rg` finds the new routing fields.
+Expected: contract test PASS; first `rg` has no active legacy matches except, if retained, a negative sentence forbidding new `execution_lane=skill_eval_fast_path` output; second `rg` finds the new routing fields.
 
 - [ ] **Step 6: Commit skill routing changes**
 
@@ -193,7 +201,30 @@ git commit -m "수정: skill-related와 quick_edit 라우팅 분리"
 
 **Skill routing:** REQUIRED SUB-SKILL: Use superpowers:writing-skills. ALSO REQUIRED: Use skill-creator because eval evidence is required for the skill routing behavior change.
 
-- [ ] **Step 1: Record eval-first evidence**
+- [ ] **Step 1: Capture baseline / without-skill eval observations before implementation is overwritten**
+
+Use the checked-in pre-change snippets from `HEAD~0` before Task 2, or copy the old snippets into the eval artifact before editing, and evaluate these three prompts against the old active instructions:
+
+```text
+Positive trigger prompt: A Beads issue asks to change a SKILL.md trigger description and update eval prompts; decide skill_related, quick_edit, execution_lane, and required downstream discipline.
+Negative trigger prompt: A Beads issue asks to fix a typo in README.md; decide skill_related, quick_edit, execution_lane, and whether skill-creator is required.
+Behavior prompt: Execute a plan task that edits skills/executing-plans/SKILL.md routing behavior; decide whether plan authoring is skipped and which sub-skills must run before editing.
+```
+
+Record baseline observations in the eval artifact. Expected baseline gaps: the old text can select `execution_lane=skill_eval_fast_path`, can blur skill-relatedness with plan skipping, and lacks executing-plans task-level skill routing.
+
+- [ ] **Step 2: Record changed / with-skill eval evidence**
+
+After Task 2, evaluate the same three prompts against the changed active instructions and record pass/fail judgments. Passing changed behavior means:
+
+```text
+Positive trigger: skill_related=yes, quick_edit is decided independently, execution_lane is only plan or quick_edit, and skill-creator discipline appears for trigger/routing/eval changes.
+Negative trigger: skill_related=no, no skill-creator requirement appears, and quick_edit is evaluated only by normal quick_edit criteria.
+Behavior: skill-related plan execution does not skip plan authoring; the task routes through writing-skills and skill-creator when changing metadata, triggers, routing behavior, resources, or eval-driven behavior.
+With-vs-without comparison: changed instructions improve over baseline by separating the axes and avoiding new execution_lane=skill_eval_fast_path output.
+```
+
+These observations may be a documented manual skill-eval transcript plus deterministic contract-test output; no new automation harness is required.
 
 Create `docs/superpowers/evals/2026-04-28-skill-related-quick-edit-routing-superpowers-eval.md` with sections:
 ```markdown
@@ -211,7 +242,7 @@ Create `docs/superpowers/evals/2026-04-28-skill-related-quick-edit-routing-super
 ```
 Include the actual prompt, observed baseline behavior, changed behavior, and pass/fail judgment for each eval case.
 
-- [ ] **Step 2: Run final local verification**
+- [ ] **Step 3: Run final local verification**
 
 Run:
 ```bash
@@ -223,7 +254,7 @@ scripts/sync-local-plugin-copies.sh verify
 ```
 Expected: contract test PASS, no active new fast-path lane instruction, routing fields found, plugin sync verify PASS.
 
-- [ ] **Step 3: Commit eval and sync-visible tracked changes**
+- [ ] **Step 4: Commit eval and sync-visible tracked changes**
 
 Run:
 ```bash
@@ -235,7 +266,7 @@ If plugin sync changes tracked files inside this repo, stage only files directly
 
 ## Self-Review
 
-- Spec coverage: Tasks cover active runtime instruction changes, contract test rewrite/rename, eval evidence, and plugin sync checks.
+- Spec coverage: Tasks cover active runtime instruction changes, active legacy reference removal, contract test rewrite/rename, eval evidence with baseline/changed comparison, and plugin sync checks.
 - Placeholder scan: No TODO/TBD placeholders are present; every task has paths, commands, and expected results.
 - Type consistency: Field names match the spec: `skill_related`, `skill_related_reason`, `quick_edit`, `quick_edit_decision_reason`, `quick_edit_decided_by`, `execution_lane=plan|quick_edit`.
 - Skill routing check: Each skill-artifact task explicitly requires `superpowers:writing-skills`; each routing/eval task also requires `skill-creator`.

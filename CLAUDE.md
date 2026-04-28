@@ -13,24 +13,13 @@ Skills are not prose — they are code that shapes agent behavior. If you modify
 - Show before/after eval results in your PR
 - Do not modify carefully-tuned content (Red Flags tables, rationalization lists, "human partner" language) without evidence the change is an improvement
 
-## Local Plugin Sync
+## Local Runtime Sync
 
 This repo is the **source of truth**.
 
 - **Codex:** `install-codex.sh` should point `~/.agents/skills/superpowers` directly at this repo's `skills/` directory, so local edits here take effect immediately.
-- **Claude/plugin caches:** still use separate copies and must be synced from this repo.
-
-**Preferred workflow:** Always edit in this repo first, then use the sync script for Claude/plugin copies:
-
-```bash
-scripts/sync-local-plugin-copies.sh copy
-scripts/sync-local-plugin-copies.sh verify
-```
-
-- `copy` syncs tracked working-tree files to installed Claude/plugin copies, including discovered Claude cache version directories
-- `verify` checks those copies for drift and also confirms whether Codex is reading this repo directly
-- `after-commit` is a lightweight health check for the direct-link Codex setup
-- Do **not** hand-copy files into Codex runtime paths
+- Do **not** hand-copy files into Codex runtime paths.
+- Do **not** run repo-local copy/sync/install steps from a worktree when the target may resolve to the main checkout or a live runtime path. If runtime cache updates are needed, capture a follow-up and run the appropriate main-checkout workflow after merge.
 
 ## General
 

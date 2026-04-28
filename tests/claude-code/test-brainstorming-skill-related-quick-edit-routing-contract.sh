@@ -10,6 +10,12 @@ for path in "$BRAINSTORMING" "$WRITING_PLANS" "$EXECUTING_PLANS"; do
   [ -f "$path" ]
 done
 
+if ! command -v rg >/dev/null 2>&1; then
+  echo "ERROR: ripgrep (rg) is required for this contract test." >&2
+  echo "Install ripgrep, then rerun $0." >&2
+  exit 1
+fi
+
 rg -q '## skill-related Classification' "$BRAINSTORMING"
 rg -q 'skill_related=yes\|no' "$BRAINSTORMING"
 rg -q 'skill_related_reason=<short reason>' "$BRAINSTORMING"

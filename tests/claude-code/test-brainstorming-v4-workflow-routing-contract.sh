@@ -16,23 +16,6 @@ if ! command -v rg >/dev/null 2>&1; then
   exit 1
 fi
 
-assert_only_negative() {
-  local pattern="$1"
-  shift
-  local output
-  output="$(rg -n "$pattern" "$@" || true)"
-  [ -n "$output" ] || return 0
-  while IFS= read -r line; do
-    case "$line" in
-      *'Do not create canonical v4 metadata named'*|*'Do not store'*|*'Compatibility warning: do not create new canonical v4 metadata named'*) ;;
-      *)
-        echo "Unexpected active legacy metadata guidance: $line" >&2
-        return 1
-        ;;
-    esac
-  done <<< "$output"
-}
-
 rg -q '## skill_workflow Classification' "$BRAINSTORMING"
 rg -q 'quick_edit=yes\|no' "$BRAINSTORMING"
 rg -q 'quick_edit_decision_reason=<short reason>' "$BRAINSTORMING"
@@ -80,6 +63,17 @@ rg -q 'impl_reviewed_diff_range=<base>..<head>' "$EXECUTING_PLANS"
 ! rg -q 'Record `skill_eval_fast_path` as the selected execution lane|skill_eval_fast_path Preflight Exception|`skill_eval_fast_path`: record|execution_lane=skill_eval_fast_path.*→' "$BRAINSTORMING" "$WRITING_PLANS" "$EXECUTING_PLANS"
 ! rg -q '승인\+plan 작성|Approve \+ write plan \(Recommended\)|proceed to the next step' "$BRAINSTORMING"
 ! rg -q '## Skill-related|This plan is skill-related|skill-related` label|records `skill_related=yes`' "$BRAINSTORMING" "$WRITING_PLANS" "$EXECUTING_PLANS"
-assert_only_negative 'skill_related|skill_creator_required|spec_reviewed_sha|spec_review_base_sha|spec_freshness|spec_stale_reason' "$BRAINSTORMING" "$WRITING_PLANS" "$EXECUTING_PLANS"
+legacy_output="$(rg -n 'skill_related|skill_creator_required|spec_reviewed_sha|spec_review_base_sha|spec_freshness|spec_stale_reason' "$BRAINSTORMING" "$WRITING_PLANS" "$EXECUTING_PLANS" || true)"
+if [ -n "$legacy_output" ]; then
+  while IFS= read -r line; do
+    case "$line" in
+      *'Do not create canonical v4 metadata named'*|*'Do not store'*|*'Compatibility warning: do not create new canonical v4 metadata named'*) ;;
+      *)
+        echo "Unexpected active legacy metadata guidance: $line" >&2
+        exit 1
+        ;;
+    esac
+  done <<< "$legacy_output"
+fi
 
 echo 'PASS: brainstorming v4 workflow routing contract'

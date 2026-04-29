@@ -113,7 +113,7 @@ You MUST create a task for each of these items and complete them in order:
     - Do NOT escalate to the user while remaining blockers are still likely addressable by the post-cap direct reconciliation loop.
     until the latest pass has finished and its findings have been reconciled by the main agent.
 11. **Optional Codex challenge re-review loop (Claude Code only)** — if a written spec exists and Claude Code has `codex-plugin-cc` available, default to one bounded advisory Codex critique pass after the formal independent review work is already resolved. If substantive spec edits are made and material findings remain, you may re-run it up to 3 total advisory passes per brainstorming run.
-12. **User reviews written spec** — ask user to review the spec file before proceeding
+12. **User reviews written spec** — ask user to decide only whether the written spec is acceptable
 13. **Mark parent bead `reviewed:spec`** — after the full spec gate passes, the main brainstorming flow labels the linked parent bead
 14. **Record skill-related and quick_edit decisions and stop** — default to `execution_lane=plan`; use `execution_lane=quick_edit` only when `quick_edit=yes`. Record `skill_related`, `skill_related_reason`, `quick_edit`, `quick_edit_decision_reason`, `quick_edit_decided_by=brainstorming`, and `execution_lane=plan|quick_edit` on the parent bead or final handoff summary. Do not invoke `writing-plans` or `skill-creator` automatically. End after the reviewed spec is linked, labeled, committed, and pushed.
 
@@ -413,7 +413,7 @@ If `.beads/` does not exist, skip this step entirely.
 
 **User Review Gate:**
 
-After self-review, at least one formal `spec-review` pass, any post-cap direct reconciliation loop, and any Codex challenge pass are complete, ask the user to review the written spec before proceeding.
+After self-review, at least one formal `spec-review` pass, any post-cap direct reconciliation loop, and any Codex challenge pass are complete, ask the user to review the written spec before completing the brainstorming handoff.
 
 Do **not** enter this gate unless all of the following are true:
 - the spec is written to a real file path
@@ -422,11 +422,19 @@ Do **not** enter this gate unless all of the following are true:
 - any mandatory Codex automatic review pass and any used post-cap direct reconciliation loop were completed and reconciled
 - any required Beads parent linkage via `spec_id` is already in place
 
-Then ask the user:
+Then ask the user only about the written spec. If using structured choices, use choices that map to spec-review outcomes:
 
-> "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we proceed to the next step."
+- `Approve spec`
+- `Request spec changes`
+- `Stop here`
 
-Wait for the user's response. If they request changes, make them and re-run self-review, the formal `spec-review` gate, any applicable automatic independent review loop, and any needed post-cap direct reconciliation loop. Only proceed once the user approves.
+Do not bundle spec approval with the next workflow. Do not offer choices like `Approve + write plan`, `Approve + implement`, `Approve + skill-creator`, or `Approve + continue to the next step`.
+
+Recommended text:
+
+> "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before I complete the brainstorming handoff."
+
+Wait for the user's response. If they request changes, make them and re-run self-review, the formal `spec-review` gate, any applicable automatic independent review loop, and any needed post-cap direct reconciliation loop. When they approve, complete only the brainstorming handoff: mark `reviewed:spec`, record execution-lane metadata, commit/push, and stop.
 
 ### Beads Review Gate Completion
 
@@ -455,6 +463,7 @@ After the user approves the written spec, the **brainstorming** flow owns the fi
 - Record `execution_lane=quick_edit` only when `quick_edit=yes`.
 - Record `skill_related=yes|no`, `skill_related_reason=<short reason>`, `quick_edit=yes|no`, `quick_edit_decision_reason=<short reason>`, and `quick_edit_decided_by=brainstorming` with the lane.
 - Do not invoke `writing-plans` or `skill-creator` automatically.
+- `execution_lane=plan` is handoff metadata only. It is not same-turn permission to run `writing-plans`; that requires a separate explicit user request after the brainstorming handoff has stopped.
 - If Beads is available, persist these decisions on the parent bead via metadata or labels.
 - If Beads is unavailable, include them in the final handoff summary.
 - The next execution workflow owns acting on the lane:

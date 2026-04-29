@@ -240,27 +240,40 @@ This plan is skill-workflow `skill_creator` because it changes active skill rout
   git commit -m "문서: v4 workflow contract eval 기록"
   ```
 
-### Task 5: Final review and finish evidence
+### Task 5: Final verification and implementation-review readiness
 
 **Files:**
 - No planned source edits beyond review fixes.
 
-- [ ] **Step 1: Run full fast Claude skill test runner when available**
+- [ ] **Step 1: Verify the committed implementation range**
+
+  Record the implementation range from the spec/plan commits through the latest implementation commit:
+
+  ```bash
+  git log --oneline --decorate --max-count=12
+  git diff --name-only main...HEAD
+  ```
+
+  Expected: changed files are limited to the approved spec, plan, active skills, renamed contract test, test runner/README references, and the new eval artifact.
+
+- [ ] **Step 2: Run the focused contract test through the test runner when available**
 
   ```bash
   bash tests/claude-code/run-skill-tests.sh --test test-brainstorming-v4-workflow-routing-contract.sh
   ```
 
-  Expected: renamed focused test passes. If `claude` CLI is unavailable, record that blocker and rely on the direct shell contract test from Task 4.
+  Expected: renamed focused test passes. If `claude` CLI is unavailable, record that as an environment limitation and keep the direct shell contract test from Task 4 as the primary runnable verification.
 
-- [ ] **Step 2: Run implementation review**
+- [ ] **Step 3: Prepare implementation-review packet**
 
-  Request implementation review over the full implementation range after all code/docs/test/eval changes are committed.
+  The review target is the full implementation range after Task 4. Include:
+  - changed file list from `git diff --name-only main...HEAD`;
+  - direct contract test output;
+  - focused `rg` evidence for legacy and v4 terms;
+  - eval artifact path `docs/superpowers/evals/2026-04-30-superpowers-v4-workflow-contract-alignment-eval.md`.
 
-- [ ] **Step 3: Apply review fixes if needed**
+- [ ] **Step 4: Apply review fixes if needed**
 
   For blocking findings, fix, verify, commit, and re-run a focused implementation review. For non-blocking findings, record triage.
 
-- [ ] **Step 4: Finish via bd-ralph-v4 finish helper**
-
-  Use `finish_branch.sh` with `--target-branch main`, then run post-finish audit, self-audit, self-improve, final summary gate, and ledger patching before final user summary.
+> Note: bd-ralph-v4 finish helper, post-finish audit, self-audit, self-improve, final summary gate, ledger patching, PR creation, and parent Beads resolution are orchestrator responsibilities outside this implementation plan. They are not repo-local implementation tasks.

@@ -59,6 +59,20 @@
   ],
   "run_summary": {
     "status": "pass",
+    "with_skill": {
+      "count": 2,
+      "pass_count": 2,
+      "summary": "Changed v4 contract test and fixed prompt judgments passed with skill_workflow/hash-SHA guidance."
+    },
+    "without_skill": {
+      "count": 2,
+      "pass_count": 1,
+      "summary": "Baseline old contract test passed but asserted legacy skill_related routing; baseline prompt behavior lacked v4 target fields."
+    },
+    "delta": {
+      "status": "positive_contract_alignment",
+      "summary": "Active guidance moved from skill_related routing semantics to v4 skill_workflow plus content-hash/reviewed-at-SHA evidence."
+    },
     "with_skill_count": 2,
     "without_skill_count": 2,
     "pass_count": 4,

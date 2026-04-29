@@ -51,6 +51,7 @@ In a Beads-enabled repo, when `brainstorming` explicitly chooses the quick_edit 
 - **label that new issue `quick_edit`**
 - do **not** treat the parent bead as the `quick_edit` issue
 - this **does not change the normal spec-path parent** / `spec_id` / `reviewed:spec` rules used by regular brainstorming → spec runs
+- treat `execution_lane=quick_edit` as the source of truth; the `quick_edit` label is a mirror/index label that must stay aligned with that metadata
 
 ## skill_workflow Classification
 

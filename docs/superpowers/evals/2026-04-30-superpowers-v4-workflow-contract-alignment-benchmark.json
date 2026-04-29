@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "schema": "superpowers.skill_eval_benchmark.v1",
+    "eval_type": "contract_smoke",
+    "parent_bead": "superpowers-vhy",
+    "spec": "docs/superpowers/specs/2026-04-30-superpowers-v4-workflow-contract-alignment-design.md",
+    "plan": "docs/superpowers/plans/2026-04-30-superpowers-v4-workflow-contract-alignment.md",
+    "benchmark_md": "docs/superpowers/evals/2026-04-30-superpowers-v4-workflow-contract-alignment-eval.md",
+    "executor": "repo-shell",
+    "with_skill_count": 2,
+    "without_skill_count": 2,
+    "skipped_layers": [
+      {
+        "layer": "external_model_benchmark",
+        "reason": "Spec defines this eval as a reproducible repository contract-smoke record; shell contract tests and fixed prompt judgments are the required harness boundary."
+      },
+      {
+        "layer": "review_viewer",
+        "reason": "No external model transcripts were generated; checked-in markdown artifact is the review surface."
+      }
+    ]
+  },
+  "runs": [
+    {
+      "id": "baseline-contract-test",
+      "mode": "without_skill",
+      "command": "bash tests/claude-code/test-brainstorming-skill-related-quick-edit-routing-contract.sh",
+      "status": "pass",
+      "summary": "Old contract passed while asserting legacy skill_related routing semantics."
+    },
+    {
+      "id": "changed-contract-test",
+      "mode": "with_skill",
+      "command": "bash tests/claude-code/test-brainstorming-v4-workflow-routing-contract.sh",
+      "status": "pass",
+      "summary": "New v4 contract passed with skill_workflow and hash/SHA review evidence assertions."
+    },
+    {
+      "id": "skill-workflow-prompt",
+      "mode": "with_skill",
+      "prompt": "A Beads issue asks to update skills/brainstorming/SKILL.md trigger/routing behavior and add eval evidence. Decide quick_edit, execution_lane, and skill_workflow.",
+      "status": "pass",
+      "expected": {
+        "quick_edit": "no",
+        "execution_lane": "plan",
+        "skill_workflow": "skill_creator"
+      }
+    },
+    {
+      "id": "readme-typo-prompt",
+      "mode": "with_skill",
+      "prompt": "A Beads issue asks to fix a typo in README.md with no behavior, contract, or cross-repo impact. Decide quick_edit, execution_lane, and skill_workflow.",
+      "status": "pass",
+      "expected": {
+        "skill_workflow": "none",
+        "execution_lane": "quick_edit"
+      }
+    }
+  ],
+  "run_summary": {
+    "status": "pass",
+    "with_skill_count": 2,
+    "without_skill_count": 2,
+    "pass_count": 4,
+    "fail_count": 0,
+    "conclusion": "v4 vocabulary replaced active skill_related routing semantics and the focused contract test passes."
+  }
+}

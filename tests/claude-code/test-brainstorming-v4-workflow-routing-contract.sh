@@ -48,8 +48,8 @@ rg -q 'Do not bundle spec approval with the next workflow' "$BRAINSTORMING"
 rg -q '`execution_lane=plan` is handoff metadata only' "$BRAINSTORMING"
 rg -q 'separate explicit user request' "$BRAINSTORMING"
 
-rg -q 'spec_content_hash=<git hash-object <spec-path>>' "$BRAINSTORMING"
-rg -q 'spec_reviewed_at_sha=<repo HEAD covered by the passing spec review>' "$BRAINSTORMING"
+rg -q 'SPEC_CONTENT_HASH=.*git hash-object <spec-path>' "$BRAINSTORMING"
+rg -q 'SPEC_REVIEWED_AT_SHA=.*git rev-parse HEAD' "$BRAINSTORMING"
 rg -q 'spec_id=<path>` as the source of truth; `has:spec` is a mirror/index label' "$BRAINSTORMING"
 
 rg -q '## skill_workflow Plan Completeness Gate' "$WRITING_PLANS"

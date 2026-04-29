@@ -19,6 +19,7 @@ This repo is the **source of truth**.
 
 - **Codex:** `install-codex.sh` should point `~/.agents/skills/superpowers` directly at this repo's `skills/` directory, so local edits here take effect immediately.
 - Do **not** hand-copy files into Codex runtime paths.
+- **Claude:** after changing tracked skill/plugin files from the main checkout, run `scripts/sync-local-plugin-copies.sh copy` and then `scripts/sync-local-plugin-copies.sh verify` so `~/.claude/plugins/marketplaces/superpowers-custom`, `~/.claude/plugins/cache/superpowers-custom`, and any versioned cache copies stay current.
 - Do **not** run repo-local copy/sync/install steps from a worktree when the target may resolve to the main checkout or a live runtime path. If runtime cache updates are needed, capture a follow-up and run the appropriate main-checkout workflow after merge.
 
 ## General

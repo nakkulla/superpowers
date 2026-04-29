@@ -34,21 +34,28 @@ When invoked with `--auto`, this skill must:
 If the parent issue cannot be resolved safely in auto mode, fail fast instead of asking.
 In particular, if the best-matching parent issue is already `resolved` or `closed`, auto mode must fail fast instead of overwriting its `metadata.plan`.
 
-## Skill-related Plan Hard Gate
+## skill_workflow Plan Completeness Gate
 
-If the plan creates, modifies, evaluates, or changes routing for any skill artifact (`SKILL.md`, `agents/openai.yaml`, or files under a skill's `references/`, `scripts/`, `assets/`, or eval fixtures), treat it as a skill-related plan. This is a plan completeness gate, not an execution-lane decision. `quick_edit` is the only plan-skip lane.
+If the plan creates, modifies, evaluates, or changes routing for any skill artifact (`SKILL.md`, `agents/openai.yaml`, files under a skill's `references/`, `scripts/`, `assets/`, eval fixtures, or active skill contract tests), classify the required `skill_workflow`. This is a plan completeness gate, not an execution-lane decision. Only `execution_lane=quick_edit` can skip separate plan authoring.
 
-For skill-related plans, include this block near the top of the plan:
+For plans that touch skill artifacts, include this block near the top of the plan:
 
-```markdown
-This plan is skill-related.
+```text
+skill_workflow=writing_skills|skill_creator
+skill_workflow_reason=<short reason>
+execution_lane=plan|quick_edit
+```
+
+Use `skill_workflow=writing_skills` for ordinary existing skill artifact edits. Use `skill_workflow=skill_creator` when the plan creates a new skill, changes skill metadata, restructures skill resources, changes trigger/routing behavior, or does eval-driven skill iteration.
+
+Repeat the required skill discipline inside every task that touches a skill artifact so task executors do not need to infer it from the header alone:
+
+```text
 REQUIRED SUB-SKILL: Use superpowers:writing-skills for skill artifact edits.
 ALSO REQUIRED: Use skill-creator when creating a new skill, changing skill metadata, restructuring skill resources, changing trigger/routing behavior, or doing eval-driven skill iteration.
 ```
 
-Repeat the routing requirement inside every task that touches a skill artifact so task executors do not need to infer it from the header alone.
-
-If this routing is missing from the plan header or relevant tasks, the plan is incomplete.
+If `skill_workflow` is missing from the plan header or relevant tasks omit the required skill discipline, the plan is incomplete. Do not create canonical v4 metadata named `skill_related` or `skill_creator_required`; migrate legacy inputs to `skill_workflow` when encountered.
 
 ## Scope Check
 
@@ -135,9 +142,11 @@ git commit -m "feat: add specific feature"
 ```
 ````
 
-> If a task touches any skill artifact (`SKILL.md`, `agents/openai.yaml`, or a skill's `references/`, `scripts/`, `assets/`, or eval fixture files):
-> - **REQUIRED SUB-SKILL:** Use superpowers:writing-skills for skill artifact edits
-> - **ALSO REQUIRED:** Use skill-creator when creating a new skill, changing skill metadata, restructuring skill resources, changing trigger/routing behavior, or doing eval-driven skill iteration
+> If a task touches any skill artifact (`SKILL.md`, `agents/openai.yaml`, a skill's `references/`, `scripts/`, `assets/`, eval fixture files, or active skill contract tests):
+> - `skill_workflow=writing_skills|skill_creator`
+> - `skill_workflow_reason=<short reason>`
+> - **REQUIRED SUB-SKILL:** Use superpowers:writing-skills for skill artifact edits.
+> - **ALSO REQUIRED:** Use skill-creator when creating a new skill, changing skill metadata, restructuring skill resources, changing trigger/routing behavior, or doing eval-driven skill iteration.
 
 ## No Placeholders
 
@@ -165,7 +174,7 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 
 **3. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
 
-**4. Skill routing check:** If the plan is skill-related, verify that the header says `This plan is skill-related`, that every skill artifact task explicitly requires `superpowers:writing-skills`, and that `skill-creator` is required when the task creates a new skill, changes skill metadata, restructures skill resources, changes trigger/routing behavior, or does eval-driven skill iteration. This check is about plan completeness, not an execution-lane decision.
+**4. Skill workflow check:** If the plan touches skill artifacts or skill behavior, verify that the header records `skill_workflow=writing_skills|skill_creator`, `skill_workflow_reason=<short reason>`, and `execution_lane=plan|quick_edit`; that every skill artifact task explicitly requires `superpowers:writing-skills`; and that `skill-creator` is required when the task creates a new skill, changes skill metadata, restructures skill resources, changes trigger/routing behavior, or does eval-driven skill iteration. This check is about plan completeness, not an execution-lane decision.
 
 If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
 
@@ -193,7 +202,7 @@ If the closest related bead is `resolved` or `closed`, treat that as
 2. Do **not** attach `metadata.plan` to a child bead. If a match has a parent, re-resolve to the intended parent issue or ask the user.
 3. If a matching parent bead exists, inspect its status first via `bd show <id> --json`.
 4. If the matched parent bead status is `open` or `in_progress` → `bd update <id> --set-metadata plan=<path> --add-label has:plan`
-5. Re-check that `metadata.plan` is set correctly.
+5. Treat `metadata.plan=<path>` as the source of truth; `has:plan` is a mirror/index label that must stay aligned. Re-check that both are correct.
 6. If the matched parent bead status is `resolved` or `closed`, do **not** overwrite its `metadata.plan`.
    - Treat this as follow-up work beyond the original bead scope.
    - Ask the user via the platform-appropriate confirmation tool whether to create a new follow-up parent bead instead.
@@ -202,7 +211,7 @@ If the closest related bead is `resolved` or `closed`, treat that as
    - Treat `bd create --json` output as a single issue object and extract the id from `["id"]`, not `[0]["id"]`.
    - If create-response parsing fails, do **not** run a second `bd create` immediately; first verify via an independent read path such as `bd list --json`, `bd show`, or a spec-id/title match and reuse the already-created bead when found.
    - Immediately after creation: `bd update <new-id> --set-metadata plan=<path> --add-label has:plan`
-   - Re-check that both `spec_id` (when applicable) and `metadata.plan` are set correctly on the new parent bead.
+   - Re-check that `spec_id` (when applicable), `metadata.plan`, and the `has:plan` mirror/index label are aligned on the new parent bead.
 7. If not found:
    - Ask the user via the platform-appropriate confirmation tool whether to create a new parent bead now or explicitly defer it.
    - If approved, create the new parent bead per the Beads spec/plan linking rules.
@@ -210,7 +219,7 @@ If the closest related bead is `resolved` or `closed`, treat that as
    - Treat `bd create --json` output as a single issue object and extract the id from `["id"]`, not `[0]["id"]`.
    - If create-response parsing fails, do **not** run a second `bd create` immediately; first verify via an independent read path such as `bd list --json`, `bd show`, or a spec-id/title match and reuse the already-created bead when found.
    - Immediately after creation: `bd update <new-id> --set-metadata plan=<path> --add-label has:plan`
-   - Re-check that both `spec_id` (when applicable) and `metadata.plan` are set correctly on the new parent bead.
+   - Re-check that `spec_id` (when applicable), `metadata.plan`, and the `has:plan` mirror/index label are aligned on the new parent bead.
    - If the user explicitly defers creation, report that choice clearly instead of implying linkage is already done.
 8. `bd dolt push`
 
@@ -244,3 +253,14 @@ implementation, that later turn may invoke:
 
 Return the plan path and stop.
 즉, `--auto`에서는 execution choice 질문 없이 종료한다.
+
+### Plan Review Evidence
+
+When a plan-review gate passes, record v4 review evidence on the linked parent bead:
+
+```text
+plan_content_hash=<git hash-object <plan-path>>
+plan_reviewed_at_sha=<repo HEAD covered by the passing plan review>
+```
+
+Do not advance these values without a new passing plan-review. If the reviewed plan content or relevant codebase state changes, invalidate `reviewed:plan` and re-run the gate rather than storing canonical freshness strings.

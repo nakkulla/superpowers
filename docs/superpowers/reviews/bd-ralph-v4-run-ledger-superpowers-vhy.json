@@ -85,56 +85,134 @@
       "unresolved_task_count": 0,
       "children": [
         {
-          "id": "superpowers-vhy.5",
+          "id": "superpowers-vhy.1",
           "status": "resolved",
-          "verification_summary": "PASS: final focused runner, direct contract test, benchmark JSON, implementation delta re-reviews, and simplify verification passed"
-        },
-        {
-          "id": "superpowers-vhy.4",
-          "status": "resolved",
-          "verification_summary": "PASS: eval artifact and benchmark JSON recorded; v4 focused verification passed"
-        },
-        {
-          "id": "superpowers-vhy.3",
-          "status": "resolved",
-          "verification_summary": "PASS after assertion fix: brainstorming v4 workflow routing contract"
+          "task": "Update brainstorming v4 handoff and review evidence guidance",
+          "git_sha": "bfb450528e0c942e8a5780635616098b466809f5",
+          "verification_command": "rg-focused-brainstorming-v4",
+          "verification_summary": "PASS: required v4 terms present; legacy terms only negative compatibility warnings",
+          "verification_artifact": ""
         },
         {
           "id": "superpowers-vhy.2",
           "status": "resolved",
-          "verification_summary": "PASS: skill_workflow plan/execution routing and v4 review evidence terms present"
+          "task": "Update plan authoring and execution routing skill guidance",
+          "git_sha": "ced04f3b14c7d2aa55299a1431803249a68ea417",
+          "verification_command": "rg-focused-plan-execution-v4",
+          "verification_summary": "PASS: skill_workflow plan/execution routing and v4 review evidence terms present",
+          "verification_artifact": ""
         },
         {
-          "id": "superpowers-vhy.1",
+          "id": "superpowers-vhy.3",
           "status": "resolved",
-          "verification_summary": "PASS: required v4 terms present; legacy terms only negative compatibility warnings"
+          "task": "Rename and update the v4 contract test",
+          "git_sha": "b2f583c246d8d7af1a35469f81a871caa408b22e",
+          "verification_command": "bash tests/claude-code/test-brainstorming-v4-workflow-routing-contract.sh",
+          "verification_summary": "PASS after assertion fix: brainstorming v4 workflow routing contract",
+          "verification_artifact": ""
+        },
+        {
+          "id": "superpowers-vhy.4",
+          "status": "resolved",
+          "task": "Add eval artifact and run final focused verification",
+          "git_sha": "b2f583c246d8d7af1a35469f81a871caa408b22e",
+          "verification_command": "contract-test + focused rg + json.tool",
+          "verification_summary": "PASS: eval artifact and benchmark JSON recorded; v4 focused verification passed",
+          "verification_artifact": "",
+          "skill_creator": {
+            "required": true,
+            "invoked": true,
+            "mode": "planned",
+            "workflow": "full",
+            "eval_evidence": {
+              "status": "pass",
+              "evidence_root": "docs/superpowers/evals",
+              "benchmark_json": "docs/superpowers/evals/2026-04-30-superpowers-v4-workflow-contract-alignment-benchmark.json",
+              "benchmark_md": "docs/superpowers/evals/2026-04-30-superpowers-v4-workflow-contract-alignment-eval.md",
+              "with_skill_count": 2,
+              "without_skill_count": 2,
+              "freshness": "fresh",
+              "skipped_layers": [
+                "external_model_benchmark: contract_smoke shell harness per spec",
+                "review_viewer: markdown artifact is review surface"
+              ]
+            }
+          }
+        },
+        {
+          "id": "superpowers-vhy.5",
+          "status": "resolved",
+          "task": "Final verification and implementation-review readiness",
+          "git_sha": "e0a3bda0c453952c8faabb57888484f9478054c0",
+          "verification_command": "git diff --name-only main...HEAD; bash tests/claude-code/run-skill-tests.sh --test test-brainstorming-v4-workflow-routing-contract.sh; bash tests/claude-code/test-brainstorming-v4-workflow-routing-contract.sh",
+          "verification_summary": "PASS: final focused runner, direct contract test, benchmark JSON, implementation delta re-reviews, and simplify verification passed",
+          "verification_artifact": ""
         }
       ],
       "task_verification_summary": [
         {
-          "id": "superpowers-vhy.5",
+          "id": "superpowers-vhy.1",
           "status": "resolved",
-          "verification_summary": "PASS: final focused runner, direct contract test, benchmark JSON, implementation delta re-reviews, and simplify verification passed"
-        },
-        {
-          "id": "superpowers-vhy.4",
-          "status": "resolved",
-          "verification_summary": "PASS: eval artifact and benchmark JSON recorded; v4 focused verification passed"
-        },
-        {
-          "id": "superpowers-vhy.3",
-          "status": "resolved",
-          "verification_summary": "PASS after assertion fix: brainstorming v4 workflow routing contract"
+          "task": "Update brainstorming v4 handoff and review evidence guidance",
+          "git_sha": "bfb450528e0c942e8a5780635616098b466809f5",
+          "verification_command": "rg-focused-brainstorming-v4",
+          "verification_summary": "PASS: required v4 terms present; legacy terms only negative compatibility warnings",
+          "verification_artifact": ""
         },
         {
           "id": "superpowers-vhy.2",
           "status": "resolved",
-          "verification_summary": "PASS: skill_workflow plan/execution routing and v4 review evidence terms present"
+          "task": "Update plan authoring and execution routing skill guidance",
+          "git_sha": "ced04f3b14c7d2aa55299a1431803249a68ea417",
+          "verification_command": "rg-focused-plan-execution-v4",
+          "verification_summary": "PASS: skill_workflow plan/execution routing and v4 review evidence terms present",
+          "verification_artifact": ""
         },
         {
-          "id": "superpowers-vhy.1",
+          "id": "superpowers-vhy.3",
           "status": "resolved",
-          "verification_summary": "PASS: required v4 terms present; legacy terms only negative compatibility warnings"
+          "task": "Rename and update the v4 contract test",
+          "git_sha": "b2f583c246d8d7af1a35469f81a871caa408b22e",
+          "verification_command": "bash tests/claude-code/test-brainstorming-v4-workflow-routing-contract.sh",
+          "verification_summary": "PASS after assertion fix: brainstorming v4 workflow routing contract",
+          "verification_artifact": ""
+        },
+        {
+          "id": "superpowers-vhy.4",
+          "status": "resolved",
+          "task": "Add eval artifact and run final focused verification",
+          "git_sha": "b2f583c246d8d7af1a35469f81a871caa408b22e",
+          "verification_command": "contract-test + focused rg + json.tool",
+          "verification_summary": "PASS: eval artifact and benchmark JSON recorded; v4 focused verification passed",
+          "verification_artifact": "",
+          "skill_creator": {
+            "required": true,
+            "invoked": true,
+            "mode": "planned",
+            "workflow": "full",
+            "eval_evidence": {
+              "status": "pass",
+              "evidence_root": "docs/superpowers/evals",
+              "benchmark_json": "docs/superpowers/evals/2026-04-30-superpowers-v4-workflow-contract-alignment-benchmark.json",
+              "benchmark_md": "docs/superpowers/evals/2026-04-30-superpowers-v4-workflow-contract-alignment-eval.md",
+              "with_skill_count": 2,
+              "without_skill_count": 2,
+              "freshness": "fresh",
+              "skipped_layers": [
+                "external_model_benchmark: contract_smoke shell harness per spec",
+                "review_viewer: markdown artifact is review surface"
+              ]
+            }
+          }
+        },
+        {
+          "id": "superpowers-vhy.5",
+          "status": "resolved",
+          "task": "Final verification and implementation-review readiness",
+          "git_sha": "e0a3bda0c453952c8faabb57888484f9478054c0",
+          "verification_command": "git diff --name-only main...HEAD; bash tests/claude-code/run-skill-tests.sh --test test-brainstorming-v4-workflow-routing-contract.sh; bash tests/claude-code/test-brainstorming-v4-workflow-routing-contract.sh",
+          "verification_summary": "PASS: final focused runner, direct contract test, benchmark JSON, implementation delta re-reviews, and simplify verification passed",
+          "verification_artifact": ""
         }
       ],
       "scope_narrowed": false
@@ -300,6 +378,7 @@
     "implementation_review_verdict": "APPROVE",
     "run_started_at": "2026-04-29T16:11:03Z",
     "run_finished_at": "2026-04-29T16:37:52Z",
-    "self_improve_persistence": ""
+    "self_improve_persistence": "",
+    "child_summary_detail": "verification metadata and task skill_creator evidence patched post-finish before final summary gate"
   }
 }

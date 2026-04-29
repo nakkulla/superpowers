@@ -18,7 +18,9 @@
         "layer": "review_viewer",
         "reason": "No external model transcripts were generated; checked-in markdown artifact is the review surface."
       }
-    ]
+    ],
+    "grading_json": "docs/superpowers/evals/2026-04-30-superpowers-v4-workflow-contract-alignment-grading.json",
+    "timing_json": "docs/superpowers/evals/2026-04-30-superpowers-v4-workflow-contract-alignment-timing.json"
   },
   "runs": [
     {

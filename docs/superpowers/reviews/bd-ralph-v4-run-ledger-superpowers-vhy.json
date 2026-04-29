@@ -273,6 +273,26 @@
         "changed_files": "unknown",
         "reason": "none"
       }
+    },
+    "post_finish": {
+      "self_audit": {
+        "policy": "light",
+        "verdict": "clean_with_suggestions",
+        "summary": "Delivery evidence is complete after fixing implementation review and simplify findings. Existing delta guidance for ledger child evidence was applied by patching the ledger before final summary; no new append-worthy target-skill delta remains."
+      },
+      "self_improve": {
+        "delta_path": "/Users/isy_macstudio/Documents/GitHub/dotfiles/shared/skills/bd-ralph-v4/delta.md",
+        "target_skill": "shared/skills/bd-ralph-v4",
+        "target_repo_root": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
+        "appended": 0,
+        "deduped": 0,
+        "skipped": "no-append-worthy-candidates; existing delta guidance applied, not deduped",
+        "persistence": "report-only"
+      },
+      "final_summary_gate": {
+        "status": "pass",
+        "evidence_json": "docs/superpowers/reviews/bd-ralph-v4-final-summary-evidence-superpowers-vhy.json"
+      }
     }
   },
   "invocations": [],
@@ -341,20 +361,22 @@
   },
   "post_finish": {
     "self_audit": {
-      "policy": "unknown",
-      "verdict": "unknown"
+      "policy": "light",
+      "verdict": "clean_with_suggestions",
+      "summary": "Delivery evidence is complete after fixing implementation review and simplify findings. Existing delta guidance for ledger child evidence was applied by patching the ledger before final summary; no new append-worthy target-skill delta remains."
     },
     "self_improve": {
-      "delta_path": "",
-      "target_skill": "",
-      "target_repo_root": "",
+      "delta_path": "/Users/isy_macstudio/Documents/GitHub/dotfiles/shared/skills/bd-ralph-v4/delta.md",
+      "target_skill": "shared/skills/bd-ralph-v4",
+      "target_repo_root": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
       "appended": 0,
       "deduped": 0,
-      "skipped": "unknown",
-      "persistence": ""
+      "skipped": "no-append-worthy-candidates; existing delta guidance applied, not deduped",
+      "persistence": "report-only"
     },
     "final_summary_gate": {
-      "status": "unknown"
+      "status": "pass",
+      "evidence_json": "docs/superpowers/reviews/bd-ralph-v4-final-summary-evidence-superpowers-vhy.json"
     }
   },
   "acceptance": {
@@ -378,7 +400,8 @@
     "implementation_review_verdict": "APPROVE",
     "run_started_at": "2026-04-29T16:11:03Z",
     "run_finished_at": "2026-04-29T16:37:52Z",
-    "self_improve_persistence": "",
-    "child_summary_detail": "verification metadata and task skill_creator evidence patched post-finish before final summary gate"
+    "self_improve_persistence": "report-only",
+    "child_summary_detail": "verification metadata and task skill_creator evidence patched post-finish before final summary gate",
+    "final_summary_gate": "pass"
   }
 }

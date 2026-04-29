@@ -26,7 +26,7 @@ This test suite verifies that skills are loaded correctly and Claude follows the
 ### Run specific test:
 ```bash
 ./run-skill-tests.sh --test test-subagent-driven-development.sh
-./run-skill-tests.sh --test test-brainstorming-skill-related-quick-edit-routing-contract.sh
+./run-skill-tests.sh --test test-brainstorming-v4-workflow-routing-contract.sh
 ```
 
 ### Run with verbose output:
@@ -93,11 +93,12 @@ Tests skill content and requirements (~2 minutes):
 - Review loops documented
 - Task context provision documented
 
-#### test-brainstorming-skill-related-quick-edit-routing-contract.sh
-Tests the brainstorming/writing-plans/executing-plans routing contract (~1 second):
-- `skill_related` classification is recorded separately from `quick_edit`
-- `execution_lane=plan|quick_edit` replaces new `skill_eval_fast_path` output
-- skill-related plan completeness and task routing gates are documented
+#### test-brainstorming-v4-workflow-routing-contract.sh
+Tests the brainstorming/writing-plans/executing-plans v4 routing contract (~1 second):
+- `skill_workflow=none|writing_skills|skill_creator` records skill-edit discipline
+- `execution_lane=plan|quick_edit` stays independent from `skill_workflow`
+- v4 review evidence uses content hashes plus reviewed-at SHAs
+- mirror/index labels derive from metadata sources of truth
 - ripgrep (`rg`) is available before running the contract assertions
 
 ### Integration Tests (use --integration flag)

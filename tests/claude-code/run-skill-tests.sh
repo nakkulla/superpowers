@@ -58,7 +58,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Tests:"
             echo "  test-subagent-driven-development.sh  Test skill loading and requirements"
-            echo "  test-brainstorming-skill-related-quick-edit-routing-contract.sh  Test skill-related quick_edit routing contract"
+            echo "  test-brainstorming-v4-workflow-routing-contract.sh  Test v4 workflow routing contract"
             echo ""
             echo "Integration Tests (use --integration):"
             echo "  test-subagent-driven-development-integration.sh  Full workflow execution"
@@ -75,7 +75,7 @@ done
 # List of skill tests to run (fast unit tests)
 tests=(
     "test-subagent-driven-development.sh"
-    "test-brainstorming-skill-related-quick-edit-routing-contract.sh"
+    "test-brainstorming-v4-workflow-routing-contract.sh"
 )
 
 # Integration tests (slow, full execution)

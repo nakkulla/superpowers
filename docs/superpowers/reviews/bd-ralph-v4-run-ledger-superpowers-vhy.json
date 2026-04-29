@@ -1,0 +1,305 @@
+{
+  "schema_version": "v1",
+  "workflow": "bd-ralph-v4",
+  "parent_bead_id": "superpowers-vhy",
+  "generated_at": "2026-04-29T16:38:00.233138Z",
+  "artifact_path": "docs/superpowers/reviews/bd-ralph-v4-run-ledger-superpowers-vhy.json",
+  "run": {
+    "canonical_worktree": ".worktrees/superpowers-vhy",
+    "canonical_branch": "superpowers-vhy",
+    "plan_path": "docs/superpowers/plans/2026-04-30-superpowers-v4-workflow-contract-alignment.md",
+    "completed_task_count": 5,
+    "unresolved_task_count": 0,
+    "started_at": "2026-04-29T16:11:03Z",
+    "finished_at": "2026-04-29T16:37:52Z",
+    "scope_narrowed": false,
+    "tracking_repo": "nakkulla/superpowers",
+    "execution_repo": ".worktrees/superpowers-vhy",
+    "repo_boundary_status": "local"
+  },
+  "phase_evidence": {
+    "setup": {
+      "ready_check": "ran",
+      "ready_match": "superpowers-vhy",
+      "ready_note": "bd-ready-returned-parent",
+      "baseline_verification": "package-json-no-install; baseline old contract captured"
+    },
+    "plan": {
+      "path": "docs/superpowers/plans/2026-04-30-superpowers-v4-workflow-contract-alignment.md",
+      "plan_review": "run",
+      "plan_reviewed_verdict": "APPROVE",
+      "freshness": {
+        "base_sha": "e6feb9628bd078fab2ff7a0c70cc72d9c478ddc1",
+        "head_sha": "e6feb9628bd078fab2ff7a0c70cc72d9c478ddc1",
+        "source": "current_run_external_review",
+        "status": "fresh",
+        "changed_files": "unknown",
+        "auto_refresh": true,
+        "reason": "plan-review-M1-M2-fix"
+      },
+      "stale_after_review": false,
+      "fast_path": {
+        "execution_lane": "plan",
+        "quick_edit": false,
+        "source": "none",
+        "eligible": false,
+        "guard_result": "fail",
+        "guard_failure": "none",
+        "plan_fast_path": false,
+        "plan_skip_reason": "none",
+        "plan_required_after_spec": true,
+        "reviewed_plan_applied": true,
+        "skill_related": true,
+        "skill_creator_required": true,
+        "skill_creator_invoked": true,
+        "skill_creator_mode": "planned",
+        "skill_creator_workflow": "full",
+        "eval_direction": "run_proposed_evals",
+        "skill_edit_kind": "behavior_change",
+        "skill_workflow": "skill_creator",
+        "skill_workflow_source": "spec+plan",
+        "skill_workflow_reason": "The work changes active skill routing and evidence behavior and requires eval evidence.",
+        "eval_evidence": {
+          "status": "pass",
+          "evidence_root": "docs/superpowers/evals",
+          "benchmark_json": "docs/superpowers/evals/2026-04-30-superpowers-v4-workflow-contract-alignment-benchmark.json",
+          "benchmark_md": "docs/superpowers/evals/2026-04-30-superpowers-v4-workflow-contract-alignment-eval.md",
+          "with_skill_count": 2,
+          "without_skill_count": 2,
+          "freshness": "fresh",
+          "skipped_layers": [
+            "external_model_benchmark: contract_smoke shell harness per spec",
+            "review_viewer: markdown artifact is review surface"
+          ]
+        }
+      }
+    },
+    "seed": {
+      "push_ok": true,
+      "child_mapping_present": true,
+      "parent_lookup_success": true,
+      "child_lookup_success": true
+    },
+    "execute": {
+      "completed_task_count": 5,
+      "unresolved_task_count": 0,
+      "children": [
+        {
+          "id": "superpowers-vhy.5",
+          "status": "resolved",
+          "verification_summary": "PASS: final focused runner, direct contract test, benchmark JSON, implementation delta re-reviews, and simplify verification passed"
+        },
+        {
+          "id": "superpowers-vhy.4",
+          "status": "resolved",
+          "verification_summary": "PASS: eval artifact and benchmark JSON recorded; v4 focused verification passed"
+        },
+        {
+          "id": "superpowers-vhy.3",
+          "status": "resolved",
+          "verification_summary": "PASS after assertion fix: brainstorming v4 workflow routing contract"
+        },
+        {
+          "id": "superpowers-vhy.2",
+          "status": "resolved",
+          "verification_summary": "PASS: skill_workflow plan/execution routing and v4 review evidence terms present"
+        },
+        {
+          "id": "superpowers-vhy.1",
+          "status": "resolved",
+          "verification_summary": "PASS: required v4 terms present; legacy terms only negative compatibility warnings"
+        }
+      ],
+      "task_verification_summary": [
+        {
+          "id": "superpowers-vhy.5",
+          "status": "resolved",
+          "verification_summary": "PASS: final focused runner, direct contract test, benchmark JSON, implementation delta re-reviews, and simplify verification passed"
+        },
+        {
+          "id": "superpowers-vhy.4",
+          "status": "resolved",
+          "verification_summary": "PASS: eval artifact and benchmark JSON recorded; v4 focused verification passed"
+        },
+        {
+          "id": "superpowers-vhy.3",
+          "status": "resolved",
+          "verification_summary": "PASS after assertion fix: brainstorming v4 workflow routing contract"
+        },
+        {
+          "id": "superpowers-vhy.2",
+          "status": "resolved",
+          "verification_summary": "PASS: skill_workflow plan/execution routing and v4 review evidence terms present"
+        },
+        {
+          "id": "superpowers-vhy.1",
+          "status": "resolved",
+          "verification_summary": "PASS: required v4 terms present; legacy terms only negative compatibility warnings"
+        }
+      ],
+      "scope_narrowed": false
+    },
+    "review": {
+      "dispatch_history": [
+        {
+          "subject": "implementation-review",
+          "verdict": "APPROVE",
+          "final_source": "external",
+          "policy_blocked": false,
+          "external_attempts": 3,
+          "self_attempts": 0,
+          "escalated": false
+        }
+      ],
+      "review_subagent": {
+        "capable": "yes",
+        "reason": "spawn_agent review-family completed"
+      },
+      "final_verdict": "APPROVE",
+      "final_source": "external",
+      "policy_blocked": false,
+      "stale_after_code_change": false,
+      "reviewed_impl_applied": true
+    },
+    "simplify": {
+      "policy": "run",
+      "status": "applied",
+      "verification": "focused contract test PASS; focused runner PASS; benchmark json PASS",
+      "rereview": "delta_external_approve",
+      "commit_sha": "e0a3bda0c453952c8faabb57888484f9478054c0",
+      "diff_source": "main...HEAD plus simplify delta",
+      "noop_why": "reuse-common-skill-reference=out_of_scope/low_roi; test-helper-commonization=low_roi; efficiency=none; one-use-helper=fixed"
+    },
+    "finish": {
+      "pr_url": "https://github.com/nakkulla/superpowers/pull/8",
+      "pr_number": "8",
+      "final_quality_gate_success": true,
+      "first_branch_push_success": true,
+      "final_git_status": "clean",
+      "final_parent_status": "resolved",
+      "final_children_status": "all-resolved",
+      "run_ledger_write_success": true,
+      "metadata_sync_success": true,
+      "artifact_only_second_commit_success": true,
+      "second_branch_push_success": true
+    },
+    "spec": {
+      "path": "docs/superpowers/specs/2026-04-30-superpowers-v4-workflow-contract-alignment-design.md",
+      "freshness": {
+        "reviewed_sha": "3bbad069102b56db83aaacaf6b2104dc470633c3",
+        "review_base_sha": "3bbad069102b56db83aaacaf6b2104dc470633c3",
+        "codebase_head_sha": "3bbad069102b56db83aaacaf6b2104dc470633c3",
+        "source": "current_run_external_review",
+        "status": "fresh",
+        "codebase_status": "fresh",
+        "changed_files": "unknown",
+        "reason": "none"
+      }
+    }
+  },
+  "invocations": [],
+  "failures": [],
+  "usage": {
+    "scope": "direct_children",
+    "accuracy": "invocation_delta",
+    "status": "unavailable",
+    "main": {
+      "session_id": "",
+      "transcript_path": ""
+    },
+    "direct_children": [],
+    "failure_reason": "missing_inputs"
+  },
+  "review": {
+    "review_debt_summary": "none",
+    "skill_workflow": {
+      "skill_related": true,
+      "edit_kind": "behavior_change",
+      "workflow": "skill_creator",
+      "workflow_reason": "The work changes active skill routing and evidence behavior and requires eval evidence.",
+      "skill_creator_required": true,
+      "source": "spec+plan"
+    },
+    "plan_review": {
+      "final_verdict": "APPROVE",
+      "final_source": "external",
+      "policy_blocked": false,
+      "external_attempts": 2,
+      "self_attempts": 0,
+      "escalated": false,
+      "budget_exhausted": false,
+      "reviewed_plan_applied": true,
+      "debt_present": false
+    },
+    "implementation_review": {
+      "signals": [],
+      "final_verdict": "APPROVE",
+      "final_source": "external",
+      "policy_blocked": false,
+      "external_attempts": 3,
+      "self_attempts": 0,
+      "escalated": false,
+      "budget_exhausted": false,
+      "stale_after_code_change": false,
+      "forced_handoff": false,
+      "reviewed_impl_applied": true,
+      "scope": "delta",
+      "base_sha": "d5e7b14b58ab4e4fbba196df73fd617c521c80e1",
+      "rereview_reason": "simplify one-use helper fix delta"
+    },
+    "review_subagent": {
+      "capable": "yes",
+      "reason": "spawn_agent review-family completed"
+    },
+    "simplify": {
+      "policy": "run",
+      "status": "applied",
+      "verification": "focused contract test PASS; focused runner PASS; benchmark json PASS",
+      "rereview": "delta_external_approve",
+      "commit_sha": "e0a3bda0c453952c8faabb57888484f9478054c0",
+      "diff_source": "main...HEAD plus simplify delta",
+      "noop_why": "reuse-common-skill-reference=out_of_scope/low_roi; test-helper-commonization=low_roi; efficiency=none; one-use-helper=fixed"
+    }
+  },
+  "post_finish": {
+    "self_audit": {
+      "policy": "unknown",
+      "verdict": "unknown"
+    },
+    "self_improve": {
+      "delta_path": "",
+      "target_skill": "",
+      "target_repo_root": "",
+      "appended": 0,
+      "deduped": 0,
+      "skipped": "unknown",
+      "persistence": ""
+    },
+    "final_summary_gate": {
+      "status": "unknown"
+    }
+  },
+  "acceptance": {
+    "status": "accepted",
+    "blocking_checks": [],
+    "waived_checks": [],
+    "summary": {
+      "pr_url": "https://github.com/nakkulla/superpowers/pull/8",
+      "implementation_review_verdict": "APPROVE"
+    }
+  },
+  "followup": [],
+  "summary": {
+    "audit_version": "v1",
+    "audit_status": "accepted",
+    "audit_artifact": "docs/superpowers/reviews/bd-ralph-v4-run-ledger-superpowers-vhy.json",
+    "canonical_worktree": ".worktrees/superpowers-vhy",
+    "canonical_branch": "superpowers-vhy",
+    "completed_task_count": 5,
+    "unresolved_task_count": 0,
+    "implementation_review_verdict": "APPROVE",
+    "run_started_at": "2026-04-29T16:11:03Z",
+    "run_finished_at": "2026-04-29T16:37:52Z",
+    "self_improve_persistence": ""
+  }
+}

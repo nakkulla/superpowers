@@ -408,7 +408,7 @@ scope_relation=follow_up
 spec_policy=future_brainstorming_required
 ```
 
-The forbidden pre-spec fields for these follow-up issues are: `spec_id`, `has:spec`, `reviewed:spec`, `spec_content_hash`, `spec_reviewed_at_sha`, `execution_lane`, `quick_edit`, `quick_edit_decision_reason`, `quick_edit_decided_by`, `skill_workflow`, and `skill_workflow_reason`. Add those only after the follow-up has its own future brainstorming → spec → plan → implementation cycle.
+The forbidden pre-spec fields for these follow-up issues are: `spec_id`, `has:spec`, `reviewed:spec`, `spec_content_hash`, `spec_reviewed_at_sha`, `artifact_links`, `review_evidence`, `execution_lane`, `quick_edit`, `quick_edit_decision_reason`, `quick_edit_decided_by`, `skill_workflow`, and `skill_workflow_reason`. Add those only after the follow-up has its own future brainstorming → spec → plan → implementation cycle.
 
 **Execution lane recording:**
 

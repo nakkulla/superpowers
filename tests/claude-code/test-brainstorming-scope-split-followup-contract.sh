@@ -32,7 +32,7 @@ rg -q 'origin: brainstorming_scope_split' "$WORKFLOW_CONTRACT"
 rg -q 'scope_relation: follow_up' "$WORKFLOW_CONTRACT"
 rg -q 'spec_policy: future_brainstorming_required' "$WORKFLOW_CONTRACT"
 rg -q 'forbidden_pre_spec_fields:' "$WORKFLOW_CONTRACT"
-for forbidden in spec_id has:spec reviewed:spec spec_content_hash spec_reviewed_at_sha execution_lane quick_edit quick_edit_decision_reason quick_edit_decided_by skill_workflow skill_workflow_reason; do
+for forbidden in spec_id has:spec reviewed:spec spec_content_hash spec_reviewed_at_sha artifact_links review_evidence execution_lane quick_edit quick_edit_decision_reason quick_edit_decided_by skill_workflow skill_workflow_reason; do
   rg -q -- "- $forbidden" "$WORKFLOW_CONTRACT"
 done
 
@@ -45,6 +45,7 @@ rg -q 'source_parent=<main parent bead id>' "$BRAINSTORMING"
 rg -q 'scope_relation=follow_up' "$BRAINSTORMING"
 rg -q 'spec_policy=future_brainstorming_required' "$BRAINSTORMING"
 rg -q 'forbidden pre-spec fields' "$BRAINSTORMING"
+rg -q 'artifact_links.*,.*review_evidence' "$BRAINSTORMING"
 
 rg -q 'not plan-ready' "$WRITING_PLANS"
 rg -q 'spec_policy=future_brainstorming_required' "$WRITING_PLANS"
@@ -59,5 +60,21 @@ rg -q 'skills/writing-plans/SKILL.md' "$CONSUMERS"
 rg -q 'skills/executing-plans/SKILL.md' "$CONSUMERS"
 rg -q 'tests/claude-code/test-brainstorming-v4-workflow-routing-contract.sh' "$CONSUMERS"
 rg -q 'tests/claude-code/test-brainstorming-scope-split-followup-contract.sh' "$CONSUMERS"
+for routing_assert in \
+  vocabulary.execution_lane.allowed_values \
+  vocabulary.quick_edit.allowed_values \
+  vocabulary.quick_edit_decision_reason \
+  vocabulary.quick_edit_decided_by.allowed_values \
+  vocabulary.skill_workflow.allowed_values \
+  vocabulary.skill_workflow_reason \
+  vocabulary.spec_id \
+  vocabulary.has:spec.source \
+  vocabulary.reviewed:spec.required_metadata \
+  vocabulary.spec_content_hash \
+  vocabulary.spec_reviewed_at_sha \
+  vocabulary.artifact_links \
+  vocabulary.review_evidence; do
+  rg -q -- "- $routing_assert" "$CONSUMERS"
+done
 
 echo 'PASS: brainstorming scope split follow-up contract'

@@ -29,6 +29,12 @@ consumers:
         - vocabulary.quick_edit_decided_by.allowed_values
         - vocabulary.skill_workflow.allowed_values
         - vocabulary.skill_workflow_reason
+        - vocabulary.spec_id
+        - vocabulary.has:spec.source
+        - vocabulary.reviewed:spec.required_metadata
+        - vocabulary.spec_content_hash
+        - vocabulary.spec_reviewed_at_sha
+        - vocabulary.artifact_links
         - vocabulary.review_evidence
     - path: tests/claude-code/test-brainstorming-scope-split-followup-contract.sh
       asserts:

@@ -64,6 +64,8 @@ vocabulary:
       - reviewed:spec
       - spec_content_hash
       - spec_reviewed_at_sha
+      - artifact_links
+      - review_evidence
       - execution_lane
       - quick_edit
       - quick_edit_decision_reason

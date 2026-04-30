@@ -51,6 +51,10 @@ Plan path mode + `.beads/` exists:
 
 A linked `metadata.plan` entry is only a plan-document pointer; it does not imply the plan has already passed review.
 
+**Pre-spec follow-up guard:**
+
+A Beads issue with `origin=brainstorming_scope_split` or `spec_policy=future_brainstorming_required` is not execution-ready. Do not infer implementation scope from that description-only follow-up issue. Stop and route it to the future brainstorming/spec workflow so it gets its own reviewed spec before planning or execution.
+
 **0-B. Plan Review Gate (linked bead exists and lacks `reviewed:plan` label):**
 
 Default interactive branch:

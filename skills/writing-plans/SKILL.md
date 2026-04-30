@@ -57,6 +57,10 @@ ALSO REQUIRED: Use skill-creator when creating a new skill, changing skill metad
 
 If `skill_workflow` is missing from the plan header or relevant tasks omit the required skill discipline, the plan is incomplete. Do not create canonical v4 metadata named `skill_related` or `skill_creator_required`; migrate legacy inputs to `skill_workflow` when encountered.
 
+## Pre-spec Follow-up Guard
+
+A Beads issue with `origin=brainstorming_scope_split` or `spec_policy=future_brainstorming_required` is not plan-ready. Do not write a plan from that description-only follow-up issue. Stop and require a future brainstorming/spec gate before planning so the follow-up receives its own reviewed spec, `spec_id`, and review evidence.
+
 ## Scope Check
 
 If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.

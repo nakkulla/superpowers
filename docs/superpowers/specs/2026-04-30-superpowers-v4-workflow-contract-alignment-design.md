@@ -42,9 +42,9 @@ This work intentionally does not port dotfiles' `workflow-contract.yaml` helper 
 - `skills/brainstorming/SKILL.md`
 - `skills/writing-plans/SKILL.md`
 - `skills/executing-plans/SKILL.md`
-- the active Claude contract test for brainstorming / writing-plans / executing-plans routing
-- `tests/claude-code/run-skill-tests.sh`, if the contract test is renamed
-- `tests/claude-code/README.md`, if the contract test name or semantics change
+- rename the active Claude contract test for brainstorming / writing-plans / executing-plans routing to `tests/claude-code/test-brainstorming-v4-workflow-routing-contract.sh`
+- `tests/claude-code/run-skill-tests.sh` entries that reference the renamed contract test
+- `tests/claude-code/README.md` entries that reference the renamed contract test and semantics
 - one checked-in eval artifact documenting baseline and changed behavior
 
 ### Out of scope
@@ -218,13 +218,13 @@ If the linked issue, spec, or plan already records `skill_workflow`, execution s
 
 ### Contract test
 
-Update or rename the current active contract test to a v4-focused name such as:
+Rename the current active contract test to the v4-focused path:
 
 ```text
 tests/claude-code/test-brainstorming-v4-workflow-routing-contract.sh
 ```
 
-If the test is renamed, update every active entry point that names the old test:
+Update every active entry point that names the old test:
 
 - `tests/claude-code/run-skill-tests.sh` help text
 - `tests/claude-code/run-skill-tests.sh` fast `tests=(...)` array
@@ -256,10 +256,12 @@ Create a checked-in eval artifact under:
 docs/superpowers/evals/2026-04-30-superpowers-v4-workflow-contract-alignment-eval.md
 ```
 
+Minimum harness boundary: the eval artifact is a checked-in, reproducible contract-smoke record produced from repository commands, not a full external model benchmark. It must cite the baseline `rg`/contract-test evidence captured before implementation, the changed `rg`/contract-test evidence after implementation, and the two fixed prompt judgments below.
+
 It should include:
 
-- baseline evidence from the current active skills and contract test;
-- changed evidence after implementation;
+- baseline evidence from the current active skills and old contract test path before implementation;
+- changed evidence from the renamed v4 contract test and focused `rg` checks after implementation;
 - at least two prompt judgments with fixed input prompts, expected fields, and pass/fail notes:
   - **Skill workflow prompt:** "A Beads issue asks to update `skills/brainstorming/SKILL.md` trigger/routing behavior and add eval evidence. Decide `quick_edit`, `execution_lane`, and `skill_workflow`." Expected: `quick_edit=no`, `execution_lane=plan`, `skill_workflow=skill_creator`, with a reason that routing/eval behavior changes require skill-creator discipline and a written spec/plan.
   - **Non-skill quick edit prompt:** "A Beads issue asks to fix a typo in `README.md` with no behavior, contract, or cross-repo impact. Decide `quick_edit`, `execution_lane`, and `skill_workflow`." Expected: `skill_workflow=none`; `execution_lane=quick_edit` is acceptable only when the answer also states that normal quick-edit criteria are clear, bounded, same-repo, and easy to verify.
@@ -287,9 +289,9 @@ The future implementation is complete when:
 3. `skills/executing-plans/SKILL.md` routes skill artifact tasks by `skill_workflow` before editing.
 4. Active guidance no longer creates new `skill_related`, `skill_creator_required`, `skill_eval_fast_path`, `spec_freshness`, `spec_stale_reason`, `spec_reviewed_sha`, or `spec_review_base_sha` as v4 canonical metadata.
 5. Active guidance treats `has:*` and `quick_edit` as mirror/index labels aligned to metadata.
-6. `tests/claude-code/test-brainstorming-v4-workflow-routing-contract.sh` passes, or the existing contract test path is intentionally retained and updated in place.
+6. `tests/claude-code/test-brainstorming-v4-workflow-routing-contract.sh` exists and passes.
 7. The eval artifact records baseline and changed evidence.
-8. If the contract test is renamed, `tests/claude-code/run-skill-tests.sh` and `tests/claude-code/README.md` reference the new name and v4 semantics.
+8. `tests/claude-code/run-skill-tests.sh` and `tests/claude-code/README.md` reference the new test name and v4 semantics.
 9. Claude local plugin copies are synced and verified from the main checkout after tracked skill changes, if the implementation changes tracked skill/plugin files from main.
 10. The parent bead `superpowers-vhy` is linked to this spec and receives `reviewed:spec` only after the full spec gate and user approval.
 

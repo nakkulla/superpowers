@@ -57,12 +57,12 @@ Default interactive branch:
 - AskUserQuestion: "이 plan은 아직 리뷰되지 않았습니다. Plan review를 먼저 실행할까요?"
 - 1. Run plan-review, then continue
 - 2. Skip and proceed to execution
-- If chosen: invoke `plan-review`, then `bd update <id> --add-label reviewed:plan`.
-- Skip this gate when: no linked bead, or issue already has `reviewed:plan` label.
+- If chosen: invoke `plan-review`, then record `plan_content_hash=$(git hash-object <plan-path>)`, `plan_reviewed_at_sha=$(git rev-parse HEAD)`, and `reviewed:plan` on the linked parent bead.
+- Skip this gate when: no linked bead, or issue already has `reviewed:plan` label with matching `plan_content_hash` and compatible `plan_reviewed_at_sha`.
 
 `--auto` branch:
 - Read `--plan-review run|skip|if-needed`.
-- `run` → invoke `plan-review`, then label the linked bead `reviewed:plan`.
+- `run` → invoke `plan-review`, then record `plan_content_hash`, `plan_reviewed_at_sha`, and label the linked bead `reviewed:plan`.
 - `skip` → continue without review.
 - `if-needed` → run only when the linked bead exists and lacks `reviewed:plan`.
 - If no linked bead exists, continue without review regardless of `--plan-review`.
@@ -127,23 +127,29 @@ If `.beads/` does not exist, skip this question and proceed with Beads integrati
    - **If children exist (Resume):** Reconstruct Task→Bead mapping from existing children. Mark tasks corresponding to `resolved`/`closed` children as completed. Announce: "Resuming execution — N tasks already completed." Skip `seed-beads-from-plan`.
    - **If no children (Fresh start):** Invoke `seed-beads-from-plan` (pass plan path + parent issue ID). Receive and retain the mapping table (Task → Bead ID).
 
-## Skill-related Task Router
+## skill_workflow Task Router
 
-Before editing for each task, classify whether the task is skill-related. Treat it as skill-related when any of these are true:
+Before editing for each task, classify the task's `skill_workflow`. Use the linked issue, spec, or plan `skill_workflow` as the first input, then validate it against task paths and task text. If the recorded workflow conflicts with task evidence, stop and reconcile before editing.
 
-- the linked Beads issue has a `skill-related` label or equivalent metadata;
-- the linked spec or plan records `skill_related=yes`;
-- the task touches a skill artifact path such as `SKILL.md`, `agents/openai.yaml`, or a skill's `references/`, `scripts/`, `assets/`, or eval fixture files;
-- the task text explicitly says it changes skill routing, metadata, evals, resources, trigger behavior, or eval-driven behavior.
+A task requires `skill_workflow=writing_skills` when it edits a skill artifact path such as:
 
-For skill-related tasks, invoke the skill-edit discipline before editing:
+- `skills/*/SKILL.md`
+- `skills/*/references/*`
+- `skills/*/scripts/*`
+- `skills/*/assets/*`
+- skill eval fixtures or active skill contract tests
+- agent/plugin skill manifests that affect skill behavior
+
+A task requires `skill_workflow=skill_creator` when it creates a new skill, changes skill metadata, changes trigger/routing behavior, restructures skill resources, or performs eval-driven behavior iteration.
+
+For tasks with `skill_workflow=writing_skills` or `skill_workflow=skill_creator`, invoke the required skill-edit discipline before editing:
 
 ```text
 REQUIRED SUB-SKILL: superpowers:writing-skills
 ALSO REQUIRED: skill-creator when the task changes metadata, triggers, routing behavior, resources, or eval-driven skill behavior.
 ```
 
-This router does not skip plan authoring, Beads lifecycle, task verification, implementation review, or finishing workflows. It only controls how skill artifact tasks are executed.
+This router does not skip plan authoring, Beads lifecycle, task verification, implementation review, or finishing workflows. It only controls how skill artifact tasks are executed. Do not create canonical v4 metadata named `skill_related` or `skill_creator_required`; migrate legacy inputs to `skill_workflow` when encountered.
 
 ### Step 2: Execute Tasks
 
@@ -170,6 +176,15 @@ After all tasks complete and verified:
 4. **REQUIRED SUB-SKILL:** Use superpowers:finishing-a-development-branch
 5. Follow that skill to verify tests, present options, execute choice
 6. If `--finishing skip` is passed, stop after execution, return control to the caller, and do not invoke `finishing-a-development-branch`.
+
+When implementation review is completed by the finishing workflow or caller, record v4 evidence on the linked parent bead:
+
+```text
+impl_reviewed_at_sha=<reviewed implementation HEAD>
+impl_reviewed_diff_range=<base>..<head>
+```
+
+Do not advance these values without a new passing implementation review.
 
 ## When to Stop and Ask for Help
 

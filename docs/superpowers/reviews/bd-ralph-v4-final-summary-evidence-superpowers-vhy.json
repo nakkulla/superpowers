@@ -1,0 +1,114 @@
+{
+  "workflow": "bd-ralph-v4",
+  "issue_id": "superpowers-vhy",
+  "run_started_at": "2026-04-29T16:11:03Z",
+  "run_finished_at": "2026-04-29T16:41:59Z",
+  "ready": {
+    "check": "ran",
+    "match": "superpowers-vhy",
+    "note": "bd ready returned parent in Phase 0"
+  },
+  "execution_lane": "plan",
+  "skill_related": true,
+  "skill_workflow": {
+    "workflow": "skill_creator",
+    "edit_kind": "behavior_change",
+    "workflow_reason": "The work changes active skill routing and evidence behavior and requires eval evidence.",
+    "skill_creator_required": true,
+    "source": "spec+plan"
+  },
+  "skill_creator": {
+    "required": true,
+    "task_evidence": [
+      {
+        "task_id": "superpowers-vhy.4",
+        "required": true,
+        "invoked": true,
+        "mode": "planned",
+        "workflow": "full",
+        "eval_status": "pass",
+        "evidence_root": "docs/superpowers/evals",
+        "benchmark_json": "docs/superpowers/evals/2026-04-30-superpowers-v4-workflow-contract-alignment-benchmark.json",
+        "benchmark_md": "docs/superpowers/evals/2026-04-30-superpowers-v4-workflow-contract-alignment-eval.md",
+        "with_skill_count": 2,
+        "without_skill_count": 2,
+        "grading_files": 1,
+        "timing_files": 1,
+        "aggregate_command": "python3 -m json.tool docs/superpowers/evals/2026-04-30-superpowers-v4-workflow-contract-alignment-benchmark.json >/dev/null",
+        "viewer": {
+          "status": "skipped",
+          "reason": "No external model transcripts were generated; checked-in markdown artifact is the review surface."
+        },
+        "skipped_layers": [
+          "external_model_benchmark: contract_smoke shell harness per spec",
+          "review_viewer: markdown artifact is review surface"
+        ]
+      }
+    ]
+  },
+  "seed": {
+    "helper_status": "success",
+    "child_count": 5
+  },
+  "finish": {
+    "script_status": "success",
+    "pr_url": "https://github.com/nakkulla/superpowers/pull/8",
+    "finish_ok": true
+  },
+  "final": {
+    "git_status": "clean",
+    "parent_status": "resolved",
+    "children_status": "all-resolved"
+  },
+  "self_audit": {
+    "policy": "light",
+    "verdict": "clean_with_suggestions",
+    "summary": "Delivery evidence is complete after fixing implementation review and simplify findings. Existing delta guidance for ledger child evidence was applied by patching the ledger before final summary; no new append-worthy target-skill delta remains."
+  },
+  "self_improve": {
+    "delta_path": "/Users/isy_macstudio/Documents/GitHub/dotfiles/shared/skills/bd-ralph-v4/delta.md",
+    "target_skill": "shared/skills/bd-ralph-v4",
+    "target_repo_root": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
+    "appended": 0,
+    "deduped": 0,
+    "skipped": "no-append-worthy-candidates; existing delta guidance applied, not deduped",
+    "persistence": "report-only"
+  },
+  "main_checkout_only_actions": [],
+  "followup": [],
+  "reviews": {
+    "spec_review": {
+      "final_source": "external",
+      "reused": "no",
+      "reuse_reason": "none",
+      "verdict": "APPROVE"
+    },
+    "plan_review": {
+      "final_source": "external",
+      "verdict": "APPROVE",
+      "external_attempts": 2
+    },
+    "implementation_review": {
+      "final_source": "external",
+      "verdict": "APPROVE",
+      "external_attempts": 3,
+      "scope": "delta",
+      "base_sha": "d5e7b14b58ab4e4fbba196df73fd617c521c80e1",
+      "rereview_reason": "simplify one-use helper fix delta"
+    },
+    "simplify": {
+      "status": "applied",
+      "rereview": "delta_external_approve"
+    }
+  },
+  "delta": {
+    "context_loaded": 1,
+    "applied": 7,
+    "skipped": 6,
+    "not_relevant": 5,
+    "applied_stages": "phase0,plan,execution,finish,simplify,ledger,final-summary"
+  },
+  "final_summary_gate": {
+    "status": "pass"
+  }
+}

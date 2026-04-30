@@ -1,0 +1,31 @@
+{
+  "schema": "superpowers.skill_eval_grading.v1",
+  "parent_bead": "superpowers-vhy",
+  "status": "pass",
+  "graded_items": [
+    {
+      "id": "skill-workflow-prompt",
+      "expected": {
+        "quick_edit": "no",
+        "execution_lane": "plan",
+        "skill_workflow": "skill_creator"
+      },
+      "result": "pass",
+      "reason": "Routing and eval behavior changes require skill_creator discipline and plan lane."
+    },
+    {
+      "id": "readme-typo-prompt",
+      "expected": {
+        "skill_workflow": "none",
+        "execution_lane": "quick_edit"
+      },
+      "result": "pass",
+      "reason": "Non-skill typo work can use quick_edit only when bounded and easy to verify."
+    },
+    {
+      "id": "contract-test",
+      "expected": "PASS: brainstorming v4 workflow routing contract",
+      "result": "pass"
+    }
+  ]
+}

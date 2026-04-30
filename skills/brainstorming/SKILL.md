@@ -51,20 +51,21 @@ In a Beads-enabled repo, when `brainstorming` explicitly chooses the quick_edit 
 - **label that new issue `quick_edit`**
 - do **not** treat the parent bead as the `quick_edit` issue
 - this **does not change the normal spec-path parent** / `spec_id` / `reviewed:spec` rules used by regular brainstorming → spec runs
+- treat `execution_lane=quick_edit` as the source of truth; the `quick_edit` label is a mirror/index label that must stay aligned with that metadata
 
-## skill-related Classification
+## skill_workflow Classification
 
-`skill-related` is a domain classification for work that creates, modifies, evaluates, or changes routing for skill artifacts or skill behavior contracts. It is independent from `quick_edit`.
+`skill_workflow` records the downstream skill-edit discipline required for work that creates, modifies, evaluates, or changes routing for skill artifacts or skill behavior contracts. It is independent from `quick_edit`.
 
 Record both axes whenever a written spec reaches the execution-lane handoff:
 
 ```text
-skill_related=yes|no
-skill_related_reason=<short reason>
 quick_edit=yes|no
 quick_edit_decision_reason=<short reason>
 quick_edit_decided_by=brainstorming
 execution_lane=plan|quick_edit
+skill_workflow=none|writing_skills|skill_creator
+skill_workflow_reason=<short reason>
 ```
 
 Rules:
@@ -72,12 +73,18 @@ Rules:
 - Default `execution_lane=plan`.
 - Set `execution_lane=quick_edit` only when `quick_edit=yes`.
 - Never create new `execution_lane=skill_eval_fast_path` output.
-- Evaluate `quick_edit` independently from `skill_related`: `skill_related=yes` does not force `quick_edit=no`, and `quick_edit=yes` does not imply `skill_related=yes`.
-- Record `quick_edit_decision_reason` for both yes and no decisions, especially when work is plausibly small or skill-related.
+- Choose `skill_workflow` from the required downstream skill-edit discipline.
+- Use `skill_workflow=writing_skills` when work edits existing skill artifacts.
+- Use `skill_workflow=skill_creator` when work creates a new skill, changes skill metadata, changes trigger/routing behavior, restructures skill resources, or performs eval-driven behavior iteration.
+- Use `skill_workflow=none` when no skill-edit discipline is required.
+- Evaluate `quick_edit` independently from `skill_workflow`: skill artifact work does not force `quick_edit=no`, and `quick_edit=yes` does not imply skill artifact work.
+- Record `quick_edit_decision_reason` for both yes and no decisions, especially when work is plausibly small or touches skill workflow behavior.
 - Preserve the standalone Beads issue semantics for cases where brainstorming explicitly chooses the pre-spec `quick_edit` path.
-- Do not invoke `skill-creator` directly from brainstorming unless the user explicitly asks to continue execution in the same session.
+- Do not invoke `writing-plans`, `executing-plans`, `writing-skills`, or `skill-creator` automatically after spec approval.
 
-`skill-related` means later execution must use skill-edit discipline: `superpowers:writing-skills` for skill artifact edits, and `skill-creator` when the task changes skill metadata, trigger/routing behavior, resources, or eval-driven behavior. It does not skip plan authoring.
+`skill_workflow` does not skip plan authoring. Only `execution_lane=quick_edit` can skip a separate plan.
+
+Compatibility warning: do not create new canonical v4 metadata named `skill_related` or `skill_creator_required`; migrate legacy inputs to `skill_workflow` when encountered.
 
 ## Checklist
 
@@ -113,7 +120,7 @@ You MUST create a task for each of these items and complete them in order:
     until the latest pass has finished and its findings have been reconciled by the main agent.
 10. **User reviews written spec** — ask user to decide only whether the written spec is acceptable
 11. **Mark parent bead `reviewed:spec`** — after the full spec gate passes, the main brainstorming flow labels the linked parent bead
-12. **Record skill-related and quick_edit decisions and stop** — default to `execution_lane=plan`; use `execution_lane=quick_edit` only when `quick_edit=yes`. Record `skill_related`, `skill_related_reason`, `quick_edit`, `quick_edit_decision_reason`, `quick_edit_decided_by=brainstorming`, and `execution_lane=plan|quick_edit` on the parent bead or final handoff summary. Do not invoke `writing-plans` or `skill-creator` automatically. End after the reviewed spec is linked, labeled, committed, and pushed.
+12. **Record `skill_workflow` and quick_edit decisions and stop** — default to `execution_lane=plan`; use `execution_lane=quick_edit` only when `quick_edit=yes`. Record `quick_edit`, `quick_edit_decision_reason`, `quick_edit_decided_by=brainstorming`, `execution_lane=plan|quick_edit`, `skill_workflow=none|writing_skills|skill_creator`, and `skill_workflow_reason` on the parent bead or final handoff summary. Do not invoke `writing-plans`, `executing-plans`, `writing-skills`, or `skill-creator` automatically. End after the reviewed spec is linked, labeled, committed, and pushed.
 
 ## Process Flow
 
@@ -304,23 +311,24 @@ connect the spec to the Beads issue tracker if `.beads/` directory exists in the
    - Do **not** create a new bead just to change its type.
    - If the issue type is too narrow for the approved design, promote it in place to the appropriate parent type (usually `feature`, or `epic` when child decomposition is now expected) before linking the spec.
    - Then attach the spec to that same issue with `bd update <id> --type <type> --spec-id <path> --add-label has:spec`.
-   - Re-check that both `issue_type` and `spec-id` are set correctly on that same issue.
+   - Treat `spec_id=<path>` as the source of truth; `has:spec` is a mirror/index label that must stay aligned with it.
+   - Re-check that both `issue_type` and `spec_id` are set correctly on that same issue.
 5. If a matching parent bead exists and the same-scope in-place rule above does not apply, inspect its status first via `bd show <id> --json`.
 6. If the matched parent bead status is `open` or `in_progress` → `bd update <id> --spec-id <path> --add-label has:spec`
-7. Re-check that `spec-id` is set correctly on the parent bead.
+7. Re-check that `spec_id` is set correctly on the parent bead and that `has:spec` mirrors it.
 8. If the explicit issue or matched parent bead status is `resolved` or `closed`, do **not** overwrite its `spec-id`.
    - Treat this as follow-up work beyond the original bead scope.
    - Ask the user whether to create a new follow-up parent bead instead.
    - If approved, create the new bead and connect it back to the original bead with `discovered-from` when possible (for example: `bd dep add <new-id> <old-id> --type discovered-from`).
    - Immediately after creation: `bd update <new-id> --spec-id <path> --add-label has:spec`
-   - Re-check that `spec-id` is set correctly on the new parent bead.
+   - Re-check that `spec_id` is set correctly on the new parent bead and that `has:spec` mirrors it.
 9. If no match → ask user via AskUserQuestion, then create:
    - Type: `epic` if child task decomposition is expected, `feature` otherwise
    - `bd create --type <type> --title "<title>"`
    - Treat `bd create --json` output as a single issue object and extract the id from `["id"]`, not `[0]["id"]`.
    - If create-response parsing fails, do **not** run a second `bd create` immediately; first verify via an independent read path such as `bd list --json`, `bd show`, or a title/spec-id match and reuse the already-created bead when found.
    - Immediately after: `bd update <id> --spec-id <path> --add-label has:spec`
-   - Re-check that `spec-id` is set correctly
+   - Re-check that `spec_id` is set correctly and that `has:spec` mirrors it
 10. `bd dolt push`
 
 If `.beads/` does not exist, skip this step entirely.
@@ -357,32 +365,34 @@ After the user approves the written spec, the **brainstorming** flow owns the fi
 - If `.beads/` does not exist, skip this step.
 - Reuse the same **parent** bead resolved in the Beads Integration step. Do **not** label a child issue.
 - Add the label only after the full spec gate passes: self-review, at least one formal `spec-review` pass, any applicable automatic independent review loop, any used post-cap direct reconciliation loop, and user approval of the written spec.
-- Apply the label with:
-  - `SPEC_REVIEWED_SHA="$(git log -n 1 --format=%H -- <spec-path>)"`
-  - `SPEC_REVIEW_BASE_SHA="$(git rev-parse HEAD)"`
-  - `bd update <parent-id> --add-label reviewed:spec --set-metadata spec_reviewed_sha="$SPEC_REVIEWED_SHA" --set-metadata spec_review_base_sha="$SPEC_REVIEW_BASE_SHA" --set-metadata spec_freshness=fresh --set-metadata spec_stale_reason=none`
+- Apply the label with v4 review evidence:
+  - `SPEC_CONTENT_HASH="$(git hash-object <spec-path>)"`
+  - `SPEC_REVIEWED_AT_SHA="$(git rev-parse HEAD)"`
+  - `bd update <parent-id> --add-label reviewed:spec --set-metadata spec_content_hash="$SPEC_CONTENT_HASH" --set-metadata spec_reviewed_at_sha="$SPEC_REVIEWED_AT_SHA"`
   - `bd dolt push`
-- `spec_review_base_sha` is the repo `HEAD` whose codebase state was covered by the latest passing formal spec-review, not just a timestamp for when the label was applied. If code changed after the passing formal review and before user approval, re-check freshness or re-run the formal spec-review gate before recording the metadata.
-- If the label already exists, leave it in place.
-- If the label already exists but `spec_reviewed_sha` is absent, `spec_review_base_sha` is absent, `spec_reviewed_sha` does not match the current `<spec-path>` latest commit SHA, or the codebase has drifted from `spec_review_base_sha` on a spec-relevant path, treat the review freshness as incomplete: re-run the full spec gate before updating the metadata.
+- `spec_reviewed_at_sha` is the repo `HEAD` whose codebase state was covered by the latest passing formal spec-review. Do not advance it without a new passing review.
+- `spec_content_hash` is the reviewed artifact content hash. If the spec content changes, the old review evidence is stale even if the path is unchanged.
+- If the label already exists, leave it in place only when `spec_content_hash` matches the current spec file and `spec_reviewed_at_sha` still covers the relevant codebase state.
+- If the label exists but the content hash is absent/mismatched or the reviewed-at SHA no longer covers the relevant state, treat the review evidence as incomplete and re-run the full spec gate before updating metadata.
 - If substantive spec edits are made **after** `reviewed:spec` was applied, first invalidate the stale label with:
-  - `bd update <parent-id> --remove-label reviewed:spec --unset-metadata spec_reviewed_sha --unset-metadata spec_review_base_sha --set-metadata spec_freshness=stale --set-metadata spec_stale_reason=spec-changed`
+  - `bd update <parent-id> --remove-label reviewed:spec --unset-metadata spec_content_hash --unset-metadata spec_reviewed_at_sha`
   - `bd dolt push`
   Then re-run the full spec gate and re-apply the label only after the updated spec passes again.
+- Do not store `spec_freshness`, `spec_stale_reason`, `spec_reviewed_sha`, or `spec_review_base_sha` as canonical v4 review metadata.
 - `spec-review` itself remains review-only and does not own this label.
 
 **Execution lane recording:**
 
 - Default lane: record `execution_lane=plan`.
 - Record `execution_lane=quick_edit` only when `quick_edit=yes`.
-- Record `skill_related=yes|no`, `skill_related_reason=<short reason>`, `quick_edit=yes|no`, `quick_edit_decision_reason=<short reason>`, and `quick_edit_decided_by=brainstorming` with the lane.
-- Do not invoke `writing-plans` or `skill-creator` automatically.
+- Record `quick_edit=yes|no`, `quick_edit_decision_reason=<short reason>`, `quick_edit_decided_by=brainstorming`, `skill_workflow=none|writing_skills|skill_creator`, and `skill_workflow_reason=<short reason>` with the lane.
+- Do not invoke `writing-plans`, `executing-plans`, `writing-skills`, or `skill-creator` automatically.
 - `execution_lane=plan` is handoff metadata only. It is not same-turn permission to run `writing-plans`; that requires a separate explicit user request after the brainstorming handoff has stopped.
 - If Beads is available, persist these decisions on the parent bead via metadata or labels.
 - If Beads is unavailable, include them in the final handoff summary.
 - The next execution workflow owns acting on the lane:
   - `execution_lane=plan` → `writing-plans` / `executing-plans`
-  - `execution_lane=quick_edit` → bounded quick_edit execution with any required skill-related discipline
+  - `execution_lane=quick_edit` → bounded quick_edit execution with any required `skill_workflow` discipline
 
 ## Key Principles
 

@@ -27,6 +27,7 @@ This test suite verifies that skills are loaded correctly and Claude follows the
 ```bash
 ./run-skill-tests.sh --test test-subagent-driven-development.sh
 ./run-skill-tests.sh --test test-brainstorming-v4-workflow-routing-contract.sh
+./run-skill-tests.sh --test test-brainstorming-scope-split-followup-contract.sh
 ```
 
 ### Run with verbose output:
@@ -100,6 +101,15 @@ Tests the brainstorming/writing-plans/executing-plans v4 routing contract (~1 se
 - v4 review evidence uses content hashes plus reviewed-at SHAs
 - mirror/index labels derive from metadata sources of truth
 - ripgrep (`rg`) is available before running the contract assertions
+
+#### test-brainstorming-scope-split-followup-contract.sh
+Tests the brainstorming scope-split follow-up contract and Superpowers semantic contract registry (~1 second):
+- `docs/contracts/workflow-contract.yaml` is semantic-only and does not enable runtime loading
+- scope-split follow-up metadata and forbidden pre-spec fields are defined
+- brainstorming creates description-only follow-up issues after the approved main spec handoff
+- writing-plans treats `spec_policy=future_brainstorming_required` follow-ups as not plan-ready
+- executing-plans treats `spec_policy=future_brainstorming_required` follow-ups as not execution-ready
+- `docs/contracts/consumers.yaml` lists the active skills and contract tests
 
 ### Integration Tests (use --integration flag)
 

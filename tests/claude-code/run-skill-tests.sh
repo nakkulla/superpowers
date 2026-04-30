@@ -59,6 +59,7 @@ while [[ $# -gt 0 ]]; do
             echo "Tests:"
             echo "  test-subagent-driven-development.sh  Test skill loading and requirements"
             echo "  test-brainstorming-v4-workflow-routing-contract.sh  Test v4 workflow routing contract"
+            echo "  test-brainstorming-scope-split-followup-contract.sh  Test scope-split follow-up contract"
             echo ""
             echo "Integration Tests (use --integration):"
             echo "  test-subagent-driven-development-integration.sh  Full workflow execution"
@@ -76,6 +77,7 @@ done
 tests=(
     "test-subagent-driven-development.sh"
     "test-brainstorming-v4-workflow-routing-contract.sh"
+    "test-brainstorming-scope-split-followup-contract.sh"
 )
 
 # Integration tests (slow, full execution)

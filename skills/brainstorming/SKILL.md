@@ -199,6 +199,7 @@ If `$ARGUMENTS` contains a recognized Beads issue ID:
 - If brainstorming started from an issue ID, treat that issue as seed context and still ask follow-up questions until purpose, constraints, and success criteria are clear
 - Before asking detailed questions, assess scope: if the request describes multiple independent subsystems (e.g., "build a platform with chat, file storage, billing, and analytics"), flag this immediately. Don't spend questions refining details of a project that needs to be decomposed first.
 - If the project is too large for a single spec, help the user decompose into sub-projects: what are the independent pieces, how do they relate, what order should they be built? Then brainstorm the first sub-project through the normal design flow. Each sub-project gets its own spec → plan → implementation cycle.
+- If there is a main scope plus related follow-ups, propose the split explicitly: the current run writes one spec for the selected main scope, and related future work becomes description-only follow-up Beads issues after the main spec is approved. Ask the user to confirm the main scope before writing the spec. Do not write separate follow-up specs in the same brainstorming run.
 - For appropriately-scoped projects, ask questions one at a time to refine the idea
 - Prefer multiple choice questions when possible, but open-ended is fine too
 - Only one question per message - if a topic needs more exploration, break it into multiple questions
@@ -380,6 +381,34 @@ After the user approves the written spec, the **brainstorming** flow owns the fi
   Then re-run the full spec gate and re-apply the label only after the updated spec passes again.
 - Do not store `spec_freshness`, `spec_stale_reason`, `spec_reviewed_sha`, or `spec_review_base_sha` as canonical v4 review metadata.
 - `spec-review` itself remains review-only and does not own this label.
+
+### Scope-split follow-up handoff
+
+When brainstorming discovers related future work outside the selected main scope, keep the main spec focused. The written main spec may mention deferred follow-ups only to clarify boundaries; do not design those follow-ups in detail.
+
+Create durable follow-up issues only during final brainstorming handoff after the user approves the written main spec. First confirm the approved main spec is linked to its parent bead, then create/link any accepted description-only follow-up Beads issues. Do not create durable follow-up issues before that approval gate.
+
+Each scope-split follow-up description should include why it was split out, what problem or opportunity it covers, how it relates to the main spec, the expected future brainstorming/spec gate, and any known acceptance notes or open questions.
+
+Use dependency provenance when supported:
+
+```bash
+bd dep add <followup-id> <main-parent-id> --type discovered-from
+```
+
+If typed `discovered-from` dependencies are unavailable, preserve the relationship in the follow-up description and metadata instead of inventing a label.
+
+Use this metadata on description-only follow-up Beads issues:
+
+```text
+origin=brainstorming_scope_split
+source_spec_id=<main spec path>
+source_parent=<main parent bead id>
+scope_relation=follow_up
+spec_policy=future_brainstorming_required
+```
+
+The forbidden pre-spec fields for these follow-up issues are: `spec_id`, `has:spec`, `reviewed:spec`, `spec_content_hash`, `spec_reviewed_at_sha`, `artifact_links`, `review_evidence`, `execution_lane`, `quick_edit`, `quick_edit_decision_reason`, `quick_edit_decided_by`, `skill_workflow`, and `skill_workflow_reason`. Add those only after the follow-up has its own future brainstorming → spec → plan → implementation cycle.
 
 **Execution lane recording:**
 

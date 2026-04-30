@@ -1,0 +1,11 @@
+{
+  "schema": "superpowers.skill_eval_grading.v1",
+  "parent_bead": "superpowers-h2m",
+  "status": "pass",
+  "checks": [
+    {"id": "red_baseline", "status": "pass", "summary": "New test failed before contract/guidance implementation."},
+    {"id": "scope_split_contract", "status": "pass", "summary": "New scope-split contract test passed."},
+    {"id": "routing_regression", "status": "pass", "summary": "Existing v4 routing contract test passed."},
+    {"id": "runner_registration", "status": "pass", "summary": "run-skill-tests.sh can invoke the new test."}
+  ]
+}

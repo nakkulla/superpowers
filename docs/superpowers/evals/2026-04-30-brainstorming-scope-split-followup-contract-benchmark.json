@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "schema": "superpowers.skill_eval_benchmark.v1",
+    "eval_type": "contract_smoke",
+    "parent_bead": "superpowers-h2m",
+    "spec": "docs/superpowers/specs/2026-04-30-brainstorming-scope-split-followup-contract-design.md",
+    "plan": "docs/superpowers/plans/2026-04-30-brainstorming-scope-split-followup-contract.md",
+    "benchmark_md": "docs/superpowers/evals/2026-04-30-brainstorming-scope-split-followup-contract-eval.md",
+    "executor": "repo-shell",
+    "executor_model": "not_applicable_repo_shell",
+    "with_skill_count": 3,
+    "without_skill_count": 1,
+    "skipped_layers": [
+      {
+        "layer": "external_model_benchmark",
+        "reason": "Spec defines this eval as a reproducible repository contract-smoke record; shell contract tests and fixed pressure-scenario judgments are the required harness boundary."
+      },
+      {
+        "layer": "review_viewer",
+        "reason": "No external model transcripts were generated; checked-in markdown artifact is the review surface."
+      }
+    ],
+    "grading_json": "docs/superpowers/evals/2026-04-30-brainstorming-scope-split-followup-contract-grading.json",
+    "timing_json": "docs/superpowers/evals/2026-04-30-brainstorming-scope-split-followup-contract-timing.json"
+  },
+  "runs": [
+    {
+      "id": "baseline-routing-contract",
+      "mode": "without_skill",
+      "command": "bash tests/claude-code/test-brainstorming-v4-workflow-routing-contract.sh",
+      "status": "pass",
+      "summary": "Existing v4 routing contract passed before scope-split contract work."
+    },
+    {
+      "id": "scope-split-contract-test",
+      "mode": "with_skill",
+      "command": "bash tests/claude-code/test-brainstorming-scope-split-followup-contract.sh",
+      "status": "pass",
+      "summary": "New scope-split contract test passed after semantic contract and skill guidance updates."
+    },
+    {
+      "id": "v4-routing-regression-test",
+      "mode": "with_skill",
+      "command": "bash tests/claude-code/test-brainstorming-v4-workflow-routing-contract.sh",
+      "status": "pass",
+      "summary": "Existing v4 routing contract remained green."
+    },
+    {
+      "id": "scope-split-runner-test",
+      "mode": "with_skill",
+      "command": "bash tests/claude-code/run-skill-tests.sh --test test-brainstorming-scope-split-followup-contract.sh",
+      "status": "pass",
+      "summary": "Default test runner can invoke the new focused fast test."
+    }
+  ],
+  "run_summary": {
+    "status": "pass",
+    "with_skill": {
+      "count": 3,
+      "pass_count": 3,
+      "summary": "Scope-split contract test, existing routing regression, and runner invocation passed."
+    },
+    "without_skill": {
+      "count": 1,
+      "pass_count": 1,
+      "summary": "Baseline routing contract passed but did not cover semantic contract files or scope-split follow-up semantics."
+    },
+    "delta": {
+      "status": "positive_contract_alignment",
+      "summary": "Active guidance now enforces description-only scope-split follow-ups and blocks planning/execution until future spec review."
+    },
+    "with_skill_count": 3,
+    "without_skill_count": 1,
+    "pass_count": 4,
+    "fail_count": 0,
+    "conclusion": "Superpowers scope-split follow-up semantic contract is documented, registered, and covered by focused tests."
+  }
+}

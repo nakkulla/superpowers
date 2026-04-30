@@ -1,0 +1,48 @@
+contract: superpowers-workflow
+version: 1
+
+consumers:
+  skills:
+    - path: skills/brainstorming/SKILL.md
+      consumes:
+        - execution_lane
+        - quick_edit
+        - skill_workflow
+        - review_evidence
+        - scope_split_followup
+    - path: skills/writing-plans/SKILL.md
+      consumes:
+        - execution_lane
+        - skill_workflow
+        - scope_split_followup
+    - path: skills/executing-plans/SKILL.md
+      consumes:
+        - execution_lane
+        - skill_workflow
+        - scope_split_followup
+  tests:
+    - path: tests/claude-code/test-brainstorming-v4-workflow-routing-contract.sh
+      asserts:
+        - vocabulary.execution_lane.allowed_values
+        - vocabulary.quick_edit.allowed_values
+        - vocabulary.quick_edit_decision_reason
+        - vocabulary.quick_edit_decided_by.allowed_values
+        - vocabulary.skill_workflow.allowed_values
+        - vocabulary.skill_workflow_reason
+        - vocabulary.spec_id
+        - vocabulary.has:spec.source
+        - vocabulary.reviewed:spec.required_metadata
+        - vocabulary.spec_content_hash
+        - vocabulary.spec_reviewed_at_sha
+        - vocabulary.artifact_links
+        - vocabulary.review_evidence
+    - path: tests/claude-code/test-brainstorming-scope-split-followup-contract.sh
+      asserts:
+        - contract.name
+        - contract.type
+        - contract.runtime_loading
+        - vocabulary.scope_split_followup.required_metadata
+        - vocabulary.scope_split_followup.required_values
+        - vocabulary.scope_split_followup.forbidden_pre_spec_fields
+        - consumers.skills
+        - consumers.tests

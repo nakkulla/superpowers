@@ -1,4 +1,5 @@
 # Brainstorming Scope Split Follow-up Contract Design
+Parent bead: superpowers-h2m
 
 ## Summary
 

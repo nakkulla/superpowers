@@ -1,0 +1,72 @@
+contract:
+  name: superpowers-workflow
+  version: 1
+  type: semantic
+  runtime_loading: false
+
+vocabulary:
+  execution_lane:
+    kind: metadata
+    allowed_values: [plan, quick_edit]
+  quick_edit:
+    kind: metadata
+    allowed_values: [yes, no]
+  quick_edit_decision_reason:
+    kind: metadata
+    value: short_string
+  quick_edit_decided_by:
+    kind: metadata
+    allowed_values: [brainstorming]
+  skill_workflow:
+    kind: metadata
+    allowed_values: [none, writing_skills, skill_creator]
+  skill_workflow_reason:
+    kind: metadata
+    value: short_string
+  spec_id:
+    kind: metadata
+    value: repo_relative_path
+    mirror_label: has:spec
+  has:spec:
+    kind: mirror_label
+    source: spec_id
+  reviewed:spec:
+    kind: review_gate_label
+    required_metadata: [spec_content_hash, spec_reviewed_at_sha]
+  spec_content_hash:
+    kind: metadata
+    value: git_hash_object
+  spec_reviewed_at_sha:
+    kind: metadata
+    value: git_commit_sha
+  artifact_links:
+    kind: metadata_and_mirror_labels
+    sources: [spec_id]
+    mirror_labels: [has:spec]
+  review_evidence:
+    kind: metadata
+    required_keys: [spec_content_hash, spec_reviewed_at_sha]
+  scope_split_followup:
+    kind: pre_spec_followup
+    required_metadata:
+      - origin
+      - source_spec_id
+      - source_parent
+      - scope_relation
+      - spec_policy
+    required_values:
+      origin: brainstorming_scope_split
+      scope_relation: follow_up
+      spec_policy: future_brainstorming_required
+    forbidden_pre_spec_fields:
+      - spec_id
+      - has:spec
+      - reviewed:spec
+      - spec_content_hash
+      - spec_reviewed_at_sha
+      - execution_lane
+      - quick_edit
+      - quick_edit_decision_reason
+      - quick_edit_decided_by
+      - skill_workflow
+      - skill_workflow_reason

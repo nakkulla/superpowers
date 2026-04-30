@@ -1,0 +1,10 @@
+{
+  "schema": "superpowers.skill_eval_timing.v1",
+  "parent_bead": "superpowers-h2m",
+  "status": "recorded",
+  "runs": [
+    {"id": "scope_split_contract", "duration_seconds": 0, "source": "shell output rounded"},
+    {"id": "v4_routing_contract", "duration_seconds": 0, "source": "shell output rounded"},
+    {"id": "runner_scope_split", "duration_seconds": 0, "source": "run-skill-tests output"}
+  ]
+}

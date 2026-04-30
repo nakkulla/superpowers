@@ -63,7 +63,7 @@ rg -q 'impl_reviewed_diff_range=<base>..<head>' "$EXECUTING_PLANS"
 ! rg -q 'Record `skill_eval_fast_path` as the selected execution lane|skill_eval_fast_path Preflight Exception|`skill_eval_fast_path`: record|execution_lane=skill_eval_fast_path.*→' "$BRAINSTORMING" "$WRITING_PLANS" "$EXECUTING_PLANS"
 ! rg -q '승인\+plan 작성|Approve \+ write plan \(Recommended\)|proceed to the next step' "$BRAINSTORMING"
 ! rg -q '## Skill-related|This plan is skill-related|skill-related` label|records `skill_related=yes`' "$BRAINSTORMING" "$WRITING_PLANS" "$EXECUTING_PLANS"
-legacy_output="$(rg -n 'skill_related|skill_creator_required|spec_reviewed_sha|spec_review_base_sha|spec_freshness|spec_stale_reason' "$BRAINSTORMING" "$WRITING_PLANS" "$EXECUTING_PLANS" || true)"
+legacy_output="$(rg -n 'skill_related|skill-related|skill_creator_required|spec_reviewed_sha|spec_review_base_sha|spec_freshness|spec_stale_reason' "$BRAINSTORMING" "$WRITING_PLANS" "$EXECUTING_PLANS" || true)"
 if [ -n "$legacy_output" ]; then
   while IFS= read -r line; do
     case "$line" in

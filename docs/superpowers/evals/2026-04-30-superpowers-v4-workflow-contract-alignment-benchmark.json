@@ -7,8 +7,8 @@
     "plan": "docs/superpowers/plans/2026-04-30-superpowers-v4-workflow-contract-alignment.md",
     "benchmark_md": "docs/superpowers/evals/2026-04-30-superpowers-v4-workflow-contract-alignment-eval.md",
     "executor": "repo-shell",
-    "with_skill_count": 2,
-    "without_skill_count": 2,
+    "with_skill_count": 3,
+    "without_skill_count": 1,
     "skipped_layers": [
       {
         "layer": "external_model_benchmark",
@@ -75,8 +75,8 @@
       "status": "positive_contract_alignment",
       "summary": "Active guidance moved from skill_related routing semantics to v4 skill_workflow plus content-hash/reviewed-at-SHA evidence."
     },
-    "with_skill_count": 2,
-    "without_skill_count": 2,
+    "with_skill_count": 3,
+    "without_skill_count": 1,
     "pass_count": 4,
     "fail_count": 0,
     "conclusion": "v4 vocabulary replaced active skill_related routing semantics and the focused contract test passes."

@@ -1,0 +1,131 @@
+{
+  "WORKFLOW": "bd-ralph-v4",
+  "workflow": "bd-ralph-v4",
+  "issue_id": "superpowers-h2m",
+  "run_started_at": "2026-04-30T04:44:02Z",
+  "run_finished_at": "2026-04-30T05:03:35Z",
+  "execution_lane": "plan",
+  "skill_related": true,
+  "ready": {
+    "check": "ran",
+    "match": "yes:superpowers-h2m",
+    "note": "bd ready --json returned parent before worktree setup."
+  },
+  "seed": {
+    "helper_status": "success",
+    "children_created": 5
+  },
+  "finish": {
+    "script_status": "success",
+    "pr_url": "https://github.com/nakkulla/superpowers/pull/9",
+    "finish_ok": true
+  },
+  "final": {
+    "git_status": "clean",
+    "parent_status": "resolved",
+    "children_status": "all-resolved"
+  },
+  "self_audit": {
+    "policy": "light",
+    "verdict": "clean_with_suggestions",
+    "notes": [
+      "Delivery evidence is complete and finishable.",
+      "Existing delta guidance was applied for seed annotation, skill-eval evidence, and negated quality gate triage.",
+      "No new append-worthy bd-ralph-v4 guidance remained after materiality and ownership gates."
+    ]
+  },
+  "self_improve": {
+    "delta_path": "/Users/isy_macstudio/Documents/GitHub/dotfiles/shared/skills/bd-ralph-v4/delta.md",
+    "target_skill": "shared/skills/bd-ralph-v4",
+    "target_repo_root": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
+    "appended": 0,
+    "deduped": 0,
+    "skipped": "no-append-worthy-candidates",
+    "persistence": "report-only"
+  },
+  "skill_workflow": {
+    "skill_related": true,
+    "edit_kind": "behavior_change",
+    "workflow": "skill_creator",
+    "source": "spec+plan",
+    "workflow_reason": "Active skill behavior contract and eval/contract evidence change.",
+    "skill_creator_required": true
+  },
+  "skill_creator": {
+    "required": true,
+    "invoked": true,
+    "task_evidence": [
+      {
+        "id": "superpowers-h2m.4",
+        "task": "Add eval artifact and final implementation verification",
+        "required": true,
+        "invoked": true,
+        "mode": "planned",
+        "workflow": "full",
+        "eval_status": "pass",
+        "benchmark_json": "docs/superpowers/evals/2026-04-30-brainstorming-scope-split-followup-contract-benchmark.json",
+        "benchmark_md": "docs/superpowers/evals/2026-04-30-brainstorming-scope-split-followup-contract-eval.md",
+        "with_skill_count": 3,
+        "without_skill_count": 1,
+        "grading_files": 1,
+        "timing_files": 1,
+        "aggregate_command": "python3 -m json.tool docs/superpowers/evals/2026-04-30-brainstorming-scope-split-followup-contract-benchmark.json",
+        "viewer_skip_reason": "contract_smoke eval uses checked-in markdown artifact instead of external transcript viewer"
+      }
+    ]
+  },
+  "main_checkout_only_actions": [],
+  "followup": [],
+  "markers": {
+    "SPEC_REVIEW_FINAL_SOURCE": "external",
+    "SPEC_REVIEW_REUSED": "no",
+    "SPEC_REVIEW_REUSE_REASON": "none",
+    "PLAN_REVIEW_FINAL_SOURCE": "external",
+    "IMPL_REVIEW_FINAL_SOURCE": "external",
+    "EXECUTION_LANE": "plan",
+    "SKILL_RELATED": "yes",
+    "SKILL_EDIT_KIND": "behavior_change",
+    "SKILL_WORKFLOW": "skill_creator",
+    "SKILL_WORKFLOW_SOURCE": "spec+plan",
+    "SKILL_WORKFLOW_REASON": "Active skill behavior contract and eval/contract evidence change",
+    "SKILL_CREATOR_REQUIRED": "yes",
+    "READY_CHECK": "ran",
+    "SEED_HELPER_STATUS": "success",
+    "FINISH_SCRIPT_STATUS": "success",
+    "DELTA_CONTEXT_LOADED": "1",
+    "DELTA_APPLIED": 6,
+    "DELTA_SKIPPED": 2,
+    "DELTA_NOT_RELEVANT": 10,
+    "DELTA_APPLIED_STAGES": "setup,seed,skill_classification,execution,verification,finish,simplify",
+    "SELF_AUDIT_VERDICT": "clean_with_suggestions",
+    "SELF_IMPROVE_DELTA_PATH": "/Users/isy_macstudio/Documents/GitHub/dotfiles/shared/skills/bd-ralph-v4/delta.md",
+    "SELF_IMPROVE_APPENDED": 0,
+    "SELF_IMPROVE_DEDUPED": 0,
+    "SELF_IMPROVE_SKIPPED": "no-append-worthy-candidates",
+    "SELF_IMPROVE_PERSISTENCE": "report-only",
+    "SKILL_CREATOR_AUTO_MODE": "yes",
+    "SKILL_CREATOR_EVAL_DIRECTION": "run_proposed_evals"
+  },
+  "summary": {
+    "audit_version": "v1",
+    "audit_status": "accepted",
+    "audit_artifact": "docs/superpowers/reviews/bd-ralph-v4-run-ledger-superpowers-h2m.json",
+    "canonical_worktree": ".worktrees/superpowers-h2m",
+    "canonical_branch": "superpowers-h2m",
+    "completed_task_count": 5,
+    "unresolved_task_count": 0,
+    "implementation_review_verdict": "APPROVE",
+    "run_started_at": "2026-04-30T04:44:02Z",
+    "run_finished_at": "2026-04-30T05:03:35Z",
+    "self_improve_persistence": ""
+  },
+  "verification": {
+    "commands": [
+      "bash tests/claude-code/test-brainstorming-scope-split-followup-contract.sh",
+      "bash tests/claude-code/test-brainstorming-v4-workflow-routing-contract.sh",
+      "bash tests/claude-code/run-skill-tests.sh --test test-brainstorming-scope-split-followup-contract.sh",
+      "bash tmp/finish-verify.sh"
+    ],
+    "result": "pass"
+  }
+}

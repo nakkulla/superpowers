@@ -1,0 +1,152 @@
+{
+  "WORKFLOW": "bd-ralph-v4",
+  "SPEC_REVIEW_FINAL_SOURCE": "prior_external",
+  "SPEC_REVIEW_REUSED": "yes",
+  "SPEC_REVIEW_REUSE_REASON": "reviewed_sha_matches_current_head",
+  "PLAN_REVIEW_FINAL_SOURCE": "external",
+  "IMPL_REVIEW_FINAL_SOURCE": "external",
+  "EXECUTION_LANE": "plan",
+  "SKILL_RELATED": "yes",
+  "SKILL_EDIT_KIND": "behavior_change",
+  "SKILL_WORKFLOW": "skill_creator",
+  "SKILL_WORKFLOW_SOURCE": "spec+plan",
+  "SKILL_WORKFLOW_REASON": "eval-backed brainstorming skill contract/routing guidance change",
+  "SKILL_CREATOR_REQUIRED": "yes",
+  "READY_CHECK": "ran",
+  "SEED_HELPER_STATUS": "success",
+  "FINISH_SCRIPT_STATUS": "success",
+  "DELTA_CONTEXT_LOADED": "1",
+  "DELTA_APPLIED": 10,
+  "DELTA_SKIPPED": 0,
+  "DELTA_NOT_RELEVANT": 12,
+  "DELTA_APPLIED_STAGES": "phase0/run-start,phase1B/seed-before-execution,phase1A.25/skill-workflow-classification,phase2/skill-contract-tests,phase2/skill-eval-counts,phase3/target-branch-pr-base,phase3/helper-built-phase-evidence,phase3/verify-command-safe,phase3/worktree-scoped-edits,phase3/child-summary-evidence",
+  "SELF_AUDIT_VERDICT": "clean",
+  "SELF_IMPROVE_DELTA_PATH": "none",
+  "SELF_IMPROVE_LOG_PATH": "none",
+  "SELF_IMPROVE_TARGET_SKILL": "shared/skills/bd-ralph-v4",
+  "SELF_IMPROVE_TARGET_REPO_ROOT": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
+  "SELF_IMPROVE_APPENDED": 0,
+  "SELF_IMPROVE_DEDUPED": 0,
+  "SELF_IMPROVE_SKIPPED": "no-append-worthy-candidates",
+  "SELF_IMPROVE_PERSISTENCE": "report-only",
+  "SKILL_CREATOR_AUTO_MODE": "yes",
+  "SKILL_CREATOR_EVAL_DIRECTION": "run_proposed_evals",
+  "FINAL_SUMMARY_GATE": "pass",
+  "workflow": "bd-ralph-v4",
+  "issue_id": "superpowers-rd0",
+  "ready": {
+    "check": "ran",
+    "match": "parent superpowers-rd0 explicitly requested and loaded after bd ready preflight",
+    "note": "bd ready returned [] because parent was already in_progress; READY_CHECK still ran"
+  },
+  "execution_lane": "plan",
+  "skill_related": true,
+  "skill_workflow": {
+    "workflow": "skill_creator",
+    "edit_kind": "behavior_change",
+    "source": "spec+plan",
+    "workflow_reason": "eval-backed brainstorming skill contract/routing guidance change",
+    "skill_creator_required": true
+  },
+  "skill_creator": {
+    "required": true,
+    "invoked": true,
+    "task_evidence": [
+      {
+        "task_id": "superpowers-rd0.4",
+        "required": true,
+        "invoked": true,
+        "mode": "planned",
+        "workflow": "skill_creator",
+        "eval_status": "pass",
+        "benchmark_json": "docs/superpowers/evals/2026-05-01-brainstorming-consumed-contract-followup-benchmark.json",
+        "benchmark_md": "docs/superpowers/evals/2026-05-01-brainstorming-consumed-contract-followup-eval.md",
+        "with_skill_count": 3,
+        "without_skill_count": 3,
+        "grading_files": 1,
+        "timing_files": 1,
+        "aggregate_command": "python3 JSON schema check for benchmark/grading/timing artifacts",
+        "viewer_skip_reason": "No external model transcripts were generated; checked-in markdown and JSON artifacts are the review surface."
+      }
+    ]
+  },
+  "run_started_at": "2026-05-01T03:39:29Z",
+  "run_finished_at": "2026-05-01T03:58:46Z",
+  "seed": {
+    "helper_status": "success"
+  },
+  "finish": {
+    "script_status": "success",
+    "pr_url": "https://github.com/nakkulla/superpowers/pull/10",
+    "finish_ok": true
+  },
+  "final": {
+    "git_status": "clean",
+    "parent_status": "resolved",
+    "children_status": "all-resolved"
+  },
+  "self_audit": {
+    "policy": "light",
+    "verdict": "clean",
+    "notes": [
+      "Review findings were fixed and re-reviewed.",
+      "No unresolved follow-up-required failures or main-checkout-only actions remain."
+    ]
+  },
+  "self_improve": {
+    "delta_path": "none",
+    "log_path": "none",
+    "target_skill": "shared/skills/bd-ralph-v4",
+    "target_repo_root": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
+    "appended": 0,
+    "deduped": 0,
+    "skipped": "no-append-worthy-candidates",
+    "persistence": "report-only"
+  },
+  "final_summary_gate": {
+    "status": "pass"
+  },
+  "followup": [],
+  "main_checkout_only_actions": [],
+  "followup_required_failures": [],
+  "followup_sync_failures": [],
+  "failures": [],
+  "main_checkout_only_actions_note": "none",
+  "pr_url": "https://github.com/nakkulla/superpowers/pull/10",
+  "ledger_json": "docs/superpowers/reviews/bd-ralph-v4-run-ledger-superpowers-rd0.json",
+  "final_markers": {
+    "WORKFLOW": "bd-ralph-v4",
+    "SPEC_REVIEW_FINAL_SOURCE": "prior_external",
+    "SPEC_REVIEW_REUSED": "yes",
+    "SPEC_REVIEW_REUSE_REASON": "reviewed_sha_matches_current_head",
+    "PLAN_REVIEW_FINAL_SOURCE": "external",
+    "IMPL_REVIEW_FINAL_SOURCE": "external",
+    "EXECUTION_LANE": "plan",
+    "SKILL_RELATED": "yes",
+    "SKILL_EDIT_KIND": "behavior_change",
+    "SKILL_WORKFLOW": "skill_creator",
+    "SKILL_WORKFLOW_SOURCE": "spec+plan",
+    "SKILL_WORKFLOW_REASON": "eval-backed brainstorming skill contract/routing guidance change",
+    "SKILL_CREATOR_REQUIRED": "yes",
+    "READY_CHECK": "ran",
+    "SEED_HELPER_STATUS": "success",
+    "FINISH_SCRIPT_STATUS": "success",
+    "DELTA_CONTEXT_LOADED": "1",
+    "DELTA_APPLIED": 10,
+    "DELTA_SKIPPED": 0,
+    "DELTA_NOT_RELEVANT": 12,
+    "DELTA_APPLIED_STAGES": "phase0/run-start,phase1B/seed-before-execution,phase1A.25/skill-workflow-classification,phase2/skill-contract-tests,phase2/skill-eval-counts,phase3/target-branch-pr-base,phase3/helper-built-phase-evidence,phase3/verify-command-safe,phase3/worktree-scoped-edits,phase3/child-summary-evidence",
+    "SELF_AUDIT_VERDICT": "clean",
+    "SELF_IMPROVE_DELTA_PATH": "none",
+    "SELF_IMPROVE_LOG_PATH": "none",
+    "SELF_IMPROVE_TARGET_SKILL": "shared/skills/bd-ralph-v4",
+    "SELF_IMPROVE_TARGET_REPO_ROOT": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
+    "SELF_IMPROVE_APPENDED": 0,
+    "SELF_IMPROVE_DEDUPED": 0,
+    "SELF_IMPROVE_SKIPPED": "no-append-worthy-candidates",
+    "SELF_IMPROVE_PERSISTENCE": "report-only",
+    "SKILL_CREATOR_AUTO_MODE": "yes",
+    "SKILL_CREATOR_EVAL_DIRECTION": "run_proposed_evals",
+    "FINAL_SUMMARY_GATE": "pass"
+  }
+}

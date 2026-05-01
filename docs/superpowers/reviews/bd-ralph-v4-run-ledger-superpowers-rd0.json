@@ -251,20 +251,26 @@
       },
       "post_finish": {
         "self_audit": {
-          "policy": "unknown",
-          "verdict": "unknown"
+          "policy": "light",
+          "verdict": "clean",
+          "notes": [
+            "Review findings were fixed and re-reviewed.",
+            "No unresolved follow-up-required failures or main-checkout-only actions remain."
+          ]
         },
         "self_improve": {
-          "delta_path": "",
-          "target_skill": "",
-          "target_repo_root": "",
+          "delta_path": "none",
+          "log_path": "none",
+          "target_skill": "shared/skills/bd-ralph-v4",
+          "target_repo_root": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
           "appended": 0,
           "deduped": 0,
-          "skipped": "unknown",
-          "persistence": ""
+          "skipped": "no-append-worthy-candidates",
+          "persistence": "report-only"
         },
         "final_summary_gate": {
-          "status": "unknown"
+          "status": "pass",
+          "evidence_json": "docs/superpowers/reviews/bd-ralph-v4-final-summary-evidence-superpowers-rd0.json"
         }
       }
     }
@@ -584,20 +590,26 @@
   "followups": [],
   "maintenance": {
     "self_audit": {
-      "policy": "unknown",
-      "verdict": "unknown"
+      "policy": "light",
+      "verdict": "clean",
+      "notes": [
+        "Review findings were fixed and re-reviewed.",
+        "No unresolved follow-up-required failures or main-checkout-only actions remain."
+      ]
     },
     "self_improve": {
-      "delta_path": "",
-      "target_skill": "",
-      "target_repo_root": "",
+      "delta_path": "none",
+      "log_path": "none",
+      "target_skill": "shared/skills/bd-ralph-v4",
+      "target_repo_root": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
       "appended": 0,
       "deduped": 0,
-      "skipped": "unknown",
-      "persistence": ""
+      "skipped": "no-append-worthy-candidates",
+      "persistence": "report-only"
     },
     "final_summary_gate": {
-      "status": "unknown"
+      "status": "pass",
+      "evidence_json": "docs/superpowers/reviews/bd-ralph-v4-final-summary-evidence-superpowers-rd0.json"
     }
   },
   "invocations": [],
@@ -666,20 +678,26 @@
   },
   "post_finish": {
     "self_audit": {
-      "policy": "unknown",
-      "verdict": "unknown"
+      "policy": "light",
+      "verdict": "clean",
+      "notes": [
+        "Review findings were fixed and re-reviewed.",
+        "No unresolved follow-up-required failures or main-checkout-only actions remain."
+      ]
     },
     "self_improve": {
-      "delta_path": "",
-      "target_skill": "",
-      "target_repo_root": "",
+      "delta_path": "none",
+      "log_path": "none",
+      "target_skill": "shared/skills/bd-ralph-v4",
+      "target_repo_root": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
       "appended": 0,
       "deduped": 0,
-      "skipped": "unknown",
-      "persistence": ""
+      "skipped": "no-append-worthy-candidates",
+      "persistence": "report-only"
     },
     "final_summary_gate": {
-      "status": "unknown"
+      "status": "pass",
+      "evidence_json": "docs/superpowers/reviews/bd-ralph-v4-final-summary-evidence-superpowers-rd0.json"
     }
   },
   "acceptance": {
@@ -703,6 +721,7 @@
     "implementation_review_verdict": "APPROVE",
     "run_started_at": "2026-05-01T03:39:29Z",
     "run_finished_at": "2026-05-01T03:58:46Z",
-    "self_improve_persistence": ""
+    "self_improve_persistence": "report-only",
+    "final_summary_gate": "pass"
   }
 }

@@ -98,6 +98,8 @@ Tests skill content and requirements (~2 minutes):
 Tests the brainstorming/writing-plans/executing-plans v4 routing contract (~1 second):
 - `skill_workflow=none|writing_skills|skill_creator` records skill-edit discipline
 - `execution_lane=plan|quick_edit` stays independent from `skill_workflow`
+- quick-edit execution uses `metadata.execution_lane=quick_edit`, with `quick_edit` as a mirror/index label
+- standalone `quick_edit` labels are stale mirror drift, not execution-lane evidence
 - v4 review evidence uses content hashes plus reviewed-at SHAs
 - mirror/index labels derive from metadata sources of truth
 - ripgrep (`rg`) is available before running the contract assertions
@@ -105,7 +107,9 @@ Tests the brainstorming/writing-plans/executing-plans v4 routing contract (~1 se
 #### test-brainstorming-scope-split-followup-contract.sh
 Tests the brainstorming scope-split follow-up contract and Superpowers semantic contract registry (~1 second):
 - `docs/contracts/workflow-contract.yaml` is semantic-only and does not enable runtime loading
+- Superpowers keeps dotfiles runtime-only ledgers/markers/phases out of the local semantic contract
 - scope-split follow-up metadata and forbidden pre-spec fields are defined
+- new durable follow-ups include classification, target_repo, required_action, and human_decision_required
 - brainstorming creates description-only follow-up issues after the approved main spec handoff
 - writing-plans treats `spec_policy=future_brainstorming_required` follow-ups as not plan-ready
 - executing-plans treats `spec_policy=future_brainstorming_required` follow-ups as not execution-ready

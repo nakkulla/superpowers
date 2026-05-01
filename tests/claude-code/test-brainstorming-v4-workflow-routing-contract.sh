@@ -5,8 +5,9 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 BRAINSTORMING="$REPO_ROOT/skills/brainstorming/SKILL.md"
 WRITING_PLANS="$REPO_ROOT/skills/writing-plans/SKILL.md"
 EXECUTING_PLANS="$REPO_ROOT/skills/executing-plans/SKILL.md"
+WORKFLOW_CONTRACT="$REPO_ROOT/docs/contracts/workflow-contract.yaml"
 
-for path in "$BRAINSTORMING" "$WRITING_PLANS" "$EXECUTING_PLANS"; do
+for path in "$BRAINSTORMING" "$WRITING_PLANS" "$EXECUTING_PLANS" "$WORKFLOW_CONTRACT"; do
   [ -f "$path" ]
 done
 
@@ -25,6 +26,21 @@ rg -q 'skill_workflow=none\|writing_skills\|skill_creator' "$BRAINSTORMING"
 rg -q 'skill_workflow_reason=<short reason>' "$BRAINSTORMING"
 rg -q 'Set `execution_lane=quick_edit` only when `quick_edit=yes`' "$BRAINSTORMING"
 rg -q 'execution_lane=quick_edit` as the source of truth; the `quick_edit` label is a mirror/index label' "$BRAINSTORMING"
+rg -q 'metadata.execution_lane=quick_edit' "$BRAINSTORMING" "$WORKFLOW_CONTRACT"
+rg -q 'standalone `quick_edit` label is stale mirror drift' "$BRAINSTORMING"
+rg -q 'A `quick_edit` label without `metadata.execution_lane=quick_edit` is stale mirror drift' "$BRAINSTORMING"
+rg -q 'quick_edit_label:' "$WORKFLOW_CONTRACT"
+rg -q 'source: metadata.execution_lane=quick_edit' "$WORKFLOW_CONTRACT"
+rg -q 'plan:' "$WORKFLOW_CONTRACT"
+rg -q 'handoff:' "$WORKFLOW_CONTRACT"
+rg -q 'has:plan:' "$WORKFLOW_CONTRACT"
+rg -q 'source: metadata.plan' "$WORKFLOW_CONTRACT"
+rg -q 'has:handoff:' "$WORKFLOW_CONTRACT"
+rg -q 'source: metadata.handoff' "$WORKFLOW_CONTRACT"
+rg -q 'plan_content_hash:' "$WORKFLOW_CONTRACT"
+rg -q 'plan_reviewed_at_sha:' "$WORKFLOW_CONTRACT"
+rg -q 'impl_reviewed_at_sha:' "$WORKFLOW_CONTRACT"
+rg -q 'impl_reviewed_diff_range:' "$WORKFLOW_CONTRACT"
 rg -q 'Only `execution_lane=quick_edit` can skip a separate plan' "$BRAINSTORMING"
 rg -q 'Do not invoke `writing-plans`, `executing-plans`, `writing-skills`, or `skill-creator` automatically' "$BRAINSTORMING"
 rg -q 'Then ask the user only about the written spec' "$BRAINSTORMING"

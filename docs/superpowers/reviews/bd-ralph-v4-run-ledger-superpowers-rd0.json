@@ -1,0 +1,727 @@
+{
+  "schema_version": "v1",
+  "workflow": "bd-ralph-v4",
+  "parent_bead_id": "superpowers-rd0",
+  "generated_at": "2026-05-01T03:58:54.245537Z",
+  "artifact_path": "docs/superpowers/reviews/bd-ralph-v4-run-ledger-superpowers-rd0.json",
+  "run": {
+    "canonical_worktree": ".worktrees/superpowers-rd0",
+    "canonical_branch": "superpowers-rd0",
+    "plan_path": "docs/superpowers/plans/2026-05-01-brainstorming-consumed-contract-followup.md",
+    "completed_task_count": 5,
+    "unresolved_task_count": 0,
+    "started_at": "2026-05-01T03:39:29Z",
+    "finished_at": "2026-05-01T03:58:46Z",
+    "scope_narrowed": false,
+    "tracking_repo": "nakkulla/superpowers",
+    "execution_repo": ".worktrees/superpowers-rd0",
+    "repo_boundary_status": "local"
+  },
+  "issue": {
+    "id": "superpowers-rd0",
+    "status": "resolved",
+    "type": "",
+    "title": ""
+  },
+  "phase_evidence": {
+    "intake_readiness_workspace": {
+      "ready_check": "ran",
+      "ready_match": "bd ready returned no open ready items; parent already in_progress and explicitly requested",
+      "ready_note": "explicit parent superpowers-rd0 loaded via bd show after bd ready preflight",
+      "baseline_verification": "PASS: baseline focused routing and scope contract tests before edits"
+    },
+    "spec_gate": {
+      "path": "docs/superpowers/specs/2026-05-01-brainstorming-consumed-contract-followup-design.md",
+      "freshness": {
+        "reviewed_sha": "49a6f61ca716b2e9c40c4f4f4bb0080301315501",
+        "review_base_sha": "49a6f61ca716b2e9c40c4f4f4bb0080301315501",
+        "codebase_head_sha": "49a6f61ca716b2e9c40c4f4f4bb0080301315501",
+        "source": "prior_reviewed_spec_metadata",
+        "status": "fresh",
+        "codebase_status": "fresh",
+        "changed_files": "unknown",
+        "reason": "none"
+      },
+      "intake": {
+        "outcome": "ready_with_spec",
+        "normalized_metadata_keys": [],
+        "missing_spec_evidence": [],
+        "human_decision_required": "no",
+        "execution_lane_source": "metadata.execution_lane=plan"
+      }
+    },
+    "execution_lane_skill_workflow_classification": {
+      "execution_lane": "plan",
+      "quick_edit": false,
+      "skill_related": true,
+      "skill_edit_kind": "behavior_change",
+      "skill_workflow": "skill_creator",
+      "skill_workflow_source": "spec+plan",
+      "skill_workflow_reason": "eval-backed brainstorming skill contract/routing guidance change",
+      "skill_creator_required": true
+    },
+    "plan_or_quick_edit_gate": {
+      "path": "docs/superpowers/plans/2026-05-01-brainstorming-consumed-contract-followup.md",
+      "plan_review": "run",
+      "plan_reviewed_verdict": "APPROVE",
+      "freshness": {
+        "base_sha": "49a6f61ca716b2e9c40c4f4f4bb0080301315501",
+        "head_sha": "afd492ead099371d5c7e978fa746a6b39298a033",
+        "source": "current_external_review",
+        "status": "fresh",
+        "changed_files": "unknown",
+        "auto_refresh": true,
+        "reason": "implementation-review-driven plan deltas for fast selector/test-helper evidence"
+      },
+      "stale_after_review": false,
+      "fast_path": {
+        "execution_lane": "plan",
+        "quick_edit": false,
+        "source": "none",
+        "eligible": false,
+        "guard_result": "fail",
+        "guard_failure": "none",
+        "plan_fast_path": false,
+        "plan_skip_reason": "none",
+        "plan_required_after_spec": true,
+        "reviewed_plan_applied": true,
+        "skill_related": true,
+        "skill_creator_required": true,
+        "skill_creator_invoked": true,
+        "skill_creator_mode": "planned",
+        "skill_creator_workflow": "skill_creator",
+        "eval_direction": "run_proposed_evals",
+        "skill_edit_kind": "behavior_change",
+        "skill_workflow": "skill_creator",
+        "skill_workflow_source": "spec+plan",
+        "skill_workflow_reason": "eval-backed brainstorming skill contract/routing guidance change",
+        "eval_evidence": {
+          "status": "pass",
+          "benchmark_json": "docs/superpowers/evals/2026-05-01-brainstorming-consumed-contract-followup-benchmark.json",
+          "benchmark_md": "docs/superpowers/evals/2026-05-01-brainstorming-consumed-contract-followup-eval.md",
+          "with_skill_count": 3,
+          "without_skill_count": 3,
+          "freshness": "fresh",
+          "skipped_layers": [
+            "external_model_benchmark",
+            "review_viewer"
+          ],
+          "grading_files": 1,
+          "timing_files": 1,
+          "aggregate_command": "python3 - <<'PY' # parse benchmark/grading/timing JSON schema check",
+          "viewer_skip_reason": "No external model transcripts were generated; checked-in markdown and JSON artifacts are the review surface.",
+          "task_evidence": [
+            {
+              "status": "pass",
+              "benchmark_json": "docs/superpowers/evals/2026-05-01-brainstorming-consumed-contract-followup-benchmark.json",
+              "benchmark_md": "docs/superpowers/evals/2026-05-01-brainstorming-consumed-contract-followup-eval.md",
+              "with_skill_count": 3,
+              "without_skill_count": 3,
+              "freshness": "fresh",
+              "skipped_layers": [
+                "external_model_benchmark",
+                "review_viewer"
+              ],
+              "grading_files": 1,
+              "timing_files": 1,
+              "aggregate_command": "python3 - <<'PY' # parse benchmark/grading/timing JSON schema check",
+              "viewer_skip_reason": "No external model transcripts were generated; checked-in markdown and JSON artifacts are the review surface.",
+              "task_id": "superpowers-rd0.4",
+              "required": true,
+              "mode": "planned",
+              "workflow": "skill_creator"
+            }
+          ]
+        }
+      }
+    },
+    "execution_loop": {
+      "completed_task_count": 5,
+      "unresolved_task_count": 0,
+      "children": [
+        {
+          "id": "superpowers-rd0.5",
+          "status": "resolved",
+          "verification_summary": "PASS: final focused verification after implementation review fix"
+        },
+        {
+          "id": "superpowers-rd0.4",
+          "status": "resolved",
+          "verification_summary": "PASS: eval JSON artifacts parse and benchmark has metadata/runs/run_summary with positive counts"
+        },
+        {
+          "id": "superpowers-rd0.3",
+          "status": "resolved",
+          "verification_summary": "PASS: routing and scope-split contract tests after SKILL.md guidance updates"
+        },
+        {
+          "id": "superpowers-rd0.2",
+          "status": "resolved",
+          "verification_summary": "Semantic contract and consumers updated; GREEN depends on Task 3 active guidance updates"
+        },
+        {
+          "id": "superpowers-rd0.1",
+          "status": "resolved",
+          "verification_summary": "RED captured in tmp/brainstorming-consumed-contract-red.log: new routing/scope contract assertions fail before GREEN updates"
+        }
+      ],
+      "task_verification_summary": [
+        {
+          "id": "superpowers-rd0.5",
+          "status": "resolved",
+          "verification_summary": "PASS: final focused verification after implementation review fix"
+        },
+        {
+          "id": "superpowers-rd0.4",
+          "status": "resolved",
+          "verification_summary": "PASS: eval JSON artifacts parse and benchmark has metadata/runs/run_summary with positive counts"
+        },
+        {
+          "id": "superpowers-rd0.3",
+          "status": "resolved",
+          "verification_summary": "PASS: routing and scope-split contract tests after SKILL.md guidance updates"
+        },
+        {
+          "id": "superpowers-rd0.2",
+          "status": "resolved",
+          "verification_summary": "Semantic contract and consumers updated; GREEN depends on Task 3 active guidance updates"
+        },
+        {
+          "id": "superpowers-rd0.1",
+          "status": "resolved",
+          "verification_summary": "RED captured in tmp/brainstorming-consumed-contract-red.log: new routing/scope contract assertions fail before GREEN updates"
+        }
+      ],
+      "scope_narrowed": false,
+      "seed": {
+        "helper_status": "success",
+        "push_ok": true,
+        "child_mapping_present": true,
+        "parent_lookup_success": true,
+        "child_lookup_success": true
+      }
+    },
+    "implementation_review_simplification": {
+      "review": {
+        "dispatch_history": [
+          {
+            "subject": "implementation-review",
+            "verdict": "APPROVE",
+            "final_source": "external",
+            "policy_blocked": false,
+            "external_attempts": 2,
+            "self_attempts": 0,
+            "escalated": false
+          }
+        ],
+        "review_subagent": {
+          "capable": "yes",
+          "reason": "spawn_agent reviewers completed plan/simplify/implementation reviews"
+        },
+        "final_verdict": "APPROVE",
+        "final_source": "external",
+        "policy_blocked": false,
+        "stale_after_code_change": false,
+        "reviewed_impl_applied": true
+      },
+      "simplify": {
+        "policy": "run",
+        "status": "fix_applied",
+        "verification": "PASS: run-skill-tests fast after reusing test helper timeout wrapper",
+        "rereview": "completed_delta_implementation_review",
+        "commit_sha": "afd492ead099371d5c7e978fa746a6b39298a033",
+        "diff_source": "tmp/current-diff-for-review.txt",
+        "noop_why": "reuse finding fixed; quality and efficiency axes clean"
+      }
+    },
+    "finish_ledger_pr_maintenance_final_gate": {
+      "finish": {
+        "script_status": "success",
+        "pr_url": "https://github.com/nakkulla/superpowers/pull/10",
+        "pr_number": "10",
+        "final_quality_gate_success": true,
+        "first_branch_push_success": true,
+        "final_git_status": "clean",
+        "final_parent_status": "resolved",
+        "final_children_status": "all-resolved",
+        "run_ledger_write_success": true,
+        "metadata_sync_success": true,
+        "artifact_only_second_commit_success": true,
+        "second_branch_push_success": true
+      },
+      "post_finish": {
+        "self_audit": {
+          "policy": "light",
+          "verdict": "clean",
+          "notes": [
+            "Review findings were fixed and re-reviewed.",
+            "No unresolved follow-up-required failures or main-checkout-only actions remain."
+          ]
+        },
+        "self_improve": {
+          "delta_path": "none",
+          "log_path": "none",
+          "target_skill": "shared/skills/bd-ralph-v4",
+          "target_repo_root": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
+          "appended": 0,
+          "deduped": 0,
+          "skipped": "no-append-worthy-candidates",
+          "persistence": "report-only"
+        },
+        "final_summary_gate": {
+          "status": "pass",
+          "evidence_json": "docs/superpowers/reviews/bd-ralph-v4-final-summary-evidence-superpowers-rd0.json"
+        }
+      }
+    }
+  },
+  "legacy_phase_evidence": {
+    "setup": {
+      "ready_check": "ran",
+      "ready_match": "bd ready returned no open ready items; parent already in_progress and explicitly requested",
+      "ready_note": "explicit parent superpowers-rd0 loaded via bd show after bd ready preflight",
+      "baseline_verification": "PASS: baseline focused routing and scope contract tests before edits"
+    },
+    "plan": {
+      "path": "docs/superpowers/plans/2026-05-01-brainstorming-consumed-contract-followup.md",
+      "plan_review": "run",
+      "plan_reviewed_verdict": "APPROVE",
+      "freshness": {
+        "base_sha": "49a6f61ca716b2e9c40c4f4f4bb0080301315501",
+        "head_sha": "afd492ead099371d5c7e978fa746a6b39298a033",
+        "source": "current_external_review",
+        "status": "fresh",
+        "changed_files": "unknown",
+        "auto_refresh": true,
+        "reason": "implementation-review-driven plan deltas for fast selector/test-helper evidence"
+      },
+      "stale_after_review": false,
+      "fast_path": {
+        "execution_lane": "plan",
+        "quick_edit": false,
+        "source": "none",
+        "eligible": false,
+        "guard_result": "fail",
+        "guard_failure": "none",
+        "plan_fast_path": false,
+        "plan_skip_reason": "none",
+        "plan_required_after_spec": true,
+        "reviewed_plan_applied": true,
+        "skill_related": true,
+        "skill_creator_required": true,
+        "skill_creator_invoked": true,
+        "skill_creator_mode": "planned",
+        "skill_creator_workflow": "skill_creator",
+        "eval_direction": "run_proposed_evals",
+        "skill_edit_kind": "behavior_change",
+        "skill_workflow": "skill_creator",
+        "skill_workflow_source": "spec+plan",
+        "skill_workflow_reason": "eval-backed brainstorming skill contract/routing guidance change",
+        "eval_evidence": {
+          "status": "pass",
+          "benchmark_json": "docs/superpowers/evals/2026-05-01-brainstorming-consumed-contract-followup-benchmark.json",
+          "benchmark_md": "docs/superpowers/evals/2026-05-01-brainstorming-consumed-contract-followup-eval.md",
+          "with_skill_count": 3,
+          "without_skill_count": 3,
+          "freshness": "fresh",
+          "skipped_layers": [
+            "external_model_benchmark",
+            "review_viewer"
+          ],
+          "grading_files": 1,
+          "timing_files": 1,
+          "aggregate_command": "python3 - <<'PY' # parse benchmark/grading/timing JSON schema check",
+          "viewer_skip_reason": "No external model transcripts were generated; checked-in markdown and JSON artifacts are the review surface.",
+          "task_evidence": [
+            {
+              "status": "pass",
+              "benchmark_json": "docs/superpowers/evals/2026-05-01-brainstorming-consumed-contract-followup-benchmark.json",
+              "benchmark_md": "docs/superpowers/evals/2026-05-01-brainstorming-consumed-contract-followup-eval.md",
+              "with_skill_count": 3,
+              "without_skill_count": 3,
+              "freshness": "fresh",
+              "skipped_layers": [
+                "external_model_benchmark",
+                "review_viewer"
+              ],
+              "grading_files": 1,
+              "timing_files": 1,
+              "aggregate_command": "python3 - <<'PY' # parse benchmark/grading/timing JSON schema check",
+              "viewer_skip_reason": "No external model transcripts were generated; checked-in markdown and JSON artifacts are the review surface.",
+              "task_id": "superpowers-rd0.4",
+              "required": true,
+              "mode": "planned",
+              "workflow": "skill_creator"
+            }
+          ]
+        }
+      }
+    },
+    "seed": {
+      "helper_status": "success",
+      "push_ok": true,
+      "child_mapping_present": true,
+      "parent_lookup_success": true,
+      "child_lookup_success": true
+    },
+    "execute": {
+      "completed_task_count": 5,
+      "unresolved_task_count": 0,
+      "children": [
+        {
+          "id": "superpowers-rd0.5",
+          "status": "resolved",
+          "verification_summary": "PASS: final focused verification after implementation review fix"
+        },
+        {
+          "id": "superpowers-rd0.4",
+          "status": "resolved",
+          "verification_summary": "PASS: eval JSON artifacts parse and benchmark has metadata/runs/run_summary with positive counts"
+        },
+        {
+          "id": "superpowers-rd0.3",
+          "status": "resolved",
+          "verification_summary": "PASS: routing and scope-split contract tests after SKILL.md guidance updates"
+        },
+        {
+          "id": "superpowers-rd0.2",
+          "status": "resolved",
+          "verification_summary": "Semantic contract and consumers updated; GREEN depends on Task 3 active guidance updates"
+        },
+        {
+          "id": "superpowers-rd0.1",
+          "status": "resolved",
+          "verification_summary": "RED captured in tmp/brainstorming-consumed-contract-red.log: new routing/scope contract assertions fail before GREEN updates"
+        }
+      ],
+      "task_verification_summary": [
+        {
+          "id": "superpowers-rd0.5",
+          "status": "resolved",
+          "verification_summary": "PASS: final focused verification after implementation review fix"
+        },
+        {
+          "id": "superpowers-rd0.4",
+          "status": "resolved",
+          "verification_summary": "PASS: eval JSON artifacts parse and benchmark has metadata/runs/run_summary with positive counts"
+        },
+        {
+          "id": "superpowers-rd0.3",
+          "status": "resolved",
+          "verification_summary": "PASS: routing and scope-split contract tests after SKILL.md guidance updates"
+        },
+        {
+          "id": "superpowers-rd0.2",
+          "status": "resolved",
+          "verification_summary": "Semantic contract and consumers updated; GREEN depends on Task 3 active guidance updates"
+        },
+        {
+          "id": "superpowers-rd0.1",
+          "status": "resolved",
+          "verification_summary": "RED captured in tmp/brainstorming-consumed-contract-red.log: new routing/scope contract assertions fail before GREEN updates"
+        }
+      ],
+      "scope_narrowed": false
+    },
+    "review": {
+      "dispatch_history": [
+        {
+          "subject": "implementation-review",
+          "verdict": "APPROVE",
+          "final_source": "external",
+          "policy_blocked": false,
+          "external_attempts": 2,
+          "self_attempts": 0,
+          "escalated": false
+        }
+      ],
+      "review_subagent": {
+        "capable": "yes",
+        "reason": "spawn_agent reviewers completed plan/simplify/implementation reviews"
+      },
+      "final_verdict": "APPROVE",
+      "final_source": "external",
+      "policy_blocked": false,
+      "stale_after_code_change": false,
+      "reviewed_impl_applied": true
+    },
+    "simplify": {
+      "policy": "run",
+      "status": "fix_applied",
+      "verification": "PASS: run-skill-tests fast after reusing test helper timeout wrapper",
+      "rereview": "completed_delta_implementation_review",
+      "commit_sha": "afd492ead099371d5c7e978fa746a6b39298a033",
+      "diff_source": "tmp/current-diff-for-review.txt",
+      "noop_why": "reuse finding fixed; quality and efficiency axes clean"
+    },
+    "finish": {
+      "script_status": "success",
+      "pr_url": "https://github.com/nakkulla/superpowers/pull/10",
+      "pr_number": "10",
+      "final_quality_gate_success": true,
+      "first_branch_push_success": true,
+      "final_git_status": "clean",
+      "final_parent_status": "resolved",
+      "final_children_status": "all-resolved",
+      "run_ledger_write_success": true,
+      "metadata_sync_success": true,
+      "artifact_only_second_commit_success": true,
+      "second_branch_push_success": true
+    },
+    "spec": {
+      "path": "docs/superpowers/specs/2026-05-01-brainstorming-consumed-contract-followup-design.md",
+      "freshness": {
+        "reviewed_sha": "49a6f61ca716b2e9c40c4f4f4bb0080301315501",
+        "review_base_sha": "49a6f61ca716b2e9c40c4f4f4bb0080301315501",
+        "codebase_head_sha": "49a6f61ca716b2e9c40c4f4f4bb0080301315501",
+        "source": "prior_reviewed_spec_metadata",
+        "status": "fresh",
+        "codebase_status": "fresh",
+        "changed_files": "unknown",
+        "reason": "none"
+      }
+    }
+  },
+  "artifacts": {
+    "run_ledger": "docs/superpowers/reviews/bd-ralph-v4-run-ledger-superpowers-rd0.json",
+    "spec": "docs/superpowers/specs/2026-05-01-brainstorming-consumed-contract-followup-design.md",
+    "plan": "docs/superpowers/plans/2026-05-01-brainstorming-consumed-contract-followup.md",
+    "pr_url": "https://github.com/nakkulla/superpowers/pull/10"
+  },
+  "labels": {
+    "current": [],
+    "mirrors": {
+      "has:spec": true,
+      "has:plan": true,
+      "reviewed:spec": true,
+      "reviewed:plan": true,
+      "reviewed:impl": true
+    }
+  },
+  "metadata": {
+    "spec_id": "docs/superpowers/specs/2026-05-01-brainstorming-consumed-contract-followup-design.md",
+    "plan": "docs/superpowers/plans/2026-05-01-brainstorming-consumed-contract-followup.md",
+    "run_ledger": "docs/superpowers/reviews/bd-ralph-v4-run-ledger-superpowers-rd0.json",
+    "pr_url": "https://github.com/nakkulla/superpowers/pull/10",
+    "execution_lane": "plan",
+    "skill_workflow": "skill_creator"
+  },
+  "reviews": {
+    "review_debt_summary": "none",
+    "skill_workflow": {
+      "skill_related": true,
+      "edit_kind": "behavior_change",
+      "workflow": "skill_creator",
+      "workflow_reason": "eval-backed brainstorming skill contract/routing guidance change",
+      "skill_creator_required": true,
+      "source": "spec+plan"
+    },
+    "plan_review": {
+      "final_verdict": "APPROVE",
+      "final_source": "external",
+      "policy_blocked": false,
+      "external_attempts": 4,
+      "self_attempts": 0,
+      "escalated": false,
+      "budget_exhausted": false,
+      "reviewed_plan_applied": true,
+      "debt_present": false
+    },
+    "implementation_review": {
+      "signals": [],
+      "final_verdict": "APPROVE",
+      "final_source": "external",
+      "policy_blocked": false,
+      "external_attempts": 2,
+      "self_attempts": 0,
+      "escalated": false,
+      "budget_exhausted": false,
+      "stale_after_code_change": false,
+      "forced_handoff": false,
+      "reviewed_impl_applied": true,
+      "scope": "delta",
+      "base_sha": "49a6f61ca716b2e9c40c4f4f4bb0080301315501",
+      "rereview_reason": "post-review M1 test assertion fix"
+    },
+    "review_subagent": {
+      "capable": "yes",
+      "reason": "spawn_agent reviewers completed plan/simplify/implementation reviews"
+    },
+    "simplify": {
+      "policy": "run",
+      "status": "fix_applied",
+      "verification": "PASS: run-skill-tests fast after reusing test helper timeout wrapper",
+      "rereview": "completed_delta_implementation_review",
+      "commit_sha": "afd492ead099371d5c7e978fa746a6b39298a033",
+      "diff_source": "tmp/current-diff-for-review.txt",
+      "noop_why": "reuse finding fixed; quality and efficiency axes clean"
+    }
+  },
+  "freshness": {
+    "spec": {
+      "status": "fresh",
+      "reviewed_sha": "49a6f61ca716b2e9c40c4f4f4bb0080301315501"
+    },
+    "plan": {
+      "status": "fresh",
+      "reviewed_at_sha": "afd492ead099371d5c7e978fa746a6b39298a033"
+    },
+    "implementation": {
+      "reviewed_at_sha": "49a6f61ca716b2e9c40c4f4f4bb0080301315501",
+      "stale_after_code_change": false
+    }
+  },
+  "helpers": {
+    "ready": {
+      "check": "ran"
+    },
+    "seed": {
+      "status": "success"
+    },
+    "finish": {
+      "status": "success"
+    }
+  },
+  "verification": {
+    "commands": [],
+    "final_result": "pass",
+    "ci": "unknown"
+  },
+  "followups": [],
+  "maintenance": {
+    "self_audit": {
+      "policy": "light",
+      "verdict": "clean",
+      "notes": [
+        "Review findings were fixed and re-reviewed.",
+        "No unresolved follow-up-required failures or main-checkout-only actions remain."
+      ]
+    },
+    "self_improve": {
+      "delta_path": "none",
+      "log_path": "none",
+      "target_skill": "shared/skills/bd-ralph-v4",
+      "target_repo_root": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
+      "appended": 0,
+      "deduped": 0,
+      "skipped": "no-append-worthy-candidates",
+      "persistence": "report-only"
+    },
+    "final_summary_gate": {
+      "status": "pass",
+      "evidence_json": "docs/superpowers/reviews/bd-ralph-v4-final-summary-evidence-superpowers-rd0.json"
+    }
+  },
+  "invocations": [],
+  "failures": [],
+  "usage": {
+    "scope": "direct_children",
+    "accuracy": "invocation_delta",
+    "status": "unavailable",
+    "main": {
+      "session_id": "",
+      "transcript_path": ""
+    },
+    "direct_children": [],
+    "failure_reason": "missing_inputs"
+  },
+  "review": {
+    "review_debt_summary": "none",
+    "skill_workflow": {
+      "skill_related": true,
+      "edit_kind": "behavior_change",
+      "workflow": "skill_creator",
+      "workflow_reason": "eval-backed brainstorming skill contract/routing guidance change",
+      "skill_creator_required": true,
+      "source": "spec+plan"
+    },
+    "plan_review": {
+      "final_verdict": "APPROVE",
+      "final_source": "external",
+      "policy_blocked": false,
+      "external_attempts": 4,
+      "self_attempts": 0,
+      "escalated": false,
+      "budget_exhausted": false,
+      "reviewed_plan_applied": true,
+      "debt_present": false
+    },
+    "implementation_review": {
+      "signals": [],
+      "final_verdict": "APPROVE",
+      "final_source": "external",
+      "policy_blocked": false,
+      "external_attempts": 2,
+      "self_attempts": 0,
+      "escalated": false,
+      "budget_exhausted": false,
+      "stale_after_code_change": false,
+      "forced_handoff": false,
+      "reviewed_impl_applied": true,
+      "scope": "delta",
+      "base_sha": "49a6f61ca716b2e9c40c4f4f4bb0080301315501",
+      "rereview_reason": "post-review M1 test assertion fix"
+    },
+    "review_subagent": {
+      "capable": "yes",
+      "reason": "spawn_agent reviewers completed plan/simplify/implementation reviews"
+    },
+    "simplify": {
+      "policy": "run",
+      "status": "fix_applied",
+      "verification": "PASS: run-skill-tests fast after reusing test helper timeout wrapper",
+      "rereview": "completed_delta_implementation_review",
+      "commit_sha": "afd492ead099371d5c7e978fa746a6b39298a033",
+      "diff_source": "tmp/current-diff-for-review.txt",
+      "noop_why": "reuse finding fixed; quality and efficiency axes clean"
+    }
+  },
+  "post_finish": {
+    "self_audit": {
+      "policy": "light",
+      "verdict": "clean",
+      "notes": [
+        "Review findings were fixed and re-reviewed.",
+        "No unresolved follow-up-required failures or main-checkout-only actions remain."
+      ]
+    },
+    "self_improve": {
+      "delta_path": "none",
+      "log_path": "none",
+      "target_skill": "shared/skills/bd-ralph-v4",
+      "target_repo_root": "/Users/isy_macstudio/Documents/GitHub/dotfiles",
+      "appended": 0,
+      "deduped": 0,
+      "skipped": "no-append-worthy-candidates",
+      "persistence": "report-only"
+    },
+    "final_summary_gate": {
+      "status": "pass",
+      "evidence_json": "docs/superpowers/reviews/bd-ralph-v4-final-summary-evidence-superpowers-rd0.json"
+    }
+  },
+  "acceptance": {
+    "status": "accepted",
+    "blocking_checks": [],
+    "waived_checks": [],
+    "summary": {
+      "pr_url": "https://github.com/nakkulla/superpowers/pull/10",
+      "implementation_review_verdict": "APPROVE"
+    }
+  },
+  "followup": [],
+  "summary": {
+    "audit_version": "v1",
+    "audit_status": "accepted",
+    "audit_artifact": "docs/superpowers/reviews/bd-ralph-v4-run-ledger-superpowers-rd0.json",
+    "canonical_worktree": ".worktrees/superpowers-rd0",
+    "canonical_branch": "superpowers-rd0",
+    "completed_task_count": 5,
+    "unresolved_task_count": 0,
+    "implementation_review_verdict": "APPROVE",
+    "run_started_at": "2026-05-01T03:39:29Z",
+    "run_finished_at": "2026-05-01T03:58:46Z",
+    "self_improve_persistence": "report-only",
+    "final_summary_gate": "pass"
+  }
+}

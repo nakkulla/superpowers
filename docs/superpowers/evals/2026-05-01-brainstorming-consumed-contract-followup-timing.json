@@ -1,0 +1,21 @@
+{
+  "schema": "superpowers.skill_eval_timing.v1",
+  "parent_bead": "superpowers-rd0",
+  "executor": "repo-shell",
+  "runs": [
+    {
+      "name": "red_contract_capture",
+      "artifact": "tmp/brainstorming-consumed-contract-red.log",
+      "status": "expected_failures_captured"
+    },
+    {
+      "name": "green_contract_verification",
+      "commands": [
+        "bash tests/claude-code/test-brainstorming-v4-workflow-routing-contract.sh",
+        "bash tests/claude-code/test-brainstorming-scope-split-followup-contract.sh",
+        "bash tests/claude-code/run-skill-tests.sh fast"
+      ],
+      "status": "pending_final_verification"
+    }
+  ]
+}

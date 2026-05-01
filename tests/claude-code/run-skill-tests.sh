@@ -5,6 +5,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
+source "$SCRIPT_DIR/test-helpers.sh"
 
 echo "========================================"
 echo " Claude Code Skills Test Suite"
@@ -27,6 +28,7 @@ VERBOSE=false
 SPECIFIC_TEST=""
 TIMEOUT=300  # Default 5 minute timeout per test
 RUN_INTEGRATION=false
+RUN_FAST_CONTRACTS=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -44,6 +46,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --integration|-i)
             RUN_INTEGRATION=true
+            shift
+            ;;
+        fast|--fast)
+            RUN_FAST_CONTRACTS=true
             shift
             ;;
         --help|-h)
@@ -85,15 +91,12 @@ integration_tests=(
     "test-subagent-driven-development-integration.sh"
 )
 
-run_with_optional_timeout() {
-    if command -v timeout >/dev/null 2>&1; then
-        timeout "$TIMEOUT" "$@"
-    elif command -v gtimeout >/dev/null 2>&1; then
-        gtimeout "$TIMEOUT" "$@"
-    else
-        "$@"
-    fi
-}
+if [ "$RUN_FAST_CONTRACTS" = true ]; then
+    tests=(
+        "test-brainstorming-v4-workflow-routing-contract.sh"
+        "test-brainstorming-scope-split-followup-contract.sh"
+    )
+fi
 
 # Add integration tests if requested
 if [ "$RUN_INTEGRATION" = true ]; then
@@ -132,7 +135,7 @@ for test in "${tests[@]}"; do
     start_time=$(date +%s)
 
     if [ "$VERBOSE" = true ]; then
-        if run_with_optional_timeout bash "$test_path"; then
+        if run_with_timeout "$TIMEOUT" bash "$test_path"; then
             end_time=$(date +%s)
             duration=$((end_time - start_time))
             echo ""
@@ -152,7 +155,7 @@ for test in "${tests[@]}"; do
         fi
     else
         # Capture output for non-verbose mode
-        if output=$(run_with_optional_timeout bash "$test_path" 2>&1); then
+        if output=$(run_with_timeout "$TIMEOUT" bash "$test_path" 2>&1); then
             end_time=$(date +%s)
             duration=$((end_time - start_time))
             echo "  [PASS] (${duration}s)"

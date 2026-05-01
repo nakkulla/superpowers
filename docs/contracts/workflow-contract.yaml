@@ -3,6 +3,7 @@ contract:
   version: 1
   type: semantic
   runtime_loading: false
+  upstream_semantic_reference: dotfiles-v4-workflow-contract
 
 vocabulary:
   execution_lane:
@@ -11,12 +12,17 @@ vocabulary:
   quick_edit:
     kind: metadata
     allowed_values: [yes, no]
+    meaning: brainstorming decision flag, not the mirror label
   quick_edit_decision_reason:
     kind: metadata
     value: short_string
   quick_edit_decided_by:
     kind: metadata
     allowed_values: [brainstorming]
+  quick_edit_label:
+    kind: mirror_label
+    label: quick_edit
+    source: metadata.execution_lane=quick_edit
   skill_workflow:
     kind: metadata
     allowed_values: [none, writing_skills, skill_creator]
@@ -27,9 +33,23 @@ vocabulary:
     kind: metadata
     value: repo_relative_path
     mirror_label: has:spec
+  plan:
+    kind: metadata
+    key: metadata.plan
+    mirror_label: has:plan
+  handoff:
+    kind: metadata
+    key: metadata.handoff
+    mirror_label: has:handoff
   has:spec:
     kind: mirror_label
     source: spec_id
+  has:plan:
+    kind: mirror_label
+    source: metadata.plan
+  has:handoff:
+    kind: mirror_label
+    source: metadata.handoff
   reviewed:spec:
     kind: review_gate_label
     required_metadata: [spec_content_hash, spec_reviewed_at_sha]
@@ -39,6 +59,18 @@ vocabulary:
   spec_reviewed_at_sha:
     kind: metadata
     value: git_commit_sha
+  plan_content_hash:
+    kind: metadata
+    value: git_hash_object
+  plan_reviewed_at_sha:
+    kind: metadata
+    value: git_commit_sha
+  impl_reviewed_at_sha:
+    kind: metadata
+    value: git_commit_sha
+  impl_reviewed_diff_range:
+    kind: metadata
+    value: git_diff_range
   artifact_links:
     kind: metadata_and_mirror_labels
     sources: [spec_id]
@@ -54,10 +86,24 @@ vocabulary:
       - source_parent
       - scope_relation
       - spec_policy
+      - classification
+      - target_repo
+      - required_action
+      - human_decision_required
     required_values:
       origin: brainstorming_scope_split
       scope_relation: follow_up
       spec_policy: future_brainstorming_required
+    optional_metadata:
+      - source_artifact
+      - source_summary
+      - component
+      - target_paths
+      - acceptance_notes
+      - verification_notes
+    dotfiles_auto_spec_intake_fields:
+      auto_spec_eligible: not_required
+      missing_spec_evidence: not_required
     forbidden_pre_spec_fields:
       - spec_id
       - has:spec
@@ -72,3 +118,9 @@ vocabulary:
       - quick_edit_decided_by
       - skill_workflow
       - skill_workflow_reason
+
+dotfiles_runtime_only:
+  run_ledgers: out_of_scope
+  phase_markers: out_of_scope
+  final_markers: out_of_scope
+  migration_tables: out_of_scope

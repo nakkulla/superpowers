@@ -5,11 +5,11 @@ consumers:
   skills:
     - path: skills/brainstorming/SKILL.md
       consumes:
-        - execution_lane
-        - quick_edit
-        - skill_workflow
-        - review_evidence
-        - scope_split_followup
+        - execution_lane_metadata
+        - quick_edit_mirror_label
+        - skill_workflow_handoff_metadata
+        - spec_review_evidence
+        - scope_split_followup_metadata
     - path: skills/writing-plans/SKILL.md
       consumes:
         - execution_lane
@@ -24,16 +24,25 @@ consumers:
     - path: tests/claude-code/test-brainstorming-v4-workflow-routing-contract.sh
       asserts:
         - vocabulary.execution_lane.allowed_values
+        - vocabulary.quick_edit_label
         - vocabulary.quick_edit.allowed_values
         - vocabulary.quick_edit_decision_reason
         - vocabulary.quick_edit_decided_by.allowed_values
         - vocabulary.skill_workflow.allowed_values
         - vocabulary.skill_workflow_reason
         - vocabulary.spec_id
+        - vocabulary.plan
+        - vocabulary.handoff
         - vocabulary.has:spec.source
+        - vocabulary.has:plan.source
+        - vocabulary.has:handoff.source
         - vocabulary.reviewed:spec.required_metadata
         - vocabulary.spec_content_hash
         - vocabulary.spec_reviewed_at_sha
+        - vocabulary.plan_content_hash
+        - vocabulary.plan_reviewed_at_sha
+        - vocabulary.impl_reviewed_at_sha
+        - vocabulary.impl_reviewed_diff_range
         - vocabulary.artifact_links
         - vocabulary.review_evidence
     - path: tests/claude-code/test-brainstorming-scope-split-followup-contract.sh
@@ -43,6 +52,9 @@ consumers:
         - contract.runtime_loading
         - vocabulary.scope_split_followup.required_metadata
         - vocabulary.scope_split_followup.required_values
+        - vocabulary.scope_split_followup.optional_metadata
+        - vocabulary.scope_split_followup.dotfiles_auto_spec_intake_fields
         - vocabulary.scope_split_followup.forbidden_pre_spec_fields
+        - dotfiles_runtime_only
         - consumers.skills
         - consumers.tests

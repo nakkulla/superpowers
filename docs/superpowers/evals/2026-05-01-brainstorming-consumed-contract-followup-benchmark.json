@@ -1,0 +1,92 @@
+{
+  "metadata": {
+    "schema": "superpowers.skill_eval_benchmark.v1",
+    "eval_type": "contract_smoke",
+    "parent_bead": "superpowers-rd0",
+    "spec": "docs/superpowers/specs/2026-05-01-brainstorming-consumed-contract-followup-design.md",
+    "plan": "docs/superpowers/plans/2026-05-01-brainstorming-consumed-contract-followup.md",
+    "benchmark_md": "docs/superpowers/evals/2026-05-01-brainstorming-consumed-contract-followup-eval.md",
+    "executor": "repo-shell",
+    "executor_model": "not_applicable_repo_shell",
+    "with_skill_count": 3,
+    "without_skill_count": 3,
+    "grading_json": "docs/superpowers/evals/2026-05-01-brainstorming-consumed-contract-followup-grading.json",
+    "timing_json": "docs/superpowers/evals/2026-05-01-brainstorming-consumed-contract-followup-timing.json",
+    "skipped_layers": [
+      {
+        "layer": "external_model_benchmark",
+        "reason": "Deterministic repository contract-smoke checks are more discriminating for this consumed-contract wording change than live model comparisons."
+      },
+      {
+        "layer": "review_viewer",
+        "reason": "No external model transcripts were generated; checked-in markdown and JSON artifacts are the review surface."
+      }
+    ]
+  },
+  "runs": [
+    {
+      "id": "quick_edit_label_drift_without_skill",
+      "mode": "without_skill",
+      "scenario": "quick-edit label drift",
+      "status": "fail",
+      "evidence": "RED routing assertions failed before active guidance defined stale mirror drift and quick_edit_label mapping."
+    },
+    {
+      "id": "quick_edit_label_drift_with_skill",
+      "mode": "with_skill",
+      "scenario": "quick-edit label drift",
+      "status": "pass",
+      "evidence": "GREEN routing test asserts metadata.execution_lane=quick_edit, quick_edit_label, and stale mirror drift guidance."
+    },
+    {
+      "id": "scope_split_followup_without_skill",
+      "mode": "without_skill",
+      "scenario": "scope-split follow-up creation",
+      "status": "fail",
+      "evidence": "RED scope assertions failed before classification, target_repo, required_action, and human_decision_required were required."
+    },
+    {
+      "id": "scope_split_followup_with_skill",
+      "mode": "with_skill",
+      "scenario": "scope-split follow-up creation",
+      "status": "pass",
+      "evidence": "GREEN scope-split test asserts required, optional, and forbidden pre-spec follow-up fields."
+    },
+    {
+      "id": "consumed_subset_boundary_without_skill",
+      "mode": "without_skill",
+      "scenario": "consumed-subset boundary",
+      "status": "fail",
+      "evidence": "RED scope assertions failed before upstream semantic reference and dotfiles runtime-only exclusions were declared."
+    },
+    {
+      "id": "consumed_subset_boundary_with_skill",
+      "mode": "with_skill",
+      "scenario": "consumed-subset boundary",
+      "status": "pass",
+      "evidence": "GREEN scope-split test asserts semantic-only runtime_loading=false and out-of-scope runtime sections."
+    }
+  ],
+  "run_summary": {
+    "status": "pass",
+    "with_skill": {
+      "count": 3,
+      "pass_count": 3,
+      "summary": "GREEN contract-smoke scenarios passed with active contract and brainstorming guidance updates."
+    },
+    "without_skill": {
+      "count": 3,
+      "pass_count": 0,
+      "summary": "RED contract-smoke scenarios exposed missing consumed-subset assertions in baseline guidance."
+    },
+    "delta": {
+      "status": "positive_contract_alignment",
+      "summary": "Changed guidance and contract tests now enforce consumed dotfiles v4 semantics without importing runtime-only details."
+    },
+    "with_skill_count": 3,
+    "without_skill_count": 3,
+    "pass_count": 3,
+    "fail_count": 0,
+    "conclusion": "Superpowers brainstorming now consumes the relevant v4 contract semantics while preserving the local semantic-only boundary."
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schema": "superpowers.skill_eval_grading.v1",
+  "parent_bead": "superpowers-rd0",
+  "grades": [
+    {
+      "scenario": "quick-edit label drift",
+      "mode": "with_skill",
+      "status": "pass",
+      "criteria": [
+        "metadata.execution_lane=quick_edit is canonical",
+        "quick_edit label is mirror/index only",
+        "standalone label is stale mirror drift"
+      ]
+    },
+    {
+      "scenario": "scope-split follow-up creation",
+      "mode": "with_skill",
+      "status": "pass",
+      "criteria": [
+        "extended required evidence is present",
+        "optional evidence is separated",
+        "pre-spec execution/review metadata remains forbidden"
+      ]
+    },
+    {
+      "scenario": "consumed-subset boundary",
+      "mode": "with_skill",
+      "status": "pass",
+      "criteria": [
+        "semantic-only runtime_loading=false is preserved",
+        "dotfiles runtime-only sections are out of scope",
+        "phase_evidence_requirements is not required"
+      ]
+    }
+  ]
+}

@@ -48,10 +48,12 @@ Every project goes through this process. A todo list, a single-function utility,
 In a Beads-enabled repo, when `brainstorming` explicitly chooses the quick_edit path:
 
 - create a **new standalone execution issue** for that `quick_edit` work
-- **label that new issue `quick_edit`**
+- record `metadata.execution_lane=quick_edit` before or with the mirror label
+- **label that new issue `quick_edit`** only as the mirror/index label for `metadata.execution_lane=quick_edit`
 - do **not** treat the parent bead as the `quick_edit` issue
 - this **does not change the normal spec-path parent** / `spec_id` / `reviewed:spec` rules used by regular brainstorming → spec runs
 - treat `execution_lane=quick_edit` as the source of truth; the `quick_edit` label is a mirror/index label that must stay aligned with that metadata
+- A `quick_edit` label without `metadata.execution_lane=quick_edit` is stale mirror drift, not execution-lane evidence; never select quick-edit execution from a standalone `quick_edit` label.
 
 ## skill_workflow Classification
 
@@ -72,6 +74,7 @@ Rules:
 
 - Default `execution_lane=plan`.
 - Set `execution_lane=quick_edit` only when `quick_edit=yes`.
+- Treat `metadata.execution_lane=quick_edit` as the only canonical source for quick-edit execution; a standalone `quick_edit` label is stale mirror drift.
 - Never create new `execution_lane=skill_eval_fast_path` output.
 - Choose `skill_workflow` from the required downstream skill-edit discipline.
 - Use `skill_workflow=writing_skills` when work edits existing skill artifacts.
@@ -406,7 +409,26 @@ source_spec_id=<main spec path>
 source_parent=<main parent bead id>
 scope_relation=follow_up
 spec_policy=future_brainstorming_required
+classification=<scope_split_followup|cross_repo_followup|human_followup>
+target_repo=<owner/repo or tracker repo>
+required_action=<future work request>
+human_decision_required=yes|no
 ```
+
+Optional evidence fields, recorded only when known:
+
+```text
+source_artifact=<upstream artifact path or URL>
+source_summary=<short summary>
+component=<component name>
+target_paths=<known repo-relative paths>
+acceptance_notes=<known acceptance notes>
+verification_notes=<known verification notes>
+```
+
+Do not guess `target_paths`; record them only when concrete and reliable. If optional evidence is missing, describe the gap in prose and state that future brainstorming/spec work is required.
+
+`auto_spec_eligible` and `missing_spec_evidence` are dotfiles auto-spec-intake fields; they are not required for Superpowers `brainstorming` scope-split follow-ups unless a future reviewed spec makes Superpowers an auto-spec-intake consumer.
 
 The forbidden pre-spec fields for these follow-up issues are: `spec_id`, `has:spec`, `reviewed:spec`, `spec_content_hash`, `spec_reviewed_at_sha`, `artifact_links`, `review_evidence`, `execution_lane`, `quick_edit`, `quick_edit_decision_reason`, `quick_edit_decided_by`, `skill_workflow`, and `skill_workflow_reason`. Add those only after the follow-up has its own future brainstorming → spec → plan → implementation cycle.
 

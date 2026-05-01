@@ -96,10 +96,18 @@ for routing_assert in \
   vocabulary.skill_workflow.allowed_values \
   vocabulary.skill_workflow_reason \
   vocabulary.spec_id \
+  vocabulary.plan \
+  vocabulary.handoff \
   vocabulary.has:spec.source \
+  vocabulary.has:plan.source \
+  vocabulary.has:handoff.source \
   vocabulary.reviewed:spec.required_metadata \
   vocabulary.spec_content_hash \
   vocabulary.spec_reviewed_at_sha \
+  vocabulary.plan_content_hash \
+  vocabulary.plan_reviewed_at_sha \
+  vocabulary.impl_reviewed_at_sha \
+  vocabulary.impl_reviewed_diff_range \
   vocabulary.artifact_links \
   vocabulary.review_evidence \
   dotfiles_runtime_only; do

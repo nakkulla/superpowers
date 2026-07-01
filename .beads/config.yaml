@@ -55,4 +55,3 @@
 
 sync:
   git-remote: origin
-  remote-url: https://doltremoteapi.dolthub.com/nakkulla/superpowers-beads

@@ -1,7 +1,9 @@
 {
-  "database": "dolt",
+  "database": "superpowers",
   "backend": "dolt",
   "dolt_mode": "server",
-  "dolt_database": "dolt",
-  "project_id": "5c585bec-19c7-4592-b4e8-f84be6e3abab"
+  "dolt_database": "superpowers",
+  "project_id": "5c585bec-19c7-4592-b4e8-f84be6e3abab",
+  "dolt_server_host": "127.0.0.1",
+  "dolt_server_port": 3307
 }
